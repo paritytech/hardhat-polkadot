@@ -1,6 +1,16 @@
 # Dependency directories
 node_modules/
+pnpm-lock.json
 
 # Build files
 dist
-tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+
+# Other
+.vscode/
+.DS_Store
+*.code-workspace
