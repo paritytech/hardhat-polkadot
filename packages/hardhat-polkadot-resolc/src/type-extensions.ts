@@ -1,18 +1,18 @@
-import 'hardhat/types/config';
+import "hardhat/types/config"
 
-import { ResolcConfig } from './types';
+import { ResolcConfig } from "./types"
 
-declare module 'hardhat/types/config' {
+declare module "hardhat/types/config" {
     interface HardhatUserConfig {
-        resolc?: Partial<ResolcConfig>;
+        resolc?: Partial<ResolcConfig>
     }
 
     interface HardhatConfig {
-        resolc: ResolcConfig;
+        resolc: ResolcConfig
     }
 
     interface HardhatNetworkUserConfig {
-        polkavm?: boolean;
+        polkavm?: boolean
     }
 
     interface HttpNetworkUserConfig {
@@ -20,11 +20,11 @@ declare module 'hardhat/types/config' {
     }
 
     interface HardhatNetworkConfig {
-        polkavm?: boolean;
+        polkavm?: boolean
     }
 
     interface HttpNetworkConfig {
-        polkavm?: boolean;
+        polkavm?: boolean
     }
 
     interface NetworksConfig {
@@ -32,8 +32,8 @@ declare module 'hardhat/types/config' {
     }
 }
 
-declare module 'hardhat/types/runtime' {
+declare module "hardhat/types/runtime" {
     interface Network {
-        polkavm?: boolean;
+        polkavm?: boolean
     }
 }

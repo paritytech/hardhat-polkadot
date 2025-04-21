@@ -1,8 +1,38 @@
 {
     "tabWidth": 4,
-    "printWidth": 120,
-    "parser": "typescript",
-    "singleQuote": true,
+    "useTabs": false,
+    "semi": false,
+    "printWidth": 100,
+    "singleQuote": false,
     "bracketSpacing": true,
-    "proseWrap": "never"
+    "proseWrap": "never",
+    "overrides": [
+      {
+        "files": ["*.ts", "*.js"],
+        "options": {
+          "parser": "typescript"
+        }
+      },
+      {
+        "files": "*.md",
+        "options": { "parser": "markdown" }
+      },
+      {
+        "files": "*.{json,yml,yaml}",
+        "options": {
+          "parser": "json"
+        }
+      },
+      {
+        "files": "*.sol",
+        "options": {
+          "printWidth": 80,
+          "tabWidth": 4,
+          "useTabs": false,
+          "singleQuote": false,
+          "bracketSpacing": false,
+          "explicitTypes": "always"
+        }
+      }
+    ]
 }

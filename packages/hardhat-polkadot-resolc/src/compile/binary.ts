@@ -1,16 +1,16 @@
-import { exec } from 'child_process';
-import { CompiledOutput, ContractBatch, ContractSource, ResolcConfig } from '../types';
-import { CompilerInput } from 'hardhat/types';
-import { deepUpdate, extractCommands, mapImports, orderSources } from '../utils';
+import { exec } from "child_process"
+import { CompiledOutput, ContractBatch, ContractSource, ResolcConfig } from "../types"
+import { CompilerInput } from "hardhat/types"
+import { deepUpdate, extractCommands, mapImports, orderSources } from "../utils"
 
 export async function compileWithBinary(input: CompilerInput, config: ResolcConfig): Promise<any> {
     const { compilerPath, batchSize } = config.settings!;
 
-    const commands = extractCommands(config);
+    const commands = extractCommands(config)
 
-    let processCommand = `${compilerPath} ${commands.join(' ')}`;
+    let processCommand = `${compilerPath} ${commands.join(" ")}`
 
-    const map = mapImports(input);
+    const map = mapImports(input)
 
     const ordered = orderSources(map);
 
@@ -29,9 +29,9 @@ export async function compileWithBinary(input: CompilerInput, config: ResolcConf
         let selectedContracts: ContractBatch = {};
         for (let i = 0; i < ordered.length; i += batchSize!) {
             selectedContracts = ordered.slice(i, i + batchSize).reduce((acc, key) => {
-                acc[key] = input.sources[key];
-                return acc;
-            }, {} as ContractSource);
+                acc[key] = input.sources[key]
+                return acc
+            }, {} as ContractSource)
 
             const contractBatch: ContractBatch = {
                 language: input.language,
@@ -47,11 +47,11 @@ export async function compileWithBinary(input: CompilerInput, config: ResolcConf
                     },
                     (err, stdout, _stderr) => {
                         if (err !== null) {
-                            return reject(err);
+                            return reject(err)
                         }
-                        resolve(stdout);
+                        resolve(stdout)
                     },
-                );
+                )
 
                 process.stdin!.write(JSON.stringify(contractBatch));
                 process.stdin!.end();
@@ -70,16 +70,16 @@ export async function compileWithBinary(input: CompilerInput, config: ResolcConf
                 },
                 (err, stdout, _stderr) => {
                     if (err !== null) {
-                        return reject(err);
+                        return reject(err)
                     }
-                    resolve(stdout);
+                    resolve(stdout)
                 },
-            );
+            )
 
-            process.stdin!.write(JSON.stringify(input));
-            process.stdin!.end();
-        });
+            process.stdin!.write(JSON.stringify(input))
+            process.stdin!.end()
+        })
 
-        return JSON.parse(output);
+        return JSON.parse(output)
     }
 }

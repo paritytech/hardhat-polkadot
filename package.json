@@ -14,11 +14,13 @@
   "bugs": "https://github.com/paritytech/hardhat-polkadot/issues",
   "scripts": {
     "build": "tsc --build packages/hardhat-polkadot packages/hardhat-polkadot-node packages/hardhat-polkadot-resolc",
-    "prettier:write": "npx prettier --write '**/*.{md,yml,ts,js}'"
+    "prettier:check": "pnpm run --recursive prettier:check && npx prettier --check '{.examples}/**/*.{md,yml,ts,js,json}'",
+    "prettier:write": "pnpm run --recursive prettier:check && npx prettier --write '{.examples}/**/*.{md,yml,ts,js,json}'",
+    "eslint:check": "pnpm run --recursive eslint:check"
   },
   "devDependencies": {
     "@types/node": "^22.14.1",
-    "prettier": "^3.5.3",
+    "prettier": "^3.3.0",
     "typescript": "^5.8.3"
   }
 }

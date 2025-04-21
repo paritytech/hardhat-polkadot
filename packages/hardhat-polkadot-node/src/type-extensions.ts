@@ -1,7 +1,7 @@
-import 'hardhat/types/config';
-import { AdapterConfig, NodeConfig } from './types';
+import "hardhat/types/config"
+import { AdapterConfig, NodeConfig } from "./types"
 
-declare module 'hardhat/types/config' {
+declare module "hardhat/types/config" {
     interface HardhatNetworkUserConfig {
         polkavm?: boolean;
         nodeConfig?: NodeConfig;
@@ -9,22 +9,22 @@ declare module 'hardhat/types/config' {
     }
 
     interface HttpNetworkUserConfig {
-        polkavm?: boolean;
+        polkavm?: boolean
     }
 
     interface HardhatNetworkConfig {
-        polkavm?: boolean;
-        url?: string;
+        polkavm?: boolean
+        url?: string
     }
 
     interface HttpNetworkConfig {
-        polkavm?: boolean;
-        ethNetwork?: string;
+        polkavm?: boolean
+        ethNetwork?: string
     }
 }
 
-declare module 'hardhat/types/runtime' {
+declare module "hardhat/types/runtime" {
     interface Network {
-        polkavm?: boolean;
+        polkavm?: boolean
     }
 }

@@ -6,7 +6,7 @@ import { ResolcPluginError } from '../errors';
 import chalk from 'chalk';
 
 export interface ICompiler {
-    compile(input: CompilerInput, config: ResolcConfig): Promise<any>;
+    compile(input: CompilerInput, config: ResolcConfig): Promise<any>
 }
 
 export async function compile(resolcConfig: ResolcConfig, input: CompilerInput) {
@@ -14,7 +14,7 @@ export async function compile(resolcConfig: ResolcConfig, input: CompilerInput) 
 
     if (resolcConfig.compilerSource === 'binary') {
         if (resolcConfig.settings?.solcPath === null) {
-            throw new ResolcPluginError('resolc executable is not specified');
+            throw new ResolcPluginError("resolc executable is not specified")
         }
         compiler = new BinaryCompiler(resolcConfig);
     } else if (resolcConfig.compilerSource === 'npm') {
@@ -27,17 +27,17 @@ export async function compile(resolcConfig: ResolcConfig, input: CompilerInput) 
 
         compiler = new NpmCompiler(resolcConfig);
     } else {
-        throw new ResolcPluginError(`Incorrect compiler source: ${resolcConfig.compilerSource}`);
+        throw new ResolcPluginError(`Incorrect compiler source: ${resolcConfig.compilerSource}`)
     }
 
-    return await compiler.compile(input, resolcConfig);
+    return await compiler.compile(input, resolcConfig)
 }
 
 export class BinaryCompiler implements ICompiler {
     constructor(public config: ResolcConfig) {}
 
     public async compile(input: CompilerInput) {
-        return await compileWithBinary(input, this.config);
+        return await compileWithBinary(input, this.config)
     }
 }
 
@@ -45,6 +45,6 @@ export class NpmCompiler implements ICompiler {
     constructor(public config: ResolcConfig) {}
 
     public async compile(input: CompilerInput) {
-        return await compileWithNpm(input);
+        return await compileWithNpm(input)
     }
 }

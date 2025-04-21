@@ -27,7 +27,9 @@
     }
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
+    "eslint:check": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
     "@parity/revive": "^0.0.21",
@@ -40,6 +42,10 @@
     "typescript": "^5.8.3"
   },
   "devDependencies": {
-    "chalk": "^5.4.1"
+    "@eslint/js": "^9.14.0",
+    "chalk": "^5.4.1",
+    "eslint": "^9.25.0",
+    "globals": "^15.12.0",
+    "typescript-eslint": "^8.30.1"
   }
 }

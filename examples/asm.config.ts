@@ -1,4 +1,4 @@
-import { HardhatUserConfig } from "hardhat/config";
+import { HardhatUserConfig } from "hardhat/config"
 import "hardhat-resolc"
 
 const config: HardhatUserConfig = {
@@ -9,13 +9,12 @@ const config: HardhatUserConfig = {
         },
     },
     resolc: {
-        compilerSource: 'binary',
-        settings:
-        {
+        compilerSource: "binary",
+        settings: {
             /**
              * Path to the `resolc` binary
              */
-            compilerPath: '/path/to/resolc',
+            compilerPath: "/path/to/resolc",
             /**
              * Output PolkaVM assembly of the contracts.
              */
@@ -27,14 +26,14 @@ const config: HardhatUserConfig = {
             /**
              * Specify a path where we want the debug info stored at.
              */
-            debugOutputDir: '/path/to/debug/output',
+            debugOutputDir: "/path/to/debug/output",
             /**
              * Specify a path where we want the compiled files to be stored at.
              */
-            outputDir: '/path/to/output',
-            evmVersion: "istanbul"
+            outputDir: "/path/to/output",
+            evmVersion: "istanbul",
         },
     },
-};
+}
 
-export default config;
+export default config

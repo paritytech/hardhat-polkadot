@@ -219,7 +219,7 @@ function extractStandardJSONCommands(config: ResolcConfig, commandArgs: string[]
         commandArgs.push(`--output-dir=${settings.outputDir}`);
     }
 
-    return commandArgs;
+    return commandArgs
 }
 
 function extractCombinedJSONCommands(config: ResolcConfig, commandArgs: string[]): string[] {
@@ -303,7 +303,7 @@ function extractCombinedJSONCommands(config: ResolcConfig, commandArgs: string[]
         commandArgs.push(`--output-dir=${settings.outputDir}`);
     }
 
-    return commandArgs;
+    return commandArgs
 }
 
 function extractRemainingCommands(config: ResolcConfig, commandArgs: string[]): string[] {
