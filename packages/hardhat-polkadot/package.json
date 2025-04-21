@@ -20,7 +20,7 @@
         }
     },
     "bin": {
-        "@parity/hardhat-polkadot": "dist/cli/index.js"
+        "hardhat-polkadot": "node ./dist/cli/index.js"
     },
     "keywords": [
         "ethereum",
@@ -29,7 +29,6 @@
         "hardhat-plugin",
         "Polkadot"
     ],
-
     "scripts": {
         "build": "tsc --build .",
         "build:dev": "tsc --build . --watch",
@@ -37,7 +36,13 @@
         "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
         "eslint:check": "eslint 'src/**/*.ts'"
     },
-    "files": ["dist/src/", "src/", "!**/*.tsbuildinfo", "LICENSE", "README.md"],
+    "files": [
+        "dist/src/",
+        "src/",
+        "!**/*.tsbuildinfo",
+        "LICENSE",
+        "README.md"
+    ],
     "dependencies": {
         "@openzeppelin/contracts": "^5.3.0",
         "@parity/hardhat-polkadot-node": "workspace:^",
@@ -48,11 +53,15 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.25.0",
+        "@nomicfoundation/hardhat-ignition": "^0.15.11",
+        "@types/chai": "^5.2.1",
         "@types/node": "^22.14.1",
+        "chai": "^5.2.0",
         "eslint": "^9.25.0",
         "globals": "^15.15.0",
         "rimraf": "^6.0.1",
         "typescript": "^5.8.3",
-        "typescript-eslint": "^8.30.1"
+        "typescript-eslint": "^8.30.1",
+        "viem": "^2.27.2"
     }
 }

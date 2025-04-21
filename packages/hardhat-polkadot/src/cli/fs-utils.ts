@@ -36,17 +36,16 @@ export async function getAllFilesMatching(
 async function readdir(absolutePathToDir: string) {
     try {
         return await fsPromises.readdir(absolutePathToDir);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
         if (e.code === 'ENOENT') {
             return [];
         }
 
         if (e.code === 'ENOTDIR') {
-            // eslint-disable-next-line @nomicfoundation/hardhat-internal-rules/only-hardhat-error
             throw new Error(absolutePathToDir, e);
         }
 
-        // eslint-disable-next-line @nomicfoundation/hardhat-internal-rules/only-hardhat-error
         throw new Error(e.message, e);
     }
 }

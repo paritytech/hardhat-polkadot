@@ -15,12 +15,6 @@ import {
     TASK_COMPILE_SOLIDITY_GET_COMPILER_INPUT,
 } from 'hardhat/builtin-tasks/task-names';
 import debug from 'debug';
-import {
-    SolcMultiUserConfigExtractor,
-    SolcSoloUserConfigExtractor,
-    SolcStringUserConfigExtractor,
-    SolcUserConfigExtractor,
-} from './config-extractor';
 import { defaultNpmResolcConfig, defaultBinaryResolcConfig, RESOLC_ARTIFACT_FORMAT_VERSION } from './constants';
 import { extendEnvironment, extendConfig, subtask, task } from 'hardhat/internal/core/config/config-env';
 import { Artifacts } from 'hardhat/internal/artifacts';
@@ -29,6 +23,7 @@ import {
     CompilationJob,
     CompilerInput,
     CompilerOutput,
+    CompilerOutputContract,
     HardhatRuntimeEnvironment,
     RunSuperFunction,
     SolcBuild,
@@ -42,12 +37,6 @@ import './type-extensions';
 import { ReviveCompilerInput } from './types';
 
 const logDebug = debug('hardhat:core:tasks:compile');
-
-const extractors: SolcUserConfigExtractor[] = [
-    new SolcStringUserConfigExtractor(),
-    new SolcSoloUserConfigExtractor(),
-    new SolcMultiUserConfigExtractor(),
-]
 
 extendConfig((config, userConfig) => {
     if (config.resolc.compilerSource !== "binary") {
@@ -80,8 +69,9 @@ extendEnvironment((hre) => {
         }
 
         hre.config.paths.artifacts = artifactsPath
-        hre.config.paths.cache = cachePath
-        ;(hre as any).artifacts = new Artifacts(artifactsPath)
+        hre.config.paths.cache = cachePath;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (hre as any).artifacts = new Artifacts(artifactsPath)
         hre.config.solidity.compilers.forEach(async (compiler) =>
             updateDefaultCompilerConfig({ compiler }, hre.config.resolc),
         )
@@ -94,6 +84,7 @@ extendEnvironment((hre) => {
 
 task(TASK_COMPILE).setAction(
     async (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         compilationArgs: any,
         _hre: HardhatRuntimeEnvironment,
         runSuper: RunSuperFunction<TaskArguments>,
@@ -130,6 +121,7 @@ subtask(TASK_COMPILE_SOLIDITY_GET_COMPILATION_JOBS, async (args, hre, runSuper) 
         return { jobs, errors }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     jobs.forEach((job: any) => {
         job.solidityConfig.resolc = hre.config.resolc;
         job.solidityConfig.resolc.settings.compilerPath = hre.config.resolc.settings?.compilerPath;
@@ -148,14 +140,15 @@ subtask(
         }: {
             sourceName: string
             contractName: string
-            contractOutput: any
+            contractOutput: CompilerOutputContract
         },
         hre,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): Promise<any> => {
         if (!hre.network.polkavm) {
             return getArtifactFromContractOutput(sourceName, contractName, contractOutput)
         }
-        let bytecode: string =
+        const bytecode: string =
             contractOutput.evm?.bytecode?.object ||
             contractOutput.evm?.deployedBytecode?.object ||
             ""
@@ -173,6 +166,7 @@ subtask(
     },
 )
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 subtask(TASK_COMPILE_SOLIDITY_RUN_SOLC, async (args: { input: any }, hre, runSuper) => {
     if (!hre.config.networks.hardhat.polkavm) {
         return await runSuper(args)
@@ -239,7 +233,7 @@ subtask(
 
 subtask(
     TASK_COMPILE_SOLIDITY_LOG_COMPILATION_RESULT,
-    async ({ compilationJobs }: { compilationJobs: CompilationJob[] }, hre, _runSuper) => {
+    async ({ compilationJobs }: { compilationJobs: CompilationJob[] }, _hre, _runSuper) => {
         let count = 0;
         for (const job of compilationJobs) {
             count += job.getResolvedFiles().filter((file) => job.emitsArtifacts(file)).length

@@ -22,6 +22,7 @@ function createConfirmationPrompt(name: string, message: string) {
             return input;
         },
         format(): string {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const that = this as any;
             const value = that.value === true ? 'y' : 'n';
 
@@ -53,12 +54,12 @@ export async function confirmRecommendedDepsInstallation(
                 ).join(' ')})?`,
             ),
         ]);
-    } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
         if (e === '') {
             return false;
         }
 
-        // eslint-disable-next-line @nomicfoundation/hardhat-internal-rules/only-hardhat-error
         throw e;
     }
 
@@ -69,6 +70,7 @@ export async function confirmProjectCreation(): Promise<{
     projectRoot: string;
     shouldAddGitIgnore: boolean;
 }> {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const enquirer = require('enquirer');
     return enquirer.prompt([
         {
@@ -88,11 +90,6 @@ export async function confirmTelemetryConsent(): Promise<boolean | undefined> {
     );
 }
 
-/**
- * true = install ext
- * false = don't install and don't ask again
- * undefined = we couldn't confirm if the extension is installed or not
- */
 export async function confirmHHVSCodeInstallation(): Promise<boolean | undefined> {
     return confirmationPromptWithTimeout(
         'shouldInstallExtension',
@@ -106,6 +103,7 @@ async function confirmationPromptWithTimeout(
     timeoutMilliseconds: number = 10_000,
 ): Promise<boolean | undefined> {
     try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const enquirer = require('enquirer');
 
         const prompt = new enquirer.prompts.Confirm(createConfirmationPrompt(name, message));
@@ -123,12 +121,12 @@ async function confirmationPromptWithTimeout(
         }
 
         return result;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
         if (e === '') {
             return undefined;
         }
 
-        // eslint-disable-next-line @nomicfoundation/hardhat-internal-rules/only-hardhat-error
         throw e;
     }
 }

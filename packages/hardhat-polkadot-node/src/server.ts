@@ -1,4 +1,4 @@
-import { spawn, ChildProcess, StdioOptions, exec } from "child_process"
+import { spawn, ChildProcess, StdioOptions } from "child_process"
 import chalk from "chalk"
 
 import { NODE_START_PORT, ETH_RPC_ADAPTER_START_PORT } from "./constants"
@@ -10,7 +10,6 @@ export class JsonRpcServer implements RpcServer {
     private adapterProcess: ChildProcess | null = null
     private serverPort: number | null = null
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     constructor(
         private readonly nodeBinaryPath: string | undefined,
         private readonly adapterBinaryPath: string | undefined,
@@ -67,7 +66,7 @@ export class JsonRpcServer implements RpcServer {
             }
 
             let terminatedProcesses = 0
-            const processExitHandler = (process: ChildProcess, name: string, port?: number) => {
+            const processExitHandler = (process: ChildProcess, name: string, _port?: number) => {
                 process.on("exit", (code, signal) => {
                     if (signal) {
                         console.info(

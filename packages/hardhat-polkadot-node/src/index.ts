@@ -140,6 +140,7 @@ task(TASK_NODE_POLKAVM, 'Starts a JSON-RPC server for PolkaVM node')
 
             try {
                 await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (error: any) {
                 throw new PolkaVMNodePluginError(`Failed when running node: ${error.message}`)
             }
@@ -253,6 +254,7 @@ task(
 
             process.exitCode = testFailures
             return testFailures
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             throw new PolkaVMNodePluginError(`Failed when running node: ${error.message}`)
         }

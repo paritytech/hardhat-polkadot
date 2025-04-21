@@ -1,12 +1,13 @@
 import { CompilerInput } from 'hardhat/types';
-import { ResolcConfig } from '../types';
+import { CompiledOutput, ResolcConfig } from '../types';
 import { compileWithBinary } from './binary';
 import { compileWithNpm } from './npm';
 import { ResolcPluginError } from '../errors';
 import chalk from 'chalk';
+import { SolcOutput } from '@parity/revive';
 
 export interface ICompiler {
-    compile(input: CompilerInput, config: ResolcConfig): Promise<any>
+    compile(input: CompilerInput, config: ResolcConfig): Promise<CompiledOutput | SolcOutput>
 }
 
 export async function compile(resolcConfig: ResolcConfig, input: CompilerInput) {

@@ -3,12 +3,12 @@ import { CompiledOutput, ContractBatch, ContractSource, ResolcConfig } from "../
 import { CompilerInput } from "hardhat/types"
 import { deepUpdate, extractCommands, mapImports, orderSources } from "../utils"
 
-export async function compileWithBinary(input: CompilerInput, config: ResolcConfig): Promise<any> {
+export async function compileWithBinary(input: CompilerInput, config: ResolcConfig): Promise<CompiledOutput> {
     const { compilerPath, batchSize } = config.settings!;
 
     const commands = extractCommands(config)
 
-    let processCommand = `${compilerPath} ${commands.join(" ")}`
+    const processCommand = `${compilerPath} ${commands.join(" ")}`
 
     const map = mapImports(input)
 

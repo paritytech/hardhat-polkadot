@@ -5,12 +5,13 @@ import { COMPILER_RESOLC_NEED_EVM_CODEGEN } from './constants';
 import chalk from 'chalk';
 import { ResolcPluginError } from './errors';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getArtifactFromContractOutput(sourceName: string, contractName: string, contractOutput: any): Artifact {
     const evmBytecode = contractOutput.evm?.bytecode;
-    let bytecode: string = evmBytecode?.object ?? '';
+    const bytecode: string = evmBytecode?.object ?? '';
 
     const evmDeployedBytecode = contractOutput.evm?.deployedBytecode;
-    let deployedBytecode: string = evmDeployedBytecode?.object ?? '';
+    const deployedBytecode: string = evmDeployedBytecode?.object ?? '';
 
     const linkReferences = evmBytecode?.linkReferences ?? {};
     const deployedLinkReferences = evmDeployedBytecode?.linkReferences ?? {};
@@ -402,7 +403,7 @@ export function extractCommands(config: ResolcConfig): string[] {
 
 export function extractImports(fileContent: string): string[] {
     const importRegex = /import\s+(?:"([^"]+)"|'([^']+)'|(?:[^'"]+)\s+from\s+(?:"([^"]+)"|'([^']+)'))\s*;/g;
-    let imports: string[] = [];
+    const imports: string[] = [];
     let match: RegExpExecArray | null;
 
     while ((match = importRegex.exec(fileContent)) !== null) {
@@ -417,7 +418,7 @@ export function extractImports(fileContent: string): string[] {
 export function mapImports(input: CompilerInput): Map<string, string[]> {
     const keys = Object.keys(input.sources);
     const map = new Map<string, string[]>();
-    for (let key of keys) {
+    for (const key of keys) {
         const importArray = extractImports(input.sources[key].content);
         map.set(key, importArray);
     }
@@ -425,10 +426,10 @@ export function mapImports(input: CompilerInput): Map<string, string[]> {
 }
 
 export function orderSources(mapped: Map<string, string[]>): string[] {
-    let ordered: string[] = [];
+    const ordered: string[] = [];
 
     mapped.forEach((values, key) => {
-        for (let value of values) {
+        for (const value of values) {
             if (ordered.includes(value)) continue;
 
             ordered.push(value);

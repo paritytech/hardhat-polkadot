@@ -12,5 +12,3 @@ const MyTokenModule = buildModule("MyTokenModule", (m) => {
 });
 
 module.exports = MyTokenModule;
-
-});

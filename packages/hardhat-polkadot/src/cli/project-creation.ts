@@ -345,7 +345,6 @@ export async function createProject() {
                 return;
             }
 
-            // eslint-disable-next-line @nomicfoundation/hardhat-internal-rules/only-hardhat-error
             throw e;
         }
     }
@@ -430,6 +429,7 @@ async function getProjectPackageManager(): Promise<PackageManager> {
 }
 
 async function doesNpmAutoInstallPeerDependencies() {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { execSync } = require('child_process');
     try {
         const version: string = execSync('npm --version').toString();

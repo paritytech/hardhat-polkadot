@@ -16,9 +16,9 @@ import { createProvider } from "hardhat/internal/core/providers/construction"
 import { Artifacts } from "hardhat/internal/artifacts"
 import { BASE_URL, POLKAVM_TEST_NODE_NETWORK_NAME } from "../constants"
 import { getNetworkConfig } from "../utils"
+import "source-map-support/register";
 
 if (!HardhatContext.isCreated()) {
-    require("source-map-support/register")
 
     const ctx = HardhatContext.createHardhatContext()
 

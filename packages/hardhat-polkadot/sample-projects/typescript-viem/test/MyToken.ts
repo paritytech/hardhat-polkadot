@@ -1,5 +1,6 @@
-import { expect } from 'viem/chai';
+import { expect } from 'chai';
 import { parseUnits } from 'viem';
+import hre from 'hardhat'
 
 describe('MyToken (Hardhat + Viem)', () => {
     const toWei = (val: string) => parseUnits(val, 18);

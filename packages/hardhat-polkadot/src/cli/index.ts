@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { createProject } from './project-creation';
 
 async function main() {
