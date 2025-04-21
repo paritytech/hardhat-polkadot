@@ -20,6 +20,9 @@ importers:
 
   packages/hardhat-polkadot:
     dependencies:
+      '@openzeppelin/contracts':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@parity/hardhat-polkadot-node':
         specifier: workspace:^
         version: link:../hardhat-polkadot-node
@@ -343,6 +346,9 @@ packages:
   '@nomicfoundation/solidity-analyzer@0.1.2':
     resolution: {integrity: sha512-q4n32/FNKIhQ3zQGGw5CvPF6GTvDCpYwIf7bEY/dZTZbgfDsHyjJwURxUJf3VQuuJj+fDIFl4+KkBVbw4Ef6jA==}
     engines: {node: '>= 12'}
+
+  '@openzeppelin/contracts@5.3.0':
+    resolution: {integrity: sha512-zj/KGoW7zxWUE8qOI++rUM18v+VeLTTzKs/DJFkSzHpQFPD/jKKF0TrMxBfGLl3kpdELCNccvB3zmofSzm4nlA==}
 
   '@parity/revive@0.0.21':
     resolution: {integrity: sha512-D1GCsw+wJ42P9XND1ZNPxeY7dnbKtLn1Zcqwe7JOXo1c3+BIx+YOnrtJKlZ0kWBVBpeH5XlRFzv58EUsBIEu9w==}
@@ -1577,6 +1583,8 @@ snapshots:
       '@nomicfoundation/solidity-analyzer-linux-x64-gnu': 0.1.2
       '@nomicfoundation/solidity-analyzer-linux-x64-musl': 0.1.2
       '@nomicfoundation/solidity-analyzer-win32-x64-msvc': 0.1.2
+
+  '@openzeppelin/contracts@5.3.0': {}
 
   '@parity/revive@0.0.21(debug@4.4.0)':
     dependencies:

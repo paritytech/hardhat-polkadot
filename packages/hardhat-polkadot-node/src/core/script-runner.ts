@@ -54,10 +54,16 @@ export async function runScriptWithHardhat(
     extraNodeArgs: string[] = [],
     extraEnvVars: { [name: string]: string } = {},
 ): Promise<number> {
-    return runScript(config, scriptPath, scriptArgs, [...extraNodeArgs, '--require', path.join(__dirname, 'register')], {
-        ...getEnvVariablesMap(hardhatArguments),
-        ...extraEnvVars,
-    });
+    return runScript(
+        config,
+        scriptPath,
+        scriptArgs,
+        [...extraNodeArgs, '--require', path.join(__dirname, 'register')],
+        {
+            ...getEnvVariablesMap(hardhatArguments),
+            ...extraEnvVars,
+        },
+    );
 }
 
 function withFixedInspectArg(argv: string[]) {

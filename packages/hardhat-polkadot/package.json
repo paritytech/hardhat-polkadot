@@ -14,10 +14,13 @@
     "types": "dist/index.d.ts",
     "exports": {
         ".": {
-        "require": "./dist/index.js",
-        "import": "./dist/index.js",
-        "types": "./dist/index.d.ts"
+            "require": "./dist/index.js",
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
         }
+    },
+    "bin": {
+        "@parity/hardhat-polkadot": "dist/cli/index.js"
     },
     "keywords": [
         "ethereum",
@@ -39,6 +42,7 @@
         "README.md"
     ],
     "dependencies": {
+        "@openzeppelin/contracts": "^5.3.0",
         "@parity/hardhat-polkadot-node": "workspace:^",
         "@parity/hardhat-polkadot-resolc": "workspace:^"
     },

@@ -40,46 +40,44 @@ task(TASK_RUN).setAction(async (args, hre, runSuper) => {
         return;
     }
 
-    await runScriptWithHardhat({
-        forking: hre.config.networks.hardhat.forking,
-        forkBlockNumber: hre.config.networks.hardhat.forking?.blockNumber,
-        nodeCommands: hre.userConfig.networks?.hardhat?.nodeConfig,
-        adapterCommands: hre.userConfig.networks?.hardhat?.adapterConfig
-    }, hre.hardhatArguments, path.resolve(args.script));
+    await runScriptWithHardhat(
+        {
+            forking: hre.config.networks.hardhat.forking,
+            forkBlockNumber: hre.config.networks.hardhat.forking?.blockNumber,
+            nodeCommands: hre.userConfig.networks?.hardhat?.nodeConfig,
+            adapterCommands: hre.userConfig.networks?.hardhat?.adapterConfig,
+        },
+        hre.hardhatArguments,
+        path.resolve(args.script),
+    );
 });
 
 subtask(TASK_NODE_POLKAVM_CREATE_SERVER, 'Creates a JSON-RPC server for PolkaVM node')
     .addOptionalParam('nodePath', 'Path to the node binary file', undefined, types.string)
     .addOptionalParam('adapterPath', 'Path to the Eth Rpc Adapter binary file', undefined, types.string)
-    .setAction(
-        async (
-            {
-                nodePath,
-                adapterPath
-            }: {
-                nodePath: string,
-                adapterPath: string
-            },
-        ) => {
-            const server: JsonRpcServer = new JsonRpcServer(nodePath, adapterPath);
-            return server;
-        },
-    );
-
-task(TASK_NODE, 'Start a PolkaVM Node')
-    .setAction(async (args: TaskArguments, { network, run }, runSuper) => {
-        if (network.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
-            return await runSuper();
-        }
-
-        await run(TASK_NODE_POLKAVM, args);
+    .setAction(async ({ nodePath, adapterPath }: { nodePath: string; adapterPath: string }) => {
+        const server: JsonRpcServer = new JsonRpcServer(nodePath, adapterPath);
+        return server;
     });
+
+task(TASK_NODE, 'Start a PolkaVM Node').setAction(async (args: TaskArguments, { network, run }, runSuper) => {
+    if (network.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
+        return await runSuper();
+    }
+
+    await run(TASK_NODE_POLKAVM, args);
+});
 
 task(TASK_NODE_POLKAVM, 'Starts a JSON-RPC server for PolkaVM node')
     .addOptionalParam('nodeBinaryPath', 'Path to the substrate node binary', undefined, types.string)
     .addOptionalParam('rpcPort', 'Port where the node will listen on - default: 8000', undefined, types.int)
     .addOptionalParam('adapterBinaryPath', 'Path to the eth-rpc-adapter binary', undefined, types.string)
-    .addOptionalParam('adapterEndpoint', 'Endpoint to which the adapter will connect to - default: ws://localhost:8000', undefined, types.string)
+    .addOptionalParam(
+        'adapterEndpoint',
+        'Endpoint to which the adapter will connect to - default: ws://localhost:8000',
+        undefined,
+        types.string,
+    )
     .addOptionalParam('adapterPort', 'Port where the adapter will listen on - default: 8545 ', undefined, types.int)
     .addOptionalParam('dev', 'Whether to run the adapter in dev mode - default: false', undefined, types.boolean)
     .addOptionalParam('buildBlockMode', 'Build block mode for @acala-network/chopsticks', undefined, types.string)
@@ -96,20 +94,18 @@ task(TASK_NODE_POLKAVM, 'Starts a JSON-RPC server for PolkaVM node')
                 dev,
                 buildBlockMode,
                 fork,
-                forkBlockNumber
-
-            }:
-                {
-                    nodeBinaryPath: string,
-                    rpcPort: number,
-                    adapterBinaryPath: string,
-                    adapterEndpoint: string,
-                    adapterPort: number,
-                    dev: boolean,
-                    buildBlockMode: 'Instant' | 'Manual' | 'Batch',
-                    fork: string,
-                    forkBlockNumber: string
-                },
+                forkBlockNumber,
+            }: {
+                nodeBinaryPath: string;
+                rpcPort: number;
+                adapterBinaryPath: string;
+                adapterEndpoint: string;
+                adapterPort: number;
+                dev: boolean;
+                buildBlockMode: 'Instant' | 'Manual' | 'Batch';
+                fork: string;
+                forkBlockNumber: string;
+            },
             { run, config, userConfig },
         ) => {
             const commandArgs = constructCommandArgs(
@@ -117,7 +113,7 @@ task(TASK_NODE_POLKAVM, 'Starts a JSON-RPC server for PolkaVM node')
                     forking: config.networks.hardhat.forking,
                     forkBlockNumber: config.networks.hardhat.forking?.blockNumber,
                     nodeCommands: userConfig.networks?.hardhat?.nodeConfig,
-                    adapterCommands: userConfig.networks?.hardhat?.adapterConfig
+                    adapterCommands: userConfig.networks?.hardhat?.adapterConfig,
                 },
                 {
                     nodeBinaryPath,
@@ -129,10 +125,13 @@ task(TASK_NODE_POLKAVM, 'Starts a JSON-RPC server for PolkaVM node')
                     buildBlockMode,
                     fork,
                     forkBlockNumber,
-                });
+                },
+            );
 
             const nodePath = nodeBinaryPath ? nodeBinaryPath : userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath;
-            const adapterPath = adapterBinaryPath ? adapterBinaryPath : userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath;
+            const adapterPath = adapterBinaryPath
+                ? adapterBinaryPath
+                : userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath;
 
             const server: RpcServer = await run(TASK_NODE_POLKAVM_CREATE_SERVER, { nodePath, adapterPath });
 
@@ -189,19 +188,36 @@ task(
 
         const files = await run(TASK_TEST_GET_TEST_FILES, { testFiles });
 
-        const currentNodePort = await getAvailablePort(userConfig.networks?.hardhat?.nodeConfig?.rpcPort ? userConfig.networks.hardhat.nodeConfig.rpcPort : NODE_START_PORT, MAX_PORT_ATTEMPTS);
-        const currentAdapterPort = await getAvailablePort(userConfig.networks?.hardhat?.adapterConfig?.adapterPort ? userConfig.networks.hardhat.adapterConfig.adapterPort : ETH_RPC_ADAPTER_START_PORT, MAX_PORT_ATTEMPTS);
+        const currentNodePort = await getAvailablePort(
+            userConfig.networks?.hardhat?.nodeConfig?.rpcPort
+                ? userConfig.networks.hardhat.nodeConfig.rpcPort
+                : NODE_START_PORT,
+            MAX_PORT_ATTEMPTS,
+        );
+        const currentAdapterPort = await getAvailablePort(
+            userConfig.networks?.hardhat?.adapterConfig?.adapterPort
+                ? userConfig.networks.hardhat.adapterConfig.adapterPort
+                : ETH_RPC_ADAPTER_START_PORT,
+            MAX_PORT_ATTEMPTS,
+        );
 
-        const nCommands: NodeConfig = Object.assign({}, userConfig.networks?.hardhat?.nodeConfig, { port: currentNodePort })
-        const aCommands: AdapterConfig = Object.assign({}, userConfig.networks?.hardhat?.adapterConfig, { adapterPort: currentAdapterPort })
+        const nCommands: NodeConfig = Object.assign({}, userConfig.networks?.hardhat?.nodeConfig, {
+            port: currentNodePort,
+        });
+        const aCommands: AdapterConfig = Object.assign({}, userConfig.networks?.hardhat?.adapterConfig, {
+            adapterPort: currentAdapterPort,
+        });
         const commandArgs = constructCommandArgs({
             forking: config.networks.hardhat.forking,
             forkBlockNumber: config.networks.hardhat.forking?.blockNumber,
             nodeCommands: nCommands,
-            adapterCommands: aCommands
+            adapterCommands: aCommands,
         });
 
-        const server = new JsonRpcServer(userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath, userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath);
+        const server = new JsonRpcServer(
+            userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath,
+            userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath,
+        );
 
         try {
             await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false);

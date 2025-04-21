@@ -29,7 +29,7 @@ export const NETWORK_ACCOUNTS = {
         '0x5fb92d6e9884f768de468fa3f6275af5b0000a7021338f8807c48bebc13595d4',
         '0x5fb92d6de468fa3f6275af5b0000a7021338f8807c48bebc13595d46e98884f7',
         '0x5fb92d6e98884f76de468fa3f6275af5b0000a7021338f8807c48be3595d4bc1',
-    ]
+    ],
 };
 export const NETWORK_GAS = {
     AUTO: 'auto',

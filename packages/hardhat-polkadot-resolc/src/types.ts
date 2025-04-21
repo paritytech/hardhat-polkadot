@@ -1,14 +1,43 @@
 import { CompilerInput, SolcConfig } from 'hardhat/types';
 
-type EvmVersions = 'homestead' | 'tangerineWhistle' | 'spuriousDragon' | 'byzantium' | 'constantinople' | 'petersburg' | 'istanbul' | 'berlin' | 'london' | 'paris' | 'shanghai' | 'cancun'; 
+type EvmVersions =
+    | 'homestead'
+    | 'tangerineWhistle'
+    | 'spuriousDragon'
+    | 'byzantium'
+    | 'constantinople'
+    | 'petersburg'
+    | 'istanbul'
+    | 'berlin'
+    | 'london'
+    | 'paris'
+    | 'shanghai'
+    | 'cancun';
 
-type CombinedJSONOpts = 'abi' | 'hashes' | 'metadata' | 'devdoc' | 'userdoc' | 'storage-layout' | 'ast' | 'asm' | 'bin' | 'bin-runtime';
+type CombinedJSONOpts =
+    | 'abi'
+    | 'hashes'
+    | 'metadata'
+    | 'devdoc'
+    | 'userdoc'
+    | 'storage-layout'
+    | 'ast'
+    | 'asm'
+    | 'bin'
+    | 'bin-runtime';
 
-type SuppresWarningsOpts = 'ecrecover' | 'sendtransfer' | 'extcodesize' | 'txorigin' | 'blocktimestamp' | 'blocknumber' | 'blockhash';
+type SuppresWarningsOpts =
+    | 'ecrecover'
+    | 'sendtransfer'
+    | 'extcodesize'
+    | 'txorigin'
+    | 'blocktimestamp'
+    | 'blocknumber'
+    | 'blockhash';
 
 export interface ResolcConfig {
     version: string;
-    compilerSource?: 'binary' | 'npm',
+    compilerSource?: 'binary' | 'npm';
     settings?: {
         // Set the given path as the root of the source tree instead of the root of the filesystem. Passed to `solc` without changes.
         basePath?: string;
@@ -104,16 +133,16 @@ export interface ContractSource {
 
 export interface Sources {
     [key: string]: {
-        id: number,
-        ast: object
-    }
+        id: number;
+        ast: object;
+    };
 }
 
 export interface CompiledOutput {
-    contracts: ContractSource,
-    sources: Sources,
-    errors: string[],
-    version: string,
-    long_version: string,
-    revive_version: string,
+    contracts: ContractSource;
+    sources: Sources;
+    errors: string[];
+    version: string;
+    long_version: string;
+    revive_version: string;
 }

@@ -57,12 +57,7 @@ if (!HardhatContext.isCreated()) {
 
     const provider = new LazyInitializationProviderAdapter(async () => {
         log(`Creating provider for network ${networkName}`);
-        return createProvider(
-            resolvedConfig,
-            networkName,
-            artifacts,
-            ctx.providerExtenders,
-        );
+        return createProvider(resolvedConfig, networkName, artifacts, ctx.providerExtenders);
     });
 
     env.network.provider = provider;

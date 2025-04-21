@@ -54,7 +54,9 @@ export function constructCommandArgs(args?: CommandArguments, cliCommands?: CliC
 
         if (cliCommands.dev) {
             adapterCommands.push('--dev');
-            if (cliCommands.nodeBinaryPath) { nodeCommands.push('--dev') }
+            if (cliCommands.nodeBinaryPath) {
+                nodeCommands.push('--dev');
+            }
         }
     }
 
@@ -82,7 +84,10 @@ export function constructCommandArgs(args?: CommandArguments, cliCommands?: CliC
 
         if (args.adapterCommands?.adapterPort && args.adapterCommands?.adapterPort !== args.nodeCommands?.rpcPort) {
             adapterCommands.push(`--rpc-port=${args.adapterCommands.adapterPort}`);
-        } else if (args.adapterCommands?.adapterPort && args.adapterCommands?.adapterPort === args.nodeCommands?.rpcPort) {
+        } else if (
+            args.adapterCommands?.adapterPort &&
+            args.adapterCommands?.adapterPort === args.nodeCommands?.rpcPort
+        ) {
             throw new PolkaVMNodePluginError('Adapter and node cannot share the same port.');
         }
 
@@ -91,7 +96,7 @@ export function constructCommandArgs(args?: CommandArguments, cliCommands?: CliC
         }
 
         if (args.nodeCommands?.nodeBinaryPath && args.nodeCommands.dev && !cliCommands?.dev) {
-            nodeCommands.push(`--dev`)
+            nodeCommands.push(`--dev`);
         }
 
         if (args.adapterCommands?.dev && !cliCommands?.dev) {
@@ -101,7 +106,7 @@ export function constructCommandArgs(args?: CommandArguments, cliCommands?: CliC
 
     return {
         nodeCommands,
-        adapterCommands
+        adapterCommands,
     };
 }
 
@@ -122,16 +127,19 @@ export async function isPortAvailable(port: number): Promise<boolean> {
 }
 
 function setPayload(adapter?: boolean): object {
-
     return {
         jsonrpc: '2.0',
-        method: adapter ? RPC_ENDPOINT_PATH : "state_getRuntimeVersion",
+        method: adapter ? RPC_ENDPOINT_PATH : 'state_getRuntimeVersion',
         params: [],
         id: 1,
     };
 }
 
-export async function waitForNodeToBeReady(port: number, adapter: boolean = false, maxAttempts: number = 20): Promise<void> {
+export async function waitForNodeToBeReady(
+    port: number,
+    adapter: boolean = false,
+    maxAttempts: number = 20,
+): Promise<void> {
     const rpcEndpoint = `http://127.0.0.1:${port}`;
 
     const payload = setPayload(adapter);
@@ -180,7 +188,9 @@ export function adjustTaskArgsForPort(taskArgs: string[], currentPort: number): 
         if (portArgIndex + 1 < taskArgs.length) {
             taskArgs[portArgIndex + 1] = `${currentPort}`;
         } else {
-            throw new PolkaVMNodePluginError('Invalid task arguments: --port provided without a following port number.');
+            throw new PolkaVMNodePluginError(
+                'Invalid task arguments: --port provided without a following port number.',
+            );
         }
     } else {
         taskArgs.push(portArg, `${currentPort}`);
@@ -223,10 +233,18 @@ export async function configureNetwork(config: HardhatConfig, network: any, port
 }
 
 export async function startServer(commands: CommandArguments, nodePath?: string, adapterPath?: string) {
-
-    const currentNodePort = await getAvailablePort(commands.nodeCommands?.rpcPort ? commands.nodeCommands.rpcPort : NODE_START_PORT, MAX_PORT_ATTEMPTS);
-    const currentAdapterPort = await getAvailablePort(commands.adapterCommands?.adapterPort ? commands.adapterCommands.adapterPort : ETH_RPC_ADAPTER_START_PORT, MAX_PORT_ATTEMPTS);
-    const updatedCommands = Object.assign({}, commands, { nodeCommands: { port: currentNodePort }, adapterCommands: { adapterPort: currentAdapterPort } })
+    const currentNodePort = await getAvailablePort(
+        commands.nodeCommands?.rpcPort ? commands.nodeCommands.rpcPort : NODE_START_PORT,
+        MAX_PORT_ATTEMPTS,
+    );
+    const currentAdapterPort = await getAvailablePort(
+        commands.adapterCommands?.adapterPort ? commands.adapterCommands.adapterPort : ETH_RPC_ADAPTER_START_PORT,
+        MAX_PORT_ATTEMPTS,
+    );
+    const updatedCommands = Object.assign({}, commands, {
+        nodeCommands: { port: currentNodePort },
+        adapterCommands: { adapterPort: currentAdapterPort },
+    });
     const commandArgs = constructCommandArgs(updatedCommands);
 
     return {
@@ -234,4 +252,4 @@ export async function startServer(commands: CommandArguments, nodePath?: string,
         server: new JsonRpcServer(nodePath, adapterPath),
         port: currentAdapterPort,
     };
-};
+}

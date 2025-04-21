@@ -13,12 +13,15 @@ export class JsonRpcServer implements RpcServer {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     constructor(
         private readonly nodeBinaryPath: string | undefined,
-        private readonly adapterBinaryPath: string | undefined
-    ) { }
+        private readonly adapterBinaryPath: string | undefined,
+    ) {}
 
     public listen(nodeArgs: string[] = [], adapterArgs: string[] = [], blockProcess: boolean = true): Promise<void> {
         return new Promise((resolve, reject) => {
-            const nodeCommand = this.nodeBinaryPath && nodeArgs.find((arg) => arg.startsWith('--forking=')) ? this.nodeBinaryPath : nodeArgs[0];
+            const nodeCommand =
+                this.nodeBinaryPath && nodeArgs.find((arg) => arg.startsWith('--forking='))
+                    ? this.nodeBinaryPath
+                    : nodeArgs[0];
             const nodeCommandArgs = nodeArgs.slice(1);
 
             const nodePortArg = nodeArgs.find((arg) => arg.startsWith('--rpc-port='));
@@ -42,10 +45,12 @@ export class JsonRpcServer implements RpcServer {
 
             if (!adapterCommand) {
                 throw new PolkaVMNodePluginError('A path for the Eth RPC Adapter must be provided.');
-            };
+            }
 
             const adapterPortArg = adapterArgs.find((arg) => arg.startsWith('--port='));
-            const adapterPort = adapterPortArg ? parseInt(adapterPortArg.split('=')[1], 10) : ETH_RPC_ADAPTER_START_PORT;
+            const adapterPort = adapterPortArg
+                ? parseInt(adapterPortArg.split('=')[1], 10)
+                : ETH_RPC_ADAPTER_START_PORT;
 
             this.adapterProcess = spawn(adapterCommand, adapterArgs, { stdio: stdioConfig });
 

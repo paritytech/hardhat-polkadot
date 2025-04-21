@@ -1,6 +1,6 @@
-import { ResolcConfig } from "./types";
+import { ResolcConfig } from './types';
 
-export const PLUGIN_NAME = 'hardhat-resolc';
+export const PLUGIN_NAME = 'hardhat-polkadot';
 export const RESOLC_ARTIFACT_FORMAT_VERSION = 'hh-resolc-artifact-1';
 export const DEFAULT_TIMEOUT_MILISECONDS = 30000;
 
@@ -19,6 +19,6 @@ export const defaultBinaryResolcConfig: ResolcConfig = {
         compilerPath: 'resolc',
         optimizer: {
             enabled: true,
-        }
+        },
     },
 };

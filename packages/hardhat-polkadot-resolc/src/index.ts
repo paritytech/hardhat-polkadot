@@ -15,11 +15,25 @@ import {
     TASK_COMPILE_SOLIDITY_GET_COMPILER_INPUT,
 } from 'hardhat/builtin-tasks/task-names';
 import debug from 'debug';
-import { SolcMultiUserConfigExtractor, SolcSoloUserConfigExtractor, SolcStringUserConfigExtractor, SolcUserConfigExtractor } from './config-extractor';
+import {
+    SolcMultiUserConfigExtractor,
+    SolcSoloUserConfigExtractor,
+    SolcStringUserConfigExtractor,
+    SolcUserConfigExtractor,
+} from './config-extractor';
 import { defaultNpmResolcConfig, defaultBinaryResolcConfig, RESOLC_ARTIFACT_FORMAT_VERSION } from './constants';
 import { extendEnvironment, extendConfig, subtask, task } from 'hardhat/internal/core/config/config-env';
 import { Artifacts } from 'hardhat/internal/artifacts';
-import { ArtifactsEmittedPerFile, CompilationJob, CompilerInput, CompilerOutput, HardhatRuntimeEnvironment, RunSuperFunction, SolcBuild, TaskArguments } from 'hardhat/types';
+import {
+    ArtifactsEmittedPerFile,
+    CompilationJob,
+    CompilerInput,
+    CompilerOutput,
+    HardhatRuntimeEnvironment,
+    RunSuperFunction,
+    SolcBuild,
+    TaskArguments,
+} from 'hardhat/types';
 import { getArtifactFromContractOutput, pluralize, updateDefaultCompilerConfig } from './utils';
 import { compile } from './compile';
 import chalk from 'chalk';
@@ -43,13 +57,12 @@ extendConfig((config, userConfig) => {
         config.resolc = { ...defaultBinaryResolcConfig, ...userConfig?.resolc };
         config.resolc.settings = { ...defaultBinaryResolcConfig.settings, ...userConfig?.resolc?.settings };
     }
-
 });
 
 extendEnvironment((hre) => {
     if (hre.network.config.polkavm) {
         hre.network.polkavm = hre.network.config.polkavm;
-        
+
         let artifactsPath = hre.config.paths.artifacts;
         if (!artifactsPath.endsWith('-pvm')) {
             artifactsPath = `${artifactsPath}-pvm`;
@@ -106,7 +119,6 @@ subtask(TASK_COMPILE_SOLIDITY_GET_COMPILATION_JOBS, async (args, hre, runSuper) 
     jobs.forEach((job: any) => {
         job.solidityConfig.resolc = hre.config.resolc;
         job.solidityConfig.resolc.settings.compilerPath = hre.config.resolc.settings?.compilerPath;
-
     });
 
     return { jobs, errors };
@@ -212,7 +224,6 @@ subtask(
 subtask(
     TASK_COMPILE_SOLIDITY_LOG_COMPILATION_RESULT,
     async ({ compilationJobs }: { compilationJobs: CompilationJob[] }, hre, _runSuper) => {
-
         let count = 0;
         for (const job of compilationJobs) {
             count += job.getResolvedFiles().filter((file) => job.emitsArtifacts(file)).length;
@@ -221,7 +232,7 @@ subtask(
         if (count > 0) {
             console.info(chalk.green(`Successfully compiled ${count} Solidity ${pluralize(count, 'file')}`));
         }
-    }
+    },
 );
 
 subtask(TASK_COMPILE_SOLIDITY_LOG_RUN_COMPILER_START).setAction(

@@ -32,7 +32,12 @@ async function wrapTaskWithNode(taskArgs: TaskArguments, env: any, runSuper: Run
         return await runSuper(taskArgs);
     }
     const polkaVMGlobal = global as PolkaVMTasksWithWrappedNode;
-    const { commandArgs, server, port } = await startServer({ forking: env.config.networks.hardhat.forking, forkBlockNumber: env.config.networks.hardhat.forking.blockNumber, nodeCommands: env.userConfig.networks.hardhat.nodeConfig, adapterCommands: env.userConfig.networks.hardhat.adapterConfig });
+    const { commandArgs, server, port } = await startServer({
+        forking: env.config.networks.hardhat.forking,
+        forkBlockNumber: env.config.networks.hardhat.forking.blockNumber,
+        nodeCommands: env.userConfig.networks.hardhat.nodeConfig,
+        adapterCommands: env.userConfig.networks.hardhat.adapterConfig,
+    });
     try {
         await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false);
         await waitForNodeToBeReady(port);
