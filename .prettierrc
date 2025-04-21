@@ -3,11 +3,26 @@
     "useTabs": false,
     "semi": false,
     "printWidth": 100,
-    "parser": "typescript",
     "singleQuote": false,
     "bracketSpacing": true,
     "proseWrap": "never",
     "overrides": [
+      {
+        "files": ["*.ts", "*.js"],
+        "options": {
+          "parser": "typescript"
+        }
+      },
+      {
+        "files": "*.md",
+        "options": { "parser": "markdown" }
+      },
+      {
+        "files": "*.{json,yml,yaml}",
+        "options": {
+          "parser": "json"
+        }
+      },
       {
         "files": "*.sol",
         "options": {

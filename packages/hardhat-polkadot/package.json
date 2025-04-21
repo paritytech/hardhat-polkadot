@@ -19,26 +19,15 @@
             "types": "./dist/index.d.ts"
         }
     },
-    "keywords": [
-        "ethereum",
-        "smart-contracts",
-        "hardhat",
-        "hardhat-plugin",
-        "Polkadot"
-    ],
+    "keywords": ["ethereum", "smart-contracts", "hardhat", "hardhat-plugin", "Polkadot"],
     "scripts": {
         "build": "tsc --build .",
         "build:dev": "tsc --build . --watch",
         "clean": "rimraf dist",
-        "eslint": "eslint 'src/**/*.ts'"
+        "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
+        "eslint:check": "eslint 'src/**/*.ts'"
     },
-    "files": [
-        "dist/src/",
-        "src/",
-        "!**/*.tsbuildinfo",
-        "LICENSE",
-        "README.md"
-    ],
+    "files": ["dist/src/", "src/", "!**/*.tsbuildinfo", "LICENSE", "README.md"],
     "dependencies": {
         "@parity/hardhat-polkadot-node": "workspace:^",
         "@parity/hardhat-polkadot-resolc": "workspace:^"

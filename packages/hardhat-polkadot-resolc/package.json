@@ -28,7 +28,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "eslint": "eslint 'src/**/*.ts'"
+    "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
+    "eslint:check": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
     "@parity/revive": "^0.0.21",
