@@ -15,7 +15,8 @@
   "scripts": {
     "build": "tsc --build packages/hardhat-polkadot packages/hardhat-polkadot-node packages/hardhat-polkadot-resolc",
     "prettier:write": "npx prettier --write '**/*.{ts,js,md,yml}'",
-    "prettier:check": "npx prettier --check '**/*.{ts,js,md,yml}'"
+    "prettier:check": "npx prettier --check '**/*.{ts,js,md,yml}'",
+    "eslint": "pnpm run --recursive eslint"
   },
   "devDependencies": {
     "@types/node": "^22.14.1",

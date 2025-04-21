@@ -27,7 +27,8 @@
     }
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "eslint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
     "@parity/revive": "^0.0.21",
@@ -40,6 +41,7 @@
     "typescript": "^5.8.3"
   },
   "devDependencies": {
-    "chalk": "^5.4.1"
+    "chalk": "^5.4.1",
+    "eslint": "^8.44.0"
   }
 }
