@@ -14,8 +14,8 @@
   "bugs": "https://github.com/paritytech/hardhat-polkadot/issues",
   "scripts": {
     "build": "tsc --build packages/hardhat-polkadot packages/hardhat-polkadot-node packages/hardhat-polkadot-resolc",
-    "prettier:write": "npx prettier --write '**/*.{ts,js,md,yml}'",
-    "prettier:check": "npx prettier --check '**/*.{ts,js,md,yml}'",
+    "prettier:write": "npx prettier --write '**/*.{ts,js,md,yml,json}'",
+    "prettier:check": "npx prettier --check '**/*.{ts,js,md,yml,json}'",
     "eslint": "pnpm run --recursive eslint"
   },
   "devDependencies": {
