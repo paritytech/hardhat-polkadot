@@ -3,11 +3,13 @@
 # fail if any commands fails
 set -e
 
-# 1) build packages/hardhat-polkadot
+# 1) build and export packages/hardhat-polkadot
 cd ../packages/hardhat-polkadot
 pnpm install
 pnpm build
 HARDHAT_TGZ_FILE=$(pnpm pack | grep "hardhat-*.*.*.tgz")
+HARDHAT_POLKADOT_PACKAGE_PATH="$(pwd)/$HARDHAT_TGZ_FILE"
+export HARDHAT_POLKADOT_PACKAGE_PATH
 cd - >/dev/null
 
 # 2) create a temporary directory to run the tests
@@ -16,10 +18,9 @@ TMP_TESTS_DIR="${TMP_DIR}/run-$(date +%Y-%m-%d-%H-%M-%S)"
 cp -r fixture-projects $TMP_TESTS_DIR
 cp helpers.sh $TMP_TESTS_DIR/helpers.sh  # copy the helper script
 
-# 3) export package path to be used in tmp tests dir
-HARDHAT_POLKADOT_PACKAGE_PATH="$(pwd)/../packages/hardhat-core"/$HARDHAT_TGZ_FILE
-export HARDHAT_POLKADOT_PACKAGE_PATH
+# 3) print relevant info
 printf "Package manager version: npm version $(npm --version)\n"
+printf "@parity/hardhat-polkadot package in $HARDHAT_POLKADOT_PACKAGE_PATH\n"
 printf "Running tests in $TMP_TESTS_DIR\n\n"
 
 # E2E
@@ -34,3 +35,7 @@ for file in ./e2e/*; do
         popd >/dev/null # cd back to start
     fi
 done
+printf "\n[e2e] All tests passed\n"
+
+# remove the temporary directory
+rm -fr $TMP_TESTS_DIR

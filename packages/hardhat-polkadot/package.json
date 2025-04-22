@@ -27,7 +27,11 @@
         "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
         "eslint:check": "eslint 'src/**/*.ts'"
     },
-    "files": ["dist/src/", "src/", "!**/*.tsbuildinfo", "LICENSE", "README.md"],
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
     "dependencies": {
         "@parity/hardhat-polkadot-node": "workspace:^",
         "@parity/hardhat-polkadot-resolc": "workspace:^"
@@ -35,6 +39,10 @@
     "peerDependencies": {
         "hardhat": "^2.22.18"
     },
+    "bundledDependencies": [
+        "@parity/hardhat-polkadot-node",
+        "@parity/hardhat-polkadot-resolc"
+    ],
     "devDependencies": {
         "@eslint/js": "^9.25.0",
         "@types/node": "^22.14.1",

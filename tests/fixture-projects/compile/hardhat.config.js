@@ -1,10 +1,10 @@
-import "@parity/hardhat-polkadot"
+require("@parity/hardhat-polkadot")
 
-const config = {
+module.exports = {
     solidity: "0.8.28",
     resolc: {
         version: "1.5.2",
-        compilerSource: "Npm",
+        compilerSource: "npm",
     },
     networks: {
         hardhat: {
@@ -12,5 +12,3 @@ const config = {
         },
     },
 }
-
-export default config
