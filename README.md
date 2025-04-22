@@ -11,7 +11,7 @@
   </a>
 </div>
 
-> Polkadot is a blockchain computing platform for developers to deploy high-performance Web3 applications. This repository provides plugins that integrate with the [Hardhat](https://hardhat.org/) environment for developing and deploying Ethereum-compatible smart contracts on the Polkadot network.
+> Polkadot is a comprehensive blockchain platform for developers to deploy high-performance Web3 applications. This repository provides plugins that integrate with the [Hardhat](https://hardhat.org/) environment for developing and deploying Ethereum-compatible smart contracts on the Polkadot network.
 
 </div>
 
@@ -19,8 +19,8 @@ Overview of currently available plugins and those on the roadmap.
 
 | 🔌 Plugin                     | 📄 Description                                                                                                                    |
 |-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| [hardhat-polkadot-resolc](https://github.com/paritytech/hardhat-revive/tree/main/packages/hardhat-resolc)           | Compiles Solidity contracts for the Polkadot hub network, creating PolkaVM compatible hardhat artifacts.                              |
-| [hardhat-polkadot-node](https://github.com/paritytech/hardhat-revive/blob/main/packages/hardhat-revive-node/README.md)         | Run a polkadot hub node locally 
+| [hardhat-polkadot-resolc](https://github.com/paritytech/hardhat-revive/tree/main/packages/hardhat-resolc)           | Compiles solidity smart contracts for the Polkadot network, creating PolkaVM compatible hardhat artifacts.                              |
+| [hardhat-polkadot-node](https://github.com/paritytech/hardhat-revive/blob/main/packages/hardhat-revive-node/README.md)         | Run a Polkadot node locally 
 
 ## Getting Started
 
