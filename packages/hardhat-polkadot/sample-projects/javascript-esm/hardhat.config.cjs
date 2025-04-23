@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+require('@parity/hardhat-polkadot');
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
