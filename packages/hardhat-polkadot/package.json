@@ -11,6 +11,10 @@
         "url": "https://github.com/paritytech/hardhat-polkadot.git"
     },
     "description": "Polkadot bundle of Hardhat plugins",
+    "main": "dist/index.js",
+    "publishConfig": {
+        "access": "public"
+    },
     "types": "dist/index.d.ts",
     "exports": {
         ".": {
