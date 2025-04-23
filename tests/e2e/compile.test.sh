@@ -5,9 +5,7 @@ set -e # Fail if any command fails
 
 # Given
 cd ./compile # relative to tmp folder
-echo $HARDHAT_POLKADOT_PACKAGE_PATH
 npm add $HARDHAT_POLKADOT_PACKAGE_PATH >/dev/null 2>&1
-echo "jhdh"
 npm install >/dev/null 2>&1 # install modules specified in the package.json
 
 # When

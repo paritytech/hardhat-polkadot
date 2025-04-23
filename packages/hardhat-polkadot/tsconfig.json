@@ -1,10 +1,11 @@
 {
-    "extends": "../../config/typescript/tsconfig.json",
-    "compilerOptions": {
-        "baseUrl": ".",
-        "rootDir": "./src",
-        "outDir": "./dist"
-    },
-    "exclude": ["./dist", "./node_modules"],
-    "include": ["./src/**/*.ts"]
+  "extends": "../../config/typescript/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "exclude": ["./dist", "./node_modules"],
+  "include": ["./src/**/*.ts"],
+  "references": [{ "path": "../hardhat-polkadot-node" }, { "path": "../hardhat-polkadot-resolc" }]
 }
