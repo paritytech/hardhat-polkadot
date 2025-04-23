@@ -20,7 +20,8 @@
       {
         "files": "*.{json,yml,yaml}",
         "options": {
-          "parser": "json"
+          "parser": "json",
+          "tabWidth": 2
         }
       },
       {
