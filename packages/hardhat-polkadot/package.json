@@ -11,6 +11,15 @@
         "url": "https://github.com/paritytech/hardhat-polkadot.git"
     },
     "description": "Polkadot bundle of Hardhat plugins",
+    "main": "dist/index.js",
+    "publishConfig": {
+        "access": "public"
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
     "types": "dist/index.d.ts",
     "exports": {
         ".": {
@@ -27,11 +36,6 @@
         "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
         "eslint:check": "eslint 'src/**/*.ts'"
     },
-    "files": [
-        "dist",
-        "README.md",
-        "LICENSE"
-    ],
     "dependencies": {
         "@parity/hardhat-polkadot-node": "workspace:^",
         "@parity/hardhat-polkadot-resolc": "workspace:^"
