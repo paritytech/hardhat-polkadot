@@ -1,6 +1,8 @@
 <div align="center">
 
 # Hardhat plugin for smart contracts on Polkadot
+<!-- markdownlint-disable-next-line MD013 -->
+![CICD](https://github.com/paritytech/hardhat-polkadot/actions/workflows/tests.yml/badge.svg)
 
 <div align="center" >
   <a href="https://polkadot.com" target="_blank">
