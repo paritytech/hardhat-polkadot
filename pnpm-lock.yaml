@@ -21,10 +21,10 @@ importers:
   packages/hardhat-polkadot:
     dependencies:
       '@parity/hardhat-polkadot-node':
-        specifier: file:../hardhat-polkadot-node
+        specifier: workspace:^
         version: link:../hardhat-polkadot-node
       '@parity/hardhat-polkadot-resolc':
-        specifier: file:../hardhat-polkadot-resolc
+        specifier: workspace:^
         version: link:../hardhat-polkadot-resolc
       hardhat:
         specifier: <2.23.0
