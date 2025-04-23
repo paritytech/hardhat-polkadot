@@ -38,7 +38,8 @@
         "build:dev": "tsc --build . --watch",
         "clean": "rimraf dist",
         "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
-        "eslint:check": "eslint 'src/**/*.ts'"
+        "eslint:check": "eslint 'src/**/*.ts'",
+        "test": "vitest"
     },
     "files": [
         "dist/src/",
@@ -60,12 +61,15 @@
         "@nomicfoundation/hardhat-ignition": "^0.15.11",
         "@types/chai": "^5.2.1",
         "@types/node": "^22.14.1",
+        "@vitest/coverage-c8": "^0.33.0",
+        "@vitest/ui": "^3.1.2",
         "chai": "^5.2.0",
         "eslint": "^9.25.0",
         "globals": "^15.15.0",
         "rimraf": "^6.0.1",
         "typescript": "^5.8.3",
         "typescript-eslint": "^8.30.1",
-        "viem": "^2.27.2"
+        "viem": "^2.27.2",
+        "vitest": "^3.1.2"
     }
 }
