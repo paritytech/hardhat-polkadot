@@ -13,6 +13,10 @@ const config: HardhatUserConfig = {
             forking: {
                 url: 'wss://westend-asset-hub-rpc.polkadot.io',
             },
+            adapterConfig: {
+                adapterBinaryPath: './bin/eth-rpc',
+                dev: true,
+            },
         },
     }
 };
