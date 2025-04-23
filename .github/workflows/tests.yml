@@ -1,0 +1,35 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-tests:
+    strategy:
+      matrix:
+        # Disabled windows because it's too slow
+        os: [ubuntu-latest, macos-latest]
+        node: ["18"]  
+    name: Run tests on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - name: Run tests
+        run: |
+          cd tests
+          chmod +x run.sh
+          ./run.sh
+        shell: bash
