@@ -38,8 +38,7 @@
         "build:dev": "tsc --build . --watch",
         "clean": "rimraf dist",
         "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
-        "eslint:check": "eslint 'src/**/*.ts'",
-        "test": "vitest"
+        "eslint:check": "eslint 'src/**/*.ts'"
     },
     "files": [
         "dist/src/",
@@ -54,7 +53,7 @@
         "@parity/hardhat-polkadot-resolc": "workspace:^"
     },
     "peerDependencies": {
-        "hardhat": "^2.22.18"
+        "hardhat": "2.22.18"
     },
     "bundledDependencies": [
         "@parity/hardhat-polkadot-node",
@@ -73,7 +72,6 @@
         "rimraf": "^6.0.1",
         "typescript": "^5.8.3",
         "typescript-eslint": "^8.30.1",
-        "viem": "^2.27.2",
-        "vitest": "^3.1.2"
+        "viem": "^2.27.2"
     }
 }
