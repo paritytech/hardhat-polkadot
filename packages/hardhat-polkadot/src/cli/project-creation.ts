@@ -85,6 +85,7 @@ function printAsciiLogo() {
     console.log(picocolors.blue('888    888 .d888888 888    888  888 888  888 .d888888 888         '));
     console.log(picocolors.blue('888    888 888  888 888    Y88b 888 888  888 888  888 Y88b.       '));
     console.log(picocolors.blue('888    888 "Y888888 888     "Y88888 888  888 "Y888888  "Y888      '));
+    console.log('');
     console.log(picocolors.blue('8888888b.          888 888                    888          888    '));
     console.log(picocolors.blue('888   Y88b         888 888                    888          888    '));
     console.log(picocolors.blue('888    888         888 888                    888          888    '));
