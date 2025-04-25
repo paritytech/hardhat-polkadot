@@ -24,7 +24,7 @@ type SampleProjectTypeCreationAction =
     | Action.CREATE_TYPESCRIPT_PROJECT_ACTION
     | Action.CREATE_TYPESCRIPT_VIEM_PROJECT_ACTION;
 
-const HARDHAT_PACKAGE_NAME = 'hardhat';
+const HARDHAT_PACKAGE_NAME = '@parity/hardhat-polkadot';
 
 const PROJECT_DEPENDENCIES: Dependencies = {};
 
@@ -33,7 +33,7 @@ const ETHERS_PROJECT_DEPENDENCIES: Dependencies = {
 };
 
 const PEER_DEPENDENCIES: Dependencies = {
-    hardhat: '^2.22.18',
+    hardhat: '<2.23.8',
     '@nomicfoundation/hardhat-verify': '^2.0.0',
     chai: '^4.2.0',
     'hardhat-gas-reporter': '^1.0.8',
@@ -42,25 +42,25 @@ const PEER_DEPENDENCIES: Dependencies = {
 };
 
 const ETHERS_PEER_DEPENDENCIES: Dependencies = {
-    '@nomicfoundation/hardhat-chai-matchers': '^2.0.0',
-    '@nomicfoundation/hardhat-ethers': '^3.0.0',
+    '@nomicfoundation/hardhat-chai-matchers': '2.0.8',
+    '@nomicfoundation/hardhat-ethers': '3.0.8',
     ethers: '^6.4.0',
-    '@typechain/hardhat': '^9.0.0',
-    typechain: '^8.3.0',
-    '@typechain/ethers-v6': '^0.5.0',
-    '@nomicfoundation/hardhat-ignition-ethers': '^0.15.0',
+    '@typechain/hardhat': '9.1.0',
+    typechain: '8.3.2',
+    '@typechain/ethers-v6': '0.5.1',
+    '@nomicfoundation/hardhat-ignition-ethers': '0.15.11',
 };
 
 const VIEM_PEER_DEPENDENCIES: Dependencies = {
-    '@nomicfoundation/hardhat-viem': '^2.0.0',
+    '@nomicfoundation/hardhat-viem': '2.0.6',
     viem: '^2.7.6',
 };
 
 const TYPESCRIPT_DEPENDENCIES: Dependencies = {};
 
 const TYPESCRIPT_PEER_DEPENDENCIES: Dependencies = {
-    '@types/chai': '^4.2.0',
-    '@types/mocha': '>=9.1.0',
+    '@types/chai': '^5.2.1',
+    '@types/mocha': '^10.0.10',
     '@types/node': '>=18.0.0',
     'ts-node': '>=8.0.0',
     typescript: '>=4.5.0',
@@ -77,14 +77,22 @@ const TYPESCRIPT_VIEM_PEER_DEPENDENCIES: Dependencies = {
 
 // generated with the "colossal" font
 function printAsciiLogo() {
-    console.log(picocolors.blue('888    888                      888 888               888         8888888b.          888 888                    888          888    '));
-    console.log(picocolors.blue('888    888                      888 888               888         888   Y88b         888 888                    888          888    '));
-    console.log(picocolors.blue('888    888                      888 888               888         888    888         888 888                    888          888    '));
-    console.log(picocolors.blue('8888888888  8888b.  888d888 .d88888 88888b.   8888b.  888888      888   d88P .d88b.  888 888  888  8888b.   .d88888  .d88b.  888888 '));
-    console.log(picocolors.blue('888    888     "88b 888P"  d88" 888 888 "88b     "88b 888         8888888P" d88""88b 888 888 .88P     "88b d88" 888 d88""88b 888    '));
-    console.log(picocolors.blue('888    888 .d888888 888    888  888 888  888 .d888888 888         888       888  888 888 888888K  .d888888 888  888 888  888 888    '));
-    console.log(picocolors.blue('888    888 888  888 888    Y88b 888 888  888 888  888 Y88b.       888       Y88..88P 888 888 "88b 888  888 Y88b 888 Y88..88P Y88b.  '));
-    console.log(picocolors.blue('888    888 "Y888888 888     "Y88888 888  888 "Y888888  "Y888      888        "Y88P"  888 888  888 "Y888888  "Y88888  "Y88P"   "Y888 '));
+    console.log(picocolors.blue('888    888                      888 888               888         '));
+    console.log(picocolors.blue('888    888                      888 888               888         '));
+    console.log(picocolors.blue('888    888                      888 888               888         '));
+    console.log(picocolors.blue('8888888888  8888b.  888d888 .d88888 88888b.   8888b.  888888      '));
+    console.log(picocolors.blue('888    888     "88b 888P"  d88" 888 888 "88b     "88b 888         '));
+    console.log(picocolors.blue('888    888 .d888888 888    888  888 888  888 .d888888 888         '));
+    console.log(picocolors.blue('888    888 888  888 888    Y88b 888 888  888 888  888 Y88b.       '));
+    console.log(picocolors.blue('888    888 "Y888888 888     "Y88888 888  888 "Y888888  "Y888      '));
+    console.log(picocolors.blue('8888888b.          888 888                    888          888    '));
+    console.log(picocolors.blue('888   Y88b         888 888                    888          888    '));
+    console.log(picocolors.blue('888    888         888 888                    888          888    '));
+    console.log(picocolors.blue('888   d88P .d88b.  888 888  888  8888b.   .d88888  .d88b.  888888 '));
+    console.log(picocolors.blue('8888888P" d88""88b 888 888 .88P     "88b d88" 888 d88""88b 888    '));
+    console.log(picocolors.blue('888       888  888 888 888888K  .d888888 888  888 888  888 888    '));
+    console.log(picocolors.blue('888       Y88..88P 888 888 "88b 888  888 Y88b 888 Y88..88P Y88b.  '));
+    console.log(picocolors.blue('888        "Y88P"  888 888  888 "Y888888  "Y88888  "Y88P"   "Y888 '));
     console.log('');
 }
 
@@ -309,7 +317,7 @@ export async function createProject() {
 
         if (!isInstalled(HARDHAT_PACKAGE_NAME)) {
             console.log('');
-            console.log(`You need to install hardhat locally to use it. Please run:`);
+            console.log(`You need to install @parity/hardhat-polkadot locally to use it. Please run:`);
             const cmd = await getRecommendedDependenciesInstallationCommand({
                 [HARDHAT_PACKAGE_NAME]: `^${(await getPackageJson()).version}`,
             });
