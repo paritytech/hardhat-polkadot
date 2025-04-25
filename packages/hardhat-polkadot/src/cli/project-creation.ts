@@ -74,6 +74,7 @@ const TYPESCRIPT_VIEM_PEER_DEPENDENCIES: Dependencies = {
     '@types/chai-as-promised': '^7.1.6',
     typescript: '~5.0.4',
 };
+const pink = '\x1b[38;2;230;0;122m';
 
 // generated with the "colossal" font
 function printAsciiLogo() {
@@ -86,14 +87,14 @@ function printAsciiLogo() {
     console.log(picocolors.blue('888    888 888  888 888    Y88b 888 888  888 888  888 Y88b.       '));
     console.log(picocolors.blue('888    888 "Y888888 888     "Y88888 888  888 "Y888888  "Y888      '));
     console.log('');
-    console.log(picocolors.blue('8888888b.          888 888                    888          888    '));
-    console.log(picocolors.blue('888   Y88b         888 888                    888          888    '));
-    console.log(picocolors.blue('888    888         888 888                    888          888    '));
-    console.log(picocolors.blue('888   d88P .d88b.  888 888  888  8888b.   .d88888  .d88b.  888888 '));
-    console.log(picocolors.blue('8888888P" d88""88b 888 888 .88P     "88b d88" 888 d88""88b 888    '));
-    console.log(picocolors.blue('888       888  888 888 888888K  .d888888 888  888 888  888 888    '));
-    console.log(picocolors.blue('888       Y88..88P 888 888 "88b 888  888 Y88b 888 Y88..88P Y88b.  '));
-    console.log(picocolors.blue('888        "Y88P"  888 888  888 "Y888888  "Y88888  "Y88P"   "Y888 '));
+    console.log(`${pink}8888888b.          888 888                    888          888             `);
+    console.log(`${pink}888   Y88b         888 888                    888          888             `);
+    console.log(`${pink}888    888         888 888                    888          888             `);
+    console.log(`${pink}888   d88P .d88b.  888 888  888  8888b.   .d88888  .d88b.  888888          `);
+    console.log(`${pink}8888888P" d88""88b 888 888 .88P     "88b d88" 888 d88""88b 888             `);
+    console.log(`${pink}888       888  888 888 888888K  .d888888 888  888 888  888 888             `);
+    console.log(`${pink}888       Y88..88P 888 888 "88b 888  888 Y88b 888 Y88..88P Y88b.           `);
+    console.log(`${pink}888        "Y88P"  888 888  888 "Y888888  "Y88888  "Y88P"   "Y888          `);
     console.log('');
 }
 
