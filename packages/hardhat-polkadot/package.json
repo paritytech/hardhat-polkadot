@@ -24,7 +24,7 @@
         }
     },
     "bin": {
-        "hardhat-polkadot": "node ./dist/cli/index.js"
+        "hardhat-polkadot": "./dist/cli/index.js"
     },
     "keywords": [
         "ethereum",
