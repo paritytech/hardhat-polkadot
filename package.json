@@ -19,7 +19,7 @@
     "eslint:check": "pnpm run --recursive eslint:check"
   },
   "devDependencies": {
-    "@types/node": "^22.14.1",
+    "@types/node": "^22.15.3",
     "prettier": "^3.3.0",
     "typescript": "^5.8.3"
   },
