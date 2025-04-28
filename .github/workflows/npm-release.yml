@@ -1,4 +1,4 @@
-name: NPM Release
+name: NPM Hardhat-Polkadot Release
 
 on:
     release:
@@ -29,15 +29,33 @@ jobs:
             - name: Set version
               run: npm version --no-git-tag-version ${{github.event.release.tag_name}}
 
-            - name: npm pack
+            - name: pack hardhat-polkadot-resolc
               run: npm pack
+              working-directory: "./packages/hardhat-polkadot-resolc"
+
+            - name: pack hardhat-polkadot-node
+              run: npm pack
+              working-directory: "./packages/hardhat-polkadot-node"
+
+            - name: pack hardhat-polkadot
+              run: npm pack
+              working-directory: "./packages/hardhat-polkadot"
+
+            - name: move_to
+              run: |
+                mkdir -p packs
+                cp ./packages/hardhat-polkadot-resolc/*.tgz packs/
+                cp ./packages/hardhat-polkadot-node/*.tgz packs/
+                cp ./packages/hardhat-polkadot/*.tgz packs/
+                ls -ltr packs
 
             - uses: actions/upload-artifact@v4
-              with:np
-                  name: package
-                  path: 'parity-revive-*.tgz'
+              with:
+                name: packages-${{ github.sha }}
+                path: packs
 
-            - uses: octokit/request-action@bbedc70b1981e610d89f1f8de88311a1fc02fb83
+            - name: name: NPM Publish automation
+              uses: octokit/request-action@bbedc70b1981e610d89f1f8de88311a1fc02fb83
               with:
                   route: POST /repos/paritytech/npm_publish_automation/actions/workflows/publish.yml/dispatches
                   ref: main
