@@ -77,15 +77,16 @@ const TYPESCRIPT_VIEM_PEER_DEPENDENCIES: Dependencies = {
 const pink = '\x1b[38;2;230;0;122m';
 
 // generated with the "colossal" font
+// prettier-ignore
 function printAsciiLogo() {
-    console.log(picocolors.blue('888    888                      888 888               888         '));
-    console.log(picocolors.blue('888    888                      888 888               888         '));
-    console.log(picocolors.blue('888    888                      888 888               888         '));
-    console.log(picocolors.blue('8888888888  8888b.  888d888 .d88888 88888b.   8888b.  888888      '));
-    console.log(picocolors.blue('888    888     "88b 888P"  d88" 888 888 "88b     "88b 888         '));
-    console.log(picocolors.blue('888    888 .d888888 888    888  888 888  888 .d888888 888         '));
-    console.log(picocolors.blue('888    888 888  888 888    Y88b 888 888  888 888  888 Y88b.       '));
-    console.log(picocolors.blue('888    888 "Y888888 888     "Y88888 888  888 "Y888888  "Y888      '));
+    console.log(`${pink}888    888                      888 888               888         `);
+    console.log(`${pink}888    888                      888 888               888         `);
+    console.log(`${pink}888    888                      888 888               888         `);
+    console.log(`${pink}8888888888  8888b.  888d888 .d88888 88888b.   8888b.  888888      `);
+    console.log(`${pink}888    888     "88b 888P"  d88" 888 888 "88b     "88b 888         `);
+    console.log(`${pink}888    888 .d888888 888    888  888 888  888 .d888888 888         `);
+    console.log(`${pink}888    888 888  888 888    Y88b 888 888  888 888  888 Y88b.       `);
+    console.log(`${pink}888    888 "Y888888 888     "Y88888 888  888 "Y888888  "Y888      `);
     console.log('');
     console.log(`${pink}8888888b.          888 888                    888          888             `);
     console.log(`${pink}888   Y88b         888 888                    888          888             `);

@@ -14,3 +14,4 @@ logs
 .vscode/
 .DS_Store
 *.code-workspace
+simple-project
