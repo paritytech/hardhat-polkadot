@@ -16,9 +16,9 @@ import {
     NODE_START_PORT,
     ETH_RPC_ADAPTER_START_PORT,
     MAX_PORT_ATTEMPTS,
-    TASK_NODE_POLKAVM,
-    TASK_NODE_POLKAVM_CREATE_SERVER,
-    TASK_RUN_POLKAVM_NODE_IN_SEPARATE_PROCESS,
+    TASK_NODE_POLKADOT,
+    TASK_NODE_POLKADOT_CREATE_SERVER,
+    TASK_RUN_POLKADOT_NODE_IN_SEPARATE_PROCESS,
 } from "./constants"
 import { JsonRpcServer } from "./server"
 import {
@@ -28,7 +28,7 @@ import {
     getAvailablePort,
     waitForNodeToBeReady,
 } from "./utils"
-import { PolkaVMNodePluginError } from "./errors"
+import { PolkadotNodePluginError } from "./errors"
 import { interceptAndWrapTasksWithNode } from "./core/global-interceptor"
 import { runScriptWithHardhat } from "./core/script-runner"
 import { AdapterConfig, NodeConfig, RpcServer } from "./types"
@@ -52,7 +52,7 @@ task(TASK_RUN).setAction(async (args, hre, runSuper) => {
     );
 });
 
-subtask(TASK_NODE_POLKAVM_CREATE_SERVER, 'Creates a JSON-RPC server for PolkaVM node')
+subtask(TASK_NODE_POLKADOT_CREATE_SERVER, 'Creates a JSON-RPC server for Polkadot node')
     .addOptionalParam('nodePath', 'Path to the node binary file', undefined, types.string)
     .addOptionalParam('adapterPath', 'Path to the Eth Rpc Adapter binary file', undefined, types.string)
     .setAction(async ({ nodePath, adapterPath }: { nodePath: string; adapterPath: string }) => {
@@ -60,15 +60,15 @@ subtask(TASK_NODE_POLKAVM_CREATE_SERVER, 'Creates a JSON-RPC server for PolkaVM 
         return server;
     });
 
-task(TASK_NODE, 'Start a PolkaVM Node').setAction(async (args: TaskArguments, { network, run }, runSuper) => {
+task(TASK_NODE, 'Start a Polkadot Node').setAction(async (args: TaskArguments, { network, run }, runSuper) => {
     if (network.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
         return await runSuper();
     }
 
-    await run(TASK_NODE_POLKAVM, args);
+    await run(TASK_NODE_POLKADOT, args);
 });
 
-task(TASK_NODE_POLKAVM, 'Starts a JSON-RPC server for PolkaVM node')
+task(TASK_NODE_POLKADOT, 'Starts a JSON-RPC server for Polkadot node')
     .addOptionalParam('nodeBinaryPath', 'Path to the substrate node binary', undefined, types.string)
     .addOptionalParam('rpcPort', 'Port where the node will listen on - default: 8000', undefined, types.int)
     .addOptionalParam('adapterBinaryPath', 'Path to the eth-rpc-adapter binary', undefined, types.string)
@@ -133,7 +133,7 @@ task(TASK_NODE_POLKAVM, 'Starts a JSON-RPC server for PolkaVM node')
                 ? adapterBinaryPath
                 : userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath;
 
-            const server: RpcServer = await run(TASK_NODE_POLKAVM_CREATE_SERVER, {
+            const server: RpcServer = await run(TASK_NODE_POLKADOT_CREATE_SERVER, {
                 nodePath,
                 adapterPath,
             })
@@ -142,21 +142,21 @@ task(TASK_NODE_POLKAVM, 'Starts a JSON-RPC server for PolkaVM node')
                 await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands)
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (error: any) {
-                throw new PolkaVMNodePluginError(`Failed when running node: ${error.message}`)
+                throw new PolkadotNodePluginError(`Failed when running node: ${error.message}`)
             }
         },
     )
 
 subtask(
-    TASK_RUN_POLKAVM_NODE_IN_SEPARATE_PROCESS,
-    "Runs a Hardhat PolkaVM task in a separate process.",
+    TASK_RUN_POLKADOT_NODE_IN_SEPARATE_PROCESS,
+    "Runs a Hardhat Polkadot task in a separate process.",
 )
-    .addVariadicPositionalParam("taskArgs", "Arguments for the Hardhat PolkaVM task.")
+    .addVariadicPositionalParam("taskArgs", "Arguments for the Hardhat Polkadot task.")
     .setAction(async ({ taskArgs = [] }, _hre) => {
         const currentPort = await getAvailablePort(ETH_RPC_ADAPTER_START_PORT, MAX_PORT_ATTEMPTS)
         const adjustedArgs = adjustTaskArgsForPort(taskArgs, currentPort)
 
-        const taskProcess = spawn("npx", ["hardhat", TASK_NODE_POLKAVM, ...adjustedArgs], {
+        const taskProcess = spawn("npx", ["hardhat", TASK_NODE_POLKADOT, ...adjustedArgs], {
             detached: true,
         })
 
@@ -256,7 +256,7 @@ task(
             return testFailures
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
-            throw new PolkaVMNodePluginError(`Failed when running node: ${error.message}`)
+            throw new PolkadotNodePluginError(`Failed when running node: ${error.message}`)
         }
     },
 )

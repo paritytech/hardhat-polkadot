@@ -12,10 +12,10 @@ import {
     NETWORK_GAS_PRICE,
     NODE_START_PORT,
     ETH_RPC_ADAPTER_START_PORT,
-    POLKAVM_TEST_NODE_NETWORK_NAME,
+    POLKADOT_TEST_NODE_NETWORK_NAME,
     RPC_ENDPOINT_PATH,
 } from './constants';
-import { PolkaVMNodePluginError } from './errors';
+import { PolkadotNodePluginError } from './errors';
 import { CliCommands, CommandArguments, SplitCommands } from './types';
 import { JsonRpcServer } from './server';
 
@@ -45,7 +45,7 @@ export function constructCommandArgs(args?: CommandArguments, cliCommands?: CliC
         if (cliCommands.adapterPort && cliCommands.adapterPort !== cliCommands.rpcPort) {
             adapterCommands.push(`--rpc-port=${cliCommands.adapterPort}`);
         } else if (cliCommands.adapterPort && cliCommands.adapterPort === cliCommands.rpcPort) {
-            throw new PolkaVMNodePluginError('Adapter and node cannot share the same port.');
+            throw new PolkadotNodePluginError('Adapter and node cannot share the same port.');
         }
 
         if (cliCommands.buildBlockMode && cliCommands.fork) {
@@ -69,7 +69,7 @@ export function constructCommandArgs(args?: CommandArguments, cliCommands?: CliC
         } else if (args.nodeCommands?.nodeBinaryPath && !cliCommands?.nodeBinaryPath) {
             nodeCommands.push(args.nodeCommands?.nodeBinaryPath);
         } else {
-            throw new PolkaVMNodePluginError('Binary path not specified.');
+            throw new PolkadotNodePluginError('Binary path not specified.');
         }
 
         if (args.nodeCommands?.rpcPort && !cliCommands?.rpcPort) {
@@ -88,7 +88,7 @@ export function constructCommandArgs(args?: CommandArguments, cliCommands?: CliC
             args.adapterCommands?.adapterPort &&
             args.adapterCommands?.adapterPort === args.nodeCommands?.rpcPort
         ) {
-            throw new PolkaVMNodePluginError('Adapter and node cannot share the same port.');
+            throw new PolkadotNodePluginError('Adapter and node cannot share the same port.');
         }
 
         if (args.adapterCommands?.buildBlockMode && !!cliCommands?.buildBlockMode) {
@@ -169,7 +169,7 @@ export async function waitForNodeToBeReady(
         waitTime = Math.min(waitTime * backoffFactor, maxWaitTime);
     }
 
-    throw new PolkaVMNodePluginError("Server didn't respond after multiple attempts");
+    throw new PolkadotNodePluginError("Server didn't respond after multiple attempts");
 }
 
 export async function getAvailablePort(startPort: number, maxAttempts: number): Promise<number> {
@@ -180,7 +180,7 @@ export async function getAvailablePort(startPort: number, maxAttempts: number): 
         }
         currentPort++;
     }
-    throw new PolkaVMNodePluginError("Couldn't find an available port after several attempts");
+    throw new PolkadotNodePluginError("Couldn't find an available port after several attempts");
 }
 
 export function adjustTaskArgsForPort(taskArgs: string[], currentPort: number): string[] {
@@ -190,7 +190,7 @@ export function adjustTaskArgsForPort(taskArgs: string[], currentPort: number): 
         if (portArgIndex + 1 < taskArgs.length) {
             taskArgs[portArgIndex + 1] = `${currentPort}`;
         } else {
-            throw new PolkaVMNodePluginError(
+            throw new PolkadotNodePluginError(
                 'Invalid task arguments: --port provided without a following port number.',
             );
         }
@@ -202,7 +202,7 @@ export function adjustTaskArgsForPort(taskArgs: string[], currentPort: number): 
 
 export function getNetworkConfig(url: string, chainId?: number) {
     return {
-        accounts: NETWORK_ACCOUNTS.POLKAVM,
+        accounts: NETWORK_ACCOUNTS.POLKADOT,
         gas: NETWORK_GAS.AUTO,
         gasPrice: NETWORK_GAS_PRICE.AUTO,
         gasMultiplier: 1,
@@ -230,7 +230,7 @@ export async function configureNetwork(config: HardhatConfig, network: any, port
         // If it fails, it will just try again
     }
 
-    network.name = POLKAVM_TEST_NODE_NETWORK_NAME;
+    network.name = POLKADOT_TEST_NODE_NETWORK_NAME;
     network.config = getNetworkConfig(url, chainId);
     config.networks[network.name] = network.config;
     network.provider = await createProvider(config, network.name);

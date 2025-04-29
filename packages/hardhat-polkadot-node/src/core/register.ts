@@ -14,7 +14,7 @@ import { LazyInitializationProviderAdapter } from "hardhat/internal/core/provide
 import { log } from "console"
 import { createProvider } from "hardhat/internal/core/providers/construction"
 import { Artifacts } from "hardhat/internal/artifacts"
-import { BASE_URL, POLKAVM_TEST_NODE_NETWORK_NAME } from "../constants"
+import { BASE_URL, POLKADOT_TEST_NODE_NETWORK_NAME } from "../constants"
 import { getNetworkConfig } from "../utils"
 import "source-map-support/register";
 
@@ -48,9 +48,9 @@ if (!HardhatContext.isCreated()) {
         ctx.providerExtenders,
     )
 
-    const polkaVMNodePort = process.env.PolkaVMNodePort
-    const url = `${BASE_URL}:${polkaVMNodePort}`
-    const networkName = POLKAVM_TEST_NODE_NETWORK_NAME
+    const polkadotNodePort = process.env.polkadotNodePort
+    const url = `${BASE_URL}:${polkadotNodePort}`
+    const networkName = POLKADOT_TEST_NODE_NETWORK_NAME
 
     env.network.name = networkName
     Object.assign(env.network.config, getNetworkConfig(url))

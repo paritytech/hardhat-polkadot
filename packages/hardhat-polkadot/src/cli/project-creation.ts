@@ -103,7 +103,7 @@ async function printWelcomeMessage() {
     const packageJson = await getPackageJson()
 
     console.log(
-        picocolors.cyan(`⭕️ Welcome to ${HARDHAT_POLKADOT_NAME} v${packageJson.version}\n ⭕️`),
+        picocolors.cyan(`⭕️ Welcome to ${HARDHAT_POLKADOT_NAME} v${packageJson.version} ⭕️\n`),
     )
 }
 

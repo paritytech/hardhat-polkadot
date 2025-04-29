@@ -1,11 +1,11 @@
 import { Network } from "hardhat/types"
 
-export type PolkaVMTasksWithWrappedNode = typeof global & {
-    _polkaVMTasksForWrapping: PolkaVMTasksForWrapping
-    _polkaVMNodeNetwork?: Network
+export type PolkadotTasksWithWrappedNode = typeof global & {
+    _polkadotTasksForWrapping: PolkadotTasksForWrapping
+    _polkadotNodeNetwork?: Network
 }
 
-export class PolkaVMTasksForWrapping {
+export class PolkadotTasksForWrapping {
     public taskNames: string[] = []
 
     constructor() {

@@ -21,8 +21,9 @@ Overview of currently available plugins and those on the roadmap.
 
 | 🔌 Plugin                     | 📄 Description                                                                                                                    |
 |-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| [hardhat-polkadot-resolc](https://github.com/paritytech/hardhat-revive/tree/main/packages/hardhat-resolc)           | Compiles solidity smart contracts for the Polkadot network, creating PolkaVM compatible hardhat artifacts.                              |
-| [hardhat-polkadot-node](https://github.com/paritytech/hardhat-revive/blob/main/packages/hardhat-revive-node/README.md)         | Run a Polkadot node locally 
+| [hardhat-polkadot](https://github.com/paritytech/hardhat-polkadot/tree/main/packages/hardhat-polkadot)           | Umbrella plugin that provides full functionality and a convenient cli.                              |
+| [hardhat-polkadot-resolc](https://github.com/paritytech/hardhat-polkadot/tree/main/packages/hardhat-polkadot-resolc)           | Compiles solidity smart contracts for the Polkadot network, creating PolkaVM compatible hardhat artifacts.                              |
+| [hardhat-polkadot-node](https://github.com/paritytech/hardhat-polkadot/blob/main/packages/hardhat-polkadot-node/README.md)         | Run a Polkadot node locally 
 
 ## Getting Started
 
@@ -30,8 +31,8 @@ Overview of currently available plugins and those on the roadmap.
 
 ## Usage
 
-* See [Examples](https://github.com/paritytech/hardhat-revive/tree/main/examples)
-* Get started from a boilerplate with [create-polkadot-dapp](https://github.com/paritytech/create-polkadot-dapp).
+* See [Examples](https://github.com/paritytech/hardhat-polkadot/tree/main/examples)
+* Get started from a boilerplate by running `npx hardhat-polkadot init`.
 
 ## Getting Help
 

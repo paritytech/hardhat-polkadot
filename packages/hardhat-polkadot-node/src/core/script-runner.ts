@@ -25,7 +25,7 @@ export async function runScript(
     await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false)
     await waitForNodeToBeReady(port)
 
-    const envVars = { ...process.env, ...extraEnvVars, PolkaVMNodePort: port.toString() }
+    const envVars = { ...process.env, ...extraEnvVars, polkadotNodePort: port.toString() }
 
     return new Promise((resolve, reject) => {
         const childProcess = fork(scriptPath, scriptArgs, {

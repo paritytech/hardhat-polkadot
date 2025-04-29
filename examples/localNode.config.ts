@@ -1,6 +1,5 @@
 import { HardhatUserConfig } from "hardhat/config"
-import "../hardhat-revive/packages/hardhat-resolc/src/index"
-import "../hardhat-revive/packages/hardhat-revive-node/src/index"
+import "@parity/hardhat-polkadot"
 
 const config: HardhatUserConfig = {
     solidity: "0.8.28",
