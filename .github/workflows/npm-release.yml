@@ -25,10 +25,7 @@ jobs:
 
             - name: Build
               run: pnpm build
-
-            - name: Set version
-              run: npm version --no-git-tag-version ${{github.event.release.tag_name}}
-
+              
             - name: pack hardhat-polkadot-resolc
               run: npm pack
               working-directory: "./packages/hardhat-polkadot-resolc"
@@ -54,7 +51,7 @@ jobs:
                 name: packages-${{ github.sha }}
                 path: packs
 
-            - name: name: NPM Publish automation
+            - name: NPM Publish automation
               uses: octokit/request-action@bbedc70b1981e610d89f1f8de88311a1fc02fb83
               with:
                   route: POST /repos/paritytech/npm_publish_automation/actions/workflows/publish.yml/dispatches
