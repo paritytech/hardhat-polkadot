@@ -2,18 +2,18 @@ import { HardhatRuntimeEnvironment, RunSuperFunction, TaskArguments } from "hard
 import { GlobalWithHardhatContext } from "hardhat/src/internal/context"
 import { HARDHAT_NETWORK_NAME } from "hardhat/plugins"
 import { configureNetwork, startServer, waitForNodeToBeReady } from "../utils"
-import { PolkaVMTasksWithWrappedNode } from "./global-task"
+import { PolkadotTasksWithWrappedNode } from "./global-task"
 import { Environment } from "hardhat/internal/core/runtime-environment"
 
 export function interceptAndWrapTasksWithNode() {
-    const polkaVMGlobal = global as PolkaVMTasksWithWrappedNode & GlobalWithHardhatContext
-    const taskMap = polkaVMGlobal.__hardhatContext.tasksDSL.getTaskDefinitions()
+    const polkadotGlobal = global as PolkadotTasksWithWrappedNode & GlobalWithHardhatContext
+    const taskMap = polkadotGlobal.__hardhatContext.tasksDSL.getTaskDefinitions()
 
-    if (!polkaVMGlobal._polkaVMTasksForWrapping) {
+    if (!polkadotGlobal._polkadotTasksForWrapping) {
         return
     }
 
-    polkaVMGlobal._polkaVMTasksForWrapping.taskNames.forEach((taskName) => {
+    polkadotGlobal._polkadotTasksForWrapping.taskNames.forEach((taskName) => {
         const foundTask = taskMap[taskName]
 
         if (!foundTask) {
@@ -21,14 +21,14 @@ export function interceptAndWrapTasksWithNode() {
         }
 
         if (foundTask.isSubtask) {
-            polkaVMGlobal.__hardhatContext.tasksDSL.subtask(
+            polkadotGlobal.__hardhatContext.tasksDSL.subtask(
                 foundTask.name,
                 foundTask.description,
                 wrapTaskWithNode,
             )
         }
 
-        polkaVMGlobal.__hardhatContext.tasksDSL.task(
+        polkadotGlobal.__hardhatContext.tasksDSL.task(
             foundTask.name,
             foundTask.description,
             wrapTaskWithNode,
@@ -44,7 +44,7 @@ async function wrapTaskWithNode(
     if (env.network.polkavm !== true || env.network.name !== HARDHAT_NETWORK_NAME) {
         return await runSuper(taskArgs)
     }
-    const polkaVMGlobal = global as PolkaVMTasksWithWrappedNode;
+    const polkadotGlobal = global as PolkadotTasksWithWrappedNode;
 
     const { commandArgs, server, port } = await startServer({
         forking: env.config.networks.hardhat.forking,
@@ -58,10 +58,10 @@ async function wrapTaskWithNode(
         const oldNetwork = env.network;
         await configureNetwork(env.config, env.network, port);
         (env as unknown as Environment).injectToGlobal();
-        polkaVMGlobal._polkaVMNodeNetwork = env.network;
+        polkadotGlobal._polkadotNodeNetwork = env.network;
         const result = await runSuper(taskArgs);
         (env as unknown as Environment).network = oldNetwork;
-        delete polkaVMGlobal._polkaVMNodeNetwork;
+        delete polkadotGlobal._polkadotNodeNetwork;
         (env as unknown as Environment).injectToGlobal();
         return result
     } finally {

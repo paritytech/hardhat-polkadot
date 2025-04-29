@@ -3,7 +3,7 @@ import chalk from "chalk"
 
 import { NODE_START_PORT, ETH_RPC_ADAPTER_START_PORT } from "./constants"
 import { RpcServer } from "./types"
-import { PolkaVMNodePluginError } from "./errors"
+import { PolkadotNodePluginError } from "./errors"
 
 export class JsonRpcServer implements RpcServer {
     private serverProcess: ChildProcess | null = null
@@ -46,7 +46,7 @@ export class JsonRpcServer implements RpcServer {
             const adapterCommand = this.adapterBinaryPath
 
             if (!adapterCommand) {
-                throw new PolkaVMNodePluginError('A path for the Eth RPC Adapter must be provided.');
+                throw new PolkadotNodePluginError('A path for the Eth RPC Adapter must be provided.');
             }
 
             const adapterPortArg = adapterArgs.find((arg) => arg.startsWith('--port='));
