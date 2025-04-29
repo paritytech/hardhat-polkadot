@@ -1,0 +1,64 @@
+name: NPM Hardhat-Polkadot Release
+
+on:
+    release:
+        types: [released]
+
+env:
+    CI: true
+
+jobs:
+    publish:
+        name: Build & Publish to NPM
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22.x
+
+            - name: Install
+              run: pnpm install --frozen-lockfile
+
+            - name: Build
+              run: pnpm build
+
+            - name: Set version
+              run: npm version --no-git-tag-version ${{github.event.release.tag_name}}
+
+            - name: pack hardhat-polkadot-resolc
+              run: npm pack
+              working-directory: "./packages/hardhat-polkadot-resolc"
+
+            - name: pack hardhat-polkadot-node
+              run: npm pack
+              working-directory: "./packages/hardhat-polkadot-node"
+
+            - name: pack hardhat-polkadot
+              run: npm pack
+              working-directory: "./packages/hardhat-polkadot"
+
+            - name: move_to
+              run: |
+                mkdir -p packs
+                cp ./packages/hardhat-polkadot-resolc/*.tgz packs/
+                cp ./packages/hardhat-polkadot-node/*.tgz packs/
+                cp ./packages/hardhat-polkadot/*.tgz packs/
+                ls -ltr packs
+
+            - uses: actions/upload-artifact@v4
+              with:
+                name: packages-${{ github.sha }}
+                path: packs
+
+            - name: name: NPM Publish automation
+              uses: octokit/request-action@bbedc70b1981e610d89f1f8de88311a1fc02fb83
+              with:
+                  route: POST /repos/paritytech/npm_publish_automation/actions/workflows/publish.yml/dispatches
+                  ref: main
+                  inputs: '${{ format(''{{ "repo": "{0}", "run_id": "{1}" }}'', github.repository, github.run_id) }}'
+              env:
+                  GITHUB_TOKEN: ${{ secrets.NPM_PUBLISH_AUTOMATION_TOKEN }}
