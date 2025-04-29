@@ -38,7 +38,15 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
 
     const settings = compiler.settings || {}
 
-    const optimizer = resolc.settings?.optimizer?.enabled && resolc.settings?.optimizer ? resolc.settings?.optimizer : { enabled: true, parameters: 'z' }
+    let optimizer = {};
+
+    if (resolc.settings?.optimizer && resolc.settings?.optimizer?.enabled) {
+        optimizer = Object.assign({}, resolc.settings?.optimizer);
+    } else if (resolc.settings?.optimizer?.enabled === false) {
+        optimizer = Object.assign({}, { enabled: false  });
+    } else {
+        optimizer = Object.assign({}, { enabled: true, parameters: 'z'  });
+    }
 
     compiler.settings = {
         ...settings,
@@ -111,6 +119,10 @@ function extractStandardJSONCommands(config: ResolcConfig, commandArgs: string[]
 
     if (settings.outputDir) {
         commandArgs.push(`--output-dir=${settings.outputDir}`);
+    }
+
+    if (settings.disableSolcOptimizer) {
+        commandArgs.push(`--disable-solc-optimizer`);
     }
 
     return commandArgs;
