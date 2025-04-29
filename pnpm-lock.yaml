@@ -29,9 +29,18 @@ importers:
       '@parity/hardhat-polkadot-resolc':
         specifier: workspace:^
         version: link:../hardhat-polkadot-resolc
+      '@types/fs-extra':
+        specifier: 5.1.0
+        version: 5.1.0
+      find-up:
+        specifier: 5.0.0
+        version: 5.0.0
       hardhat:
         specifier: <2.23.0
         version: 2.22.19(ts-node@10.9.2(@types/node@22.15.3)(typescript@5.8.3))(typescript@5.8.3)
+      picocolors:
+        specifier: ^1.1.1
+        version: 1.1.1
     devDependencies:
       '@eslint/js':
         specifier: ^9.25.1
@@ -542,6 +551,9 @@ packages:
 
   '@types/fs-extra@11.0.4':
     resolution: {integrity: sha512-yTbItCNreRooED33qjunPthRcSjERP1r4MqCZc7wv0u2sUkzTFp45tgUfS5+r7FrZPdmCCNflLhVSP/o+SemsQ==}
+
+  '@types/fs-extra@5.1.0':
+    resolution: {integrity: sha512-AInn5+UBFIK9FK5xc9yP5e3TQSPNNgjHByqYcj9g5elVBnDQcQL7PlO1CIRy2gWlbwK7UPYqi7vRvFA44dCmYQ==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -2502,6 +2514,10 @@ snapshots:
   '@types/fs-extra@11.0.4':
     dependencies:
       '@types/jsonfile': 6.1.4
+      '@types/node': 22.15.3
+
+  '@types/fs-extra@5.1.0':
+    dependencies:
       '@types/node': 22.15.3
 
   '@types/json-schema@7.0.15': {}
