@@ -61,8 +61,6 @@ export interface ResolcConfig {
         contractsToCompile?: string[]
         // Generate source based debug information in the output code file. This only has an effect with the LLVM-IR code generator and is ignored otherwise.
         emitDourceDebugInfo?: boolean
-        // Specify addresses of deployable libraries. Syntax: `<libraryName>=<address> [, or whitespace] ...`.
-        libraries?: string[]
         // Disable the `solc` optimizer.
         disableSolcOptimizer?: boolean
         // Compile in batches. Useful for environmnents with limited resources and large number of files.
