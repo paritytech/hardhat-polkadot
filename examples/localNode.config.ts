@@ -26,7 +26,6 @@ const config: HardhatUserConfig = {
             },
             evmVersion: "cancun",
             compilerPath: "path/to/resolc",
-            standardJson: true,
         },
     },
 }

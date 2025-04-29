@@ -36,11 +36,21 @@ export function getVersionComponents(version: string): number[] {
 export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, resolc: ResolcConfig) {
     const compiler = solcConfigData.compiler;
 
-    const settings = compiler.settings || {};
+    const settings = compiler.settings || {}
+
+    let optimizer = {};
+
+    if (resolc.settings?.optimizer && resolc.settings?.optimizer?.enabled) {
+        optimizer = Object.assign({}, resolc.settings?.optimizer);
+    } else if (resolc.settings?.optimizer?.enabled === false) {
+        optimizer = Object.assign({}, { enabled: false  });
+    } else if (resolc.compilerSource !== 'binary'){
+        optimizer = Object.assign({}, { enabled: true, parameters: 'z'  });
+    }
 
     compiler.settings = {
         ...settings,
-        optimizer: { ...resolc.settings?.optimizer },
+        optimizer: { ...optimizer },
         evmVersion: resolc.settings?.evmVersion,
     };
 
@@ -68,103 +78,6 @@ export function pluralize(n: number, singular: string, plural?: string) {
     return `${singular}s`;
 }
 
-function extractYulCommands(config: ResolcConfig, commandArgs: string[]): string[] {
-    const settings = config.settings!;
-
-    commandArgs.push(`--yul`);
-
-    if (settings.solcPath) {
-        commandArgs.push(`--solc=${settings.solcPath}`);
-    }
-
-    if (settings.optimizer?.enabled) {
-        commandArgs.push(`--optimization=${settings.optimizer.parameters || '3'}`);
-    }
-
-    if (settings.llvmVerifyEach) {
-        commandArgs.push(`--llvm-verify-each`);
-    }
-
-    if (settings.llvmDebugLogging) {
-        commandArgs.push(`--llvm-debug-logging`);
-    }
-
-    if (settings.metadataHash) {
-        if (settings.metadataHash !== 'none') {
-            throw new ResolcPluginError(`--metadata-hash only supported value is 'none'.`);
-        }
-        commandArgs.push(`--metadata-hash=${settings.metadataHash}`);
-    }
-
-    if (settings.debugOutputDir) {
-        commandArgs.push(`--debug-output-dir=${settings.debugOutputDir}`);
-    }
-
-    if (settings.emitDourceDebugInfo) {
-        commandArgs.push(`-g`);
-    }
-
-    if (settings.asm) {
-        commandArgs.push(`--asm`);
-    }
-
-    if (settings.bin) {
-        commandArgs.push(`--bin`);
-    }
-
-    if (settings.outputDir) {
-        commandArgs.push(`--output-dir=${settings.outputDir}`);
-    }
-
-    return commandArgs;
-}
-
-function extractLlvmIRCommands(config: ResolcConfig, commandArgs: string[]): string[] {
-    const settings = config.settings!;
-
-    commandArgs.push(`--llvm-ir`);
-
-    if (settings.optimizer?.enabled) {
-        commandArgs.push(`--optimization=${settings.optimizer.parameters || '3'}`);
-    }
-
-    if (settings.llvmVerifyEach) {
-        commandArgs.push(`--llvm-verify-each`);
-    }
-
-    if (settings.llvmDebugLogging) {
-        commandArgs.push(`--llvm-debug-logging`);
-    }
-
-    if (settings.metadataHash) {
-        if (settings.metadataHash !== 'none') {
-            throw new ResolcPluginError(`--metadata-hash only supported value is 'none'.`);
-        }
-        commandArgs.push(`--metadata-hash=${settings.metadataHash}`);
-    }
-
-    if (settings.debugOutputDir) {
-        commandArgs.push(`--debug-output-dir=${settings.debugOutputDir}`);
-    }
-
-    if (settings.emitDourceDebugInfo) {
-        commandArgs.push(`-g`);
-    }
-
-    if (settings.asm) {
-        commandArgs.push(`--asm`);
-    }
-
-    if (settings.bin) {
-        commandArgs.push(`--bin`);
-    }
-
-    if (settings.outputDir) {
-        commandArgs.push(`--output-dir=${settings.outputDir}`);
-    }
-
-    return commandArgs;
-}
 
 function extractStandardJSONCommands(config: ResolcConfig, commandArgs: string[]): string[] {
     const settings = config.settings!;
@@ -175,10 +88,6 @@ function extractStandardJSONCommands(config: ResolcConfig, commandArgs: string[]
         commandArgs.push(`--solc=${settings.solcPath}`);
     }
 
-    if (settings.detectMissingLibraries) {
-        commandArgs.push(`--detect-missing-libraries`);
-    }
-
     if (settings.forceEVMLA) {
         commandArgs.push(`--force-evmla`);
     }
@@ -208,178 +117,12 @@ function extractStandardJSONCommands(config: ResolcConfig, commandArgs: string[]
         commandArgs.push(`-g`);
     }
 
-    if (settings.asm) {
-        commandArgs.push(`--asm`);
-    }
-
-    if (settings.bin) {
-        commandArgs.push(`--bin`);
-    }
-
     if (settings.outputDir) {
         commandArgs.push(`--output-dir=${settings.outputDir}`);
-    }
-
-    return commandArgs
-}
-
-function extractCombinedJSONCommands(config: ResolcConfig, commandArgs: string[]): string[] {
-    const settings = config.settings!;
-
-    commandArgs.push(`--combined-json=${settings.combinedJson}`);
-
-    if (settings.libraries) {
-        commandArgs.push(`-l=${settings.libraries}`);
-    }
-
-    if (settings.solcPath) {
-        commandArgs.push(`--solc=${settings.solcPath}`);
-    }
-
-    if (settings.evmVersion) {
-        commandArgs.push(`--evm-version=${settings.evmVersion}`);
     }
 
     if (settings.disableSolcOptimizer) {
         commandArgs.push(`--disable-solc-optimizer`);
-    }
-
-    if (settings.optimizer?.enabled) {
-        commandArgs.push(`--optimization=${settings.optimizer.parameters || '3'}`);
-    }
-
-    if (settings.forceEVMLA) {
-        commandArgs.push(`--force-evmla`);
-    }
-
-    if (settings.metadataHash) {
-        if (settings.metadataHash !== 'none') {
-            throw new ResolcPluginError(`--metadata-hash only supported value is 'none'.`);
-        }
-        commandArgs.push(`--metadata-hash=${settings.metadataHash}`);
-    }
-
-    if (settings.basePath) {
-        commandArgs.push(`--base-path=${settings.basePath}`);
-    }
-
-    if (settings.includePaths) {
-        commandArgs.push(`--include-paths=${settings.includePaths}`);
-    }
-
-    if (settings.allowPaths) {
-        if (!settings.basePath) {
-            throw new ResolcPluginError(
-                `--allow-paths option is only available when --base-path has a non-empty value.`,
-            );
-        }
-        commandArgs.push(`--allow-paths=${settings.allowPaths}`);
-    }
-
-    if (settings.suppressWarnings) {
-        commandArgs.push(`--suppress-warnings=${settings.suppressWarnings.join(' ')}`);
-    }
-
-    if (settings.debugOutputDir) {
-        commandArgs.push(`--debug-output-dir=${settings.debugOutputDir}`);
-    }
-
-    if (settings.emitDourceDebugInfo) {
-        commandArgs.push(`-g`);
-    }
-
-    if (settings.overwrite) {
-        commandArgs.push(`--overwrite`);
-    }
-
-    if (settings.asm) {
-        commandArgs.push(`--asm`);
-    }
-
-    if (settings.bin) {
-        commandArgs.push(`--bin`);
-    }
-
-    if (settings.outputDir) {
-        commandArgs.push(`--output-dir=${settings.outputDir}`);
-    }
-
-    return commandArgs
-}
-
-function extractRemainingCommands(config: ResolcConfig, commandArgs: string[]): string[] {
-    const settings = config.settings!;
-
-    if (settings.libraries) {
-        commandArgs.push(`-l=${settings.libraries}`);
-    }
-
-    if (settings.solcPath) {
-        commandArgs.push(`--solc=${settings.solcPath}`);
-    }
-
-    if (settings.evmVersion) {
-        commandArgs.push(`--evm-version=${settings.evmVersion}`);
-    }
-
-    if (settings.disableSolcOptimizer) {
-        commandArgs.push(`--disable-solc-optimizer`);
-    }
-
-    if (settings.optimizer?.enabled) {
-        commandArgs.push(`--optimization=${settings.optimizer.parameters || '3'}`);
-    }
-
-    if (settings.forceEVMLA) {
-        commandArgs.push(`--force-evmla`);
-    }
-
-    if (settings.metadataHash) {
-        if (settings.metadataHash !== 'none') {
-            throw new ResolcPluginError(`--metadata-hash only supported value is 'none'.`);
-        }
-        commandArgs.push(`--metadata-hash=${settings.metadataHash}`);
-    }
-
-    if (settings.basePath) {
-        commandArgs.push(`--base-path=${settings.basePath}`);
-    }
-
-    if (settings.includePaths) {
-        commandArgs.push(`--include-paths=${settings.includePaths}`);
-    }
-
-    if (settings.allowPaths) {
-        if (!settings.basePath) {
-            throw new ResolcPluginError(
-                `--allow-paths option is only available when --base-path has a non-empty value.`,
-            );
-        }
-        commandArgs.push(`--allow-paths=${settings.allowPaths}`);
-    }
-
-    if (settings.suppressWarnings) {
-        commandArgs.push(`--suppress-warnings=${settings.suppressWarnings.join(' ')}`);
-    }
-
-    if (settings.debugOutputDir) {
-        commandArgs.push(`--debug-output-dir=${settings.debugOutputDir}`);
-    }
-
-    if (settings.emitDourceDebugInfo) {
-        commandArgs.push(`-g`);
-    }
-
-    if (settings.asm) {
-        commandArgs.push(`--asm`);
-    }
-
-    if (settings.bin) {
-        commandArgs.push(`--bin`);
-    }
-
-    if (settings.outputDir) {
-        commandArgs.push(`--output-dir=${settings.outputDir}`);
     }
 
     return commandArgs;
@@ -388,17 +131,7 @@ function extractRemainingCommands(config: ResolcConfig, commandArgs: string[]): 
 export function extractCommands(config: ResolcConfig): string[] {
     const commandArgs: string[] = [];
 
-    if (config.settings?.yul) {
-        return extractYulCommands(config, commandArgs);
-    } else if (config.settings?.llvmIR) {
-        return extractLlvmIRCommands(config, commandArgs);
-    } else if (config.settings?.standardJson) {
-        return extractStandardJSONCommands(config, commandArgs);
-    } else if (config.settings?.combinedJson) {
-        return extractCombinedJSONCommands(config, commandArgs);
-    } else {
-        return extractRemainingCommands(config, commandArgs);
-    }
+    return extractStandardJSONCommands(config, commandArgs)
 }
 
 export function extractImports(fileContent: string): string[] {
