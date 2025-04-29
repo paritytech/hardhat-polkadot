@@ -1,4 +1,4 @@
-import { spawn, ChildProcess, StdioOptions, exec } from "child_process"
+import { spawn, ChildProcess, StdioOptions } from "child_process"
 import chalk from "chalk"
 
 import { NODE_START_PORT, ETH_RPC_ADAPTER_START_PORT } from "./constants"
@@ -10,23 +10,19 @@ export class JsonRpcServer implements RpcServer {
     private adapterProcess: ChildProcess | null = null
     private serverPort: number | null = null
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     constructor(
         private readonly nodeBinaryPath: string | undefined,
         private readonly adapterBinaryPath: string | undefined,
     ) {}
 
-    public listen(
-        nodeArgs: string[] = [],
-        adapterArgs: string[] = [],
-        blockProcess: boolean = true,
-    ): Promise<void> {
+    public listen(nodeArgs: string[] = [], adapterArgs: string[] = [], blockProcess: boolean = true): Promise<void> {
         return new Promise((resolve, reject) => {
             const nodeCommand =
-                this.nodeBinaryPath && nodeArgs.find((arg) => arg.startsWith("--forking="))
+                this.nodeBinaryPath && nodeArgs.find((arg) => arg.startsWith('--forking='))
                     ? this.nodeBinaryPath
-                    : nodeArgs[0]
-            const nodeCommandArgs = nodeArgs.slice(1)
+                    : nodeArgs[0];
+            const nodeCommandArgs = nodeArgs.slice(1);
+
 
             const nodePortArg = nodeArgs.find((arg) => arg.startsWith("--rpc-port="))
             const nodePort = nodePortArg ? parseInt(nodePortArg.split("=")[1], 10) : NODE_START_PORT
@@ -50,13 +46,13 @@ export class JsonRpcServer implements RpcServer {
             const adapterCommand = this.adapterBinaryPath
 
             if (!adapterCommand) {
-                throw new PolkaVMNodePluginError("A path for the Eth RPC Adapter must be provided.")
+                throw new PolkaVMNodePluginError('A path for the Eth RPC Adapter must be provided.');
             }
 
-            const adapterPortArg = adapterArgs.find((arg) => arg.startsWith("--port="))
+            const adapterPortArg = adapterArgs.find((arg) => arg.startsWith('--port='));
             const adapterPort = adapterPortArg
-                ? parseInt(adapterPortArg.split("=")[1], 10)
-                : ETH_RPC_ADAPTER_START_PORT
+                ? parseInt(adapterPortArg.split('=')[1], 10)
+                : ETH_RPC_ADAPTER_START_PORT;
 
             this.adapterProcess = spawn(adapterCommand, adapterArgs, { stdio: stdioConfig })
 
@@ -70,7 +66,7 @@ export class JsonRpcServer implements RpcServer {
             }
 
             let terminatedProcesses = 0
-            const processExitHandler = (process: ChildProcess, name: string, port?: number) => {
+            const processExitHandler = (process: ChildProcess, name: string, _port?: number) => {
                 process.on("exit", (code, signal) => {
                     if (signal) {
                         console.info(
