@@ -60,16 +60,16 @@
         "@parity/hardhat-polkadot-resolc"
     ],
     "devDependencies": {
-        "@eslint/js": "^9.25.0",
         "@nomicfoundation/hardhat-ignition": "^0.15.11",
         "@types/chai": "^5.2.1",
-        "@types/node": "^22.14.1",
         "chai": "^5.2.0",
-        "eslint": "^9.25.0",
+        "viem": "^2.27.2"
+        "@eslint/js": "^9.25.1",
+        "@types/node": "^22.15.3",
+        "eslint": "^9.25.1",
         "globals": "^16.0.0",
         "rimraf": "^6.0.1",
         "typescript": "^5.8.3",
-        "typescript-eslint": "^8.30.1",
-        "viem": "^2.27.2"
+        "typescript-eslint": "^8.31.0"
     }
 }
