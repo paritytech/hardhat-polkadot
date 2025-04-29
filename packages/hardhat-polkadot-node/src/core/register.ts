@@ -16,9 +16,9 @@ import { createProvider } from "hardhat/internal/core/providers/construction"
 import { Artifacts } from "hardhat/internal/artifacts"
 import { BASE_URL, POLKAVM_TEST_NODE_NETWORK_NAME } from "../constants"
 import { getNetworkConfig } from "../utils"
+import "source-map-support/register";
 
 if (!HardhatContext.isCreated()) {
-    require("source-map-support/register")
 
     const ctx = HardhatContext.createHardhatContext()
 
@@ -59,9 +59,10 @@ if (!HardhatContext.isCreated()) {
     const artifacts = new Artifacts(resolvedConfig.paths.artifacts)
 
     const provider = new LazyInitializationProviderAdapter(async () => {
-        log(`Creating provider for network ${networkName}`)
-        return createProvider(resolvedConfig, networkName, artifacts, ctx.providerExtenders)
-    })
+        log(`Creating provider for network ${networkName}`);
+        return createProvider(resolvedConfig, networkName, artifacts, ctx.providerExtenders);
+    });
+
 
     env.network.provider = provider
     ctx.setHardhatRuntimeEnvironment(env)

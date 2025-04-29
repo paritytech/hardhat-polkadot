@@ -49,87 +49,40 @@ task(TASK_RUN).setAction(async (args, hre, runSuper) => {
         },
         hre.hardhatArguments,
         path.resolve(args.script),
-    )
-})
+    );
+});
 
-subtask(TASK_NODE_POLKAVM_CREATE_SERVER, "Creates a JSON-RPC server for PolkaVM node")
-    .addOptionalParam("nodePath", "Path to the node binary file", undefined, types.string)
-    .addOptionalParam(
-        "adapterPath",
-        "Path to the Eth Rpc Adapter binary file",
-        undefined,
-        types.string,
-    )
+subtask(TASK_NODE_POLKAVM_CREATE_SERVER, 'Creates a JSON-RPC server for PolkaVM node')
+    .addOptionalParam('nodePath', 'Path to the node binary file', undefined, types.string)
+    .addOptionalParam('adapterPath', 'Path to the Eth Rpc Adapter binary file', undefined, types.string)
     .setAction(async ({ nodePath, adapterPath }: { nodePath: string; adapterPath: string }) => {
-        const server: JsonRpcServer = new JsonRpcServer(nodePath, adapterPath)
-        return server
-    })
+        const server: JsonRpcServer = new JsonRpcServer(nodePath, adapterPath);
+        return server;
+    });
 
-task(TASK_NODE, "Start a PolkaVM Node").setAction(
-    async (args: TaskArguments, { network, run }, runSuper) => {
-        if (network.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
-            return await runSuper()
-        }
+task(TASK_NODE, 'Start a PolkaVM Node').setAction(async (args: TaskArguments, { network, run }, runSuper) => {
+    if (network.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
+        return await runSuper();
+    }
 
-        await run(TASK_NODE_POLKAVM, args)
-    },
-)
+    await run(TASK_NODE_POLKAVM, args);
+});
 
-task(TASK_NODE_POLKAVM, "Starts a JSON-RPC server for PolkaVM node")
+task(TASK_NODE_POLKAVM, 'Starts a JSON-RPC server for PolkaVM node')
+    .addOptionalParam('nodeBinaryPath', 'Path to the substrate node binary', undefined, types.string)
+    .addOptionalParam('rpcPort', 'Port where the node will listen on - default: 8000', undefined, types.int)
+    .addOptionalParam('adapterBinaryPath', 'Path to the eth-rpc-adapter binary', undefined, types.string)
     .addOptionalParam(
-        "nodeBinaryPath",
-        "Path to the substrate node binary",
+        'adapterEndpoint',
+        'Endpoint to which the adapter will connect to - default: ws://localhost:8000',
         undefined,
         types.string,
     )
-    .addOptionalParam(
-        "rpcPort",
-        "Port where the node will listen on - default: 8000",
-        undefined,
-        types.int,
-    )
-    .addOptionalParam(
-        "adapterBinaryPath",
-        "Path to the eth-rpc-adapter binary",
-        undefined,
-        types.string,
-    )
-    .addOptionalParam(
-        "adapterEndpoint",
-        "Endpoint to which the adapter will connect to - default: ws://localhost:8000",
-        undefined,
-        types.string,
-    )
-    .addOptionalParam(
-        "adapterPort",
-        "Port where the adapter will listen on - default: 8545 ",
-        undefined,
-        types.int,
-    )
-    .addOptionalParam(
-        "dev",
-        "Whether to run the adapter in dev mode - default: false",
-        undefined,
-        types.boolean,
-    )
-    .addOptionalParam(
-        "buildBlockMode",
-        "Build block mode for @acala-network/chopsticks",
-        undefined,
-        types.string,
-    )
-    .addOptionalParam(
-        "fork",
-        "Endpoint to fork a live chain using @acala-network/chopsticks",
-        undefined,
-        types.string,
-    )
-    .addOptionalParam(
-        "forkBlockNumber",
-        "Block hash or block number from where to fork",
-        undefined,
-        types.string,
-    )
+    .addOptionalParam('adapterPort', 'Port where the adapter will listen on - default: 8545 ', undefined, types.int)
+    .addOptionalParam('dev', 'Whether to run the adapter in dev mode - default: false', undefined, types.boolean)
+    .addOptionalParam('buildBlockMode', 'Build block mode for @acala-network/chopsticks', undefined, types.string)
+    .addOptionalParam('fork', 'Endpoint to fork a live chain using @acala-network/chopsticks', undefined, types.string)
+    .addOptionalParam('forkBlockNumber', 'Block hash or block number from where to fork', undefined, types.string)
     .setAction(
         async (
             {
@@ -143,15 +96,15 @@ task(TASK_NODE_POLKAVM, "Starts a JSON-RPC server for PolkaVM node")
                 fork,
                 forkBlockNumber,
             }: {
-                nodeBinaryPath: string
-                rpcPort: number
-                adapterBinaryPath: string
-                adapterEndpoint: string
-                adapterPort: number
-                dev: boolean
-                buildBlockMode: "Instant" | "Manual" | "Batch"
-                fork: string
-                forkBlockNumber: string
+                nodeBinaryPath: string;
+                rpcPort: number;
+                adapterBinaryPath: string;
+                adapterEndpoint: string;
+                adapterPort: number;
+                dev: boolean;
+                buildBlockMode: 'Instant' | 'Manual' | 'Batch';
+                fork: string;
+                forkBlockNumber: string;
             },
             { run, config, userConfig },
         ) => {
@@ -173,14 +126,12 @@ task(TASK_NODE_POLKAVM, "Starts a JSON-RPC server for PolkaVM node")
                     fork,
                     forkBlockNumber,
                 },
-            )
+            );
 
-            const nodePath = nodeBinaryPath
-                ? nodeBinaryPath
-                : userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath
+            const nodePath = nodeBinaryPath ? nodeBinaryPath : userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath;
             const adapterPath = adapterBinaryPath
                 ? adapterBinaryPath
-                : userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath
+                : userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath;
 
             const server: RpcServer = await run(TASK_NODE_POLKAVM_CREATE_SERVER, {
                 nodePath,
@@ -189,6 +140,7 @@ task(TASK_NODE_POLKAVM, "Starts a JSON-RPC server for PolkaVM node")
 
             try {
                 await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (error: any) {
                 throw new PolkaVMNodePluginError(`Failed when running node: ${error.message}`)
             }
@@ -248,33 +200,35 @@ task(
                 ? userConfig.networks.hardhat.nodeConfig.rpcPort
                 : NODE_START_PORT,
             MAX_PORT_ATTEMPTS,
-        )
+        );
+
         const currentAdapterPort = await getAvailablePort(
             userConfig.networks?.hardhat?.adapterConfig?.adapterPort
                 ? userConfig.networks.hardhat.adapterConfig.adapterPort
                 : ETH_RPC_ADAPTER_START_PORT,
             MAX_PORT_ATTEMPTS,
-        )
+        );
 
         const nCommands: NodeConfig = Object.assign({}, userConfig.networks?.hardhat?.nodeConfig, {
             port: currentNodePort,
-        })
-        const aCommands: AdapterConfig = Object.assign(
-            {},
-            userConfig.networks?.hardhat?.adapterConfig,
-            { adapterPort: currentAdapterPort },
-        )
+        });
+        const aCommands: AdapterConfig = Object.assign({}, userConfig.networks?.hardhat?.adapterConfig, {
+            adapterPort: currentAdapterPort,
+        });
+
         const commandArgs = constructCommandArgs({
             forking: config.networks.hardhat.forking,
             forkBlockNumber: config.networks.hardhat.forking?.blockNumber,
             nodeCommands: nCommands,
             adapterCommands: aCommands,
-        })
+        });
+
 
         const server = new JsonRpcServer(
             userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath,
             userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath,
-        )
+        );
+
 
         try {
             await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false)
@@ -300,6 +254,7 @@ task(
 
             process.exitCode = testFailures
             return testFailures
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             throw new PolkaVMNodePluginError(`Failed when running node: ${error.message}`)
         }

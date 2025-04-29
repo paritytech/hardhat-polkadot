@@ -16,7 +16,7 @@ declare module "hardhat/types/config" {
     }
 
     interface HttpNetworkUserConfig {
-        polkavm?: boolean
+        polkavm?: boolean;
     }
 
     interface HardhatNetworkConfig {
@@ -28,7 +28,7 @@ declare module "hardhat/types/config" {
     }
 
     interface NetworksConfig {
-        polkavm?: boolean
+        polkavm?: boolean;
     }
 }
 
