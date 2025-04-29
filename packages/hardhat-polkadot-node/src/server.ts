@@ -28,7 +28,7 @@ export class JsonRpcServer implements RpcServer {
             const nodePort = nodePortArg ? parseInt(nodePortArg.split("=")[1], 10) : NODE_START_PORT
 
             if (blockProcess) {
-                console.info(chalk.green(`Starting server at 127.0.0.1:${nodePortArg}`))
+                console.info(chalk.green(`Starting server at 127.0.0.1:${nodePort}`))
                 console.info(
                     chalk.green(`Running command: ${nodeCommand} ${nodeCommandArgs.join(" ")}`),
                 )
