@@ -100,9 +100,11 @@ function printAsciiLogo() {
 }
 
 async function printWelcomeMessage() {
-    const packageJson = await getPackageJson();
+    const packageJson = await getPackageJson()
 
-    console.log(picocolors.cyan(`Welcome to ${HARDHAT_POLKADOT_NAME} v${packageJson.version}\n`));
+    console.log(
+        picocolors.cyan(`⭕️ Welcome to ${HARDHAT_POLKADOT_NAME} v${packageJson.version}\n ⭕️`),
+    )
 }
 
 async function copySampleProject(projectRoot: string, projectType: SampleProjectTypeCreationAction, isEsm: boolean) {
