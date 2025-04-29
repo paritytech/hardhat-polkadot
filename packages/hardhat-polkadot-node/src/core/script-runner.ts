@@ -58,12 +58,12 @@ export async function runScriptWithHardhat(
         config,
         scriptPath,
         scriptArgs,
-        [...extraNodeArgs, "--require", path.join(__dirname, "register")],
+        [...extraNodeArgs, '--require', path.join(__dirname, 'register')],
         {
             ...getEnvVariablesMap(hardhatArguments),
             ...extraEnvVars,
         },
-    )
+    );
 }
 
 function withFixedInspectArg(argv: string[]) {

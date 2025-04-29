@@ -15,11 +15,6 @@
     "publishConfig": {
         "access": "public"
     },
-    "files": [
-        "dist",
-        "README.md",
-        "LICENSE"
-    ],
     "types": "dist/index.d.ts",
     "exports": {
         ".": {
@@ -28,7 +23,16 @@
             "types": "./dist/index.d.ts"
         }
     },
-    "keywords": ["ethereum", "smart-contracts", "hardhat", "hardhat-plugin", "Polkadot"],
+    "bin": {
+        "hardhat-polkadot": "./dist/cli/index.js"
+    },
+    "keywords": [
+        "ethereum",
+        "smart-contracts",
+        "hardhat",
+        "hardhat-plugin",
+        "Polkadot"
+    ],
     "scripts": {
         "build": "tsc --build .",
         "build:dev": "tsc --build . --watch",
@@ -36,7 +40,15 @@
         "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
         "eslint:check": "eslint 'src/**/*.ts'"
     },
+    "files": [
+        "dist/src/",
+        "src/",
+        "!**/*.tsbuildinfo",
+        "LICENSE",
+        "README.md"
+    ],
     "dependencies": {
+        "@openzeppelin/contracts": "^5.3.0",
         "@parity/hardhat-polkadot-node": "workspace:^",
         "@parity/hardhat-polkadot-resolc": "workspace:^"
     },
@@ -48,6 +60,10 @@
         "@parity/hardhat-polkadot-resolc"
     ],
     "devDependencies": {
+        "@nomicfoundation/hardhat-ignition": "^0.15.11",
+        "@types/chai": "^5.2.1",
+        "chai": "^5.2.0",
+        "viem": "^2.27.2",
         "@eslint/js": "^9.25.1",
         "@types/node": "^22.15.3",
         "eslint": "^9.25.1",

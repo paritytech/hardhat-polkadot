@@ -1,8 +1,9 @@
-import { RunSuperFunction, TaskArguments } from "hardhat/types"
+import { HardhatRuntimeEnvironment, RunSuperFunction, TaskArguments } from "hardhat/types"
 import { GlobalWithHardhatContext } from "hardhat/src/internal/context"
 import { HARDHAT_NETWORK_NAME } from "hardhat/plugins"
 import { configureNetwork, startServer, waitForNodeToBeReady } from "../utils"
 import { PolkaVMTasksWithWrappedNode } from "./global-task"
+import { Environment } from "hardhat/internal/core/runtime-environment"
 
 export function interceptAndWrapTasksWithNode() {
     const polkaVMGlobal = global as PolkaVMTasksWithWrappedNode & GlobalWithHardhatContext
@@ -37,30 +38,31 @@ export function interceptAndWrapTasksWithNode() {
 
 async function wrapTaskWithNode(
     taskArgs: TaskArguments,
-    env: any,
+    env: HardhatRuntimeEnvironment,
     runSuper: RunSuperFunction<TaskArguments>,
 ) {
     if (env.network.polkavm !== true || env.network.name !== HARDHAT_NETWORK_NAME) {
         return await runSuper(taskArgs)
     }
-    const polkaVMGlobal = global as PolkaVMTasksWithWrappedNode
+    const polkaVMGlobal = global as PolkaVMTasksWithWrappedNode;
+
     const { commandArgs, server, port } = await startServer({
         forking: env.config.networks.hardhat.forking,
-        forkBlockNumber: env.config.networks.hardhat.forking.blockNumber,
-        nodeCommands: env.userConfig.networks.hardhat.nodeConfig,
-        adapterCommands: env.userConfig.networks.hardhat.adapterConfig,
-    })
+        forkBlockNumber: env.config.networks.hardhat.forking?.blockNumber,
+        nodeCommands: env.userConfig.networks?.hardhat?.nodeConfig,
+        adapterCommands: env.userConfig.networks?.hardhat?.adapterConfig,
+    });
     try {
-        await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false)
-        await waitForNodeToBeReady(port)
-        const oldNetwork = env.network
-        await configureNetwork(env.config, env.network, port)
-        env.injectToGlobal()
-        polkaVMGlobal._polkaVMNodeNetwork = env.network
-        const result = await runSuper(taskArgs)
-        env.network = oldNetwork
-        delete polkaVMGlobal._polkaVMNodeNetwork
-        env.injectToGlobal()
+        await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false);
+        await waitForNodeToBeReady(port);
+        const oldNetwork = env.network;
+        await configureNetwork(env.config, env.network, port);
+        (env as unknown as Environment).injectToGlobal();
+        polkaVMGlobal._polkaVMNodeNetwork = env.network;
+        const result = await runSuper(taskArgs);
+        (env as unknown as Environment).network = oldNetwork;
+        delete polkaVMGlobal._polkaVMNodeNetwork;
+        (env as unknown as Environment).injectToGlobal();
         return result
     } finally {
         await server.stop()
