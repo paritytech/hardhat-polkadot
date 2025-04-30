@@ -24,11 +24,11 @@ importers:
         specifier: ^5.3.0
         version: 5.3.0
       '@parity/hardhat-polkadot-node':
-        specifier: workspace:^
-        version: link:../hardhat-polkadot-node
+        specifier: ^0.1.0
+        version: 0.1.0(hardhat@2.22.19(ts-node@10.9.2(@types/node@22.15.3)(typescript@5.8.3))(typescript@5.8.3))
       '@parity/hardhat-polkadot-resolc':
-        specifier: workspace:^
-        version: link:../hardhat-polkadot-resolc
+        specifier: ^0.1.0
+        version: 0.1.0(hardhat@2.22.19(ts-node@10.9.2(@types/node@22.15.3)(typescript@5.8.3))(typescript@5.8.3))
       enquirer:
         specifier: 2.3.0
         version: 2.3.0
@@ -462,6 +462,16 @@ packages:
 
   '@openzeppelin/contracts@5.3.0':
     resolution: {integrity: sha512-zj/KGoW7zxWUE8qOI++rUM18v+VeLTTzKs/DJFkSzHpQFPD/jKKF0TrMxBfGLl3kpdELCNccvB3zmofSzm4nlA==}
+
+  '@parity/hardhat-polkadot-node@0.1.0':
+    resolution: {integrity: sha512-5VKg3BVLWMAquJQBmgAjX2oZbj+H1jZF7Hj75RNnMcexvk5fIEk2w3c6NSSbd1jjf+13oFczTsCW14tkAqePqw==}
+    peerDependencies:
+      hardhat: <2.23.0
+
+  '@parity/hardhat-polkadot-resolc@0.1.0':
+    resolution: {integrity: sha512-XZETfU6kIXlYHlzm1q0Ch69echpsGJlN+fDxalp32bwJCAS0H0xMqaFcFGYZymYD6RMOYxM3w4+/pjR2SC0qcQ==}
+    peerDependencies:
+      hardhat: <2.23.0
 
   '@parity/revive@0.0.21':
     resolution: {integrity: sha512-D1GCsw+wJ42P9XND1ZNPxeY7dnbKtLn1Zcqwe7JOXo1c3+BIx+YOnrtJKlZ0kWBVBpeH5XlRFzv58EUsBIEu9w==}
@@ -2398,6 +2408,39 @@ snapshots:
       '@nomicfoundation/solidity-analyzer-win32-x64-msvc': 0.1.2
 
   '@openzeppelin/contracts@5.3.0': {}
+
+  '@parity/hardhat-polkadot-node@0.1.0(hardhat@2.22.19(ts-node@10.9.2(@types/node@22.15.3)(typescript@5.8.3))(typescript@5.8.3))':
+    dependencies:
+      '@types/debug': 4.1.12
+      '@types/fs-extra': 11.0.4
+      '@types/mocha': 10.0.10
+      '@types/node': 22.15.3
+      axios: 1.9.0(debug@4.4.0)
+      chalk: 4.1.2
+      debug: 4.4.0(supports-color@8.1.1)
+      hardhat: 2.22.19(ts-node@10.9.2(@types/node@22.15.3)(typescript@5.8.3))(typescript@5.8.3)
+      ts-node: 10.9.2(@types/node@22.15.3)(typescript@5.8.3)
+      typescript: 5.8.3
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - supports-color
+
+  '@parity/hardhat-polkadot-resolc@0.1.0(hardhat@2.22.19(ts-node@10.9.2(@types/node@22.15.3)(typescript@5.8.3))(typescript@5.8.3))':
+    dependencies:
+      '@parity/revive': 0.0.21(debug@4.4.0)
+      '@types/debug': 4.1.12
+      '@types/node': 22.15.3
+      chalk: 4.1.2
+      debug: 4.4.0(supports-color@8.1.1)
+      hardhat: 2.22.19(ts-node@10.9.2(@types/node@22.15.3)(typescript@5.8.3))(typescript@5.8.3)
+      solc: 0.8.29(debug@4.4.0)
+      ts-node: 10.9.2(@types/node@22.15.3)(typescript@5.8.3)
+      typescript: 5.8.3
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - supports-color
 
   '@parity/revive@0.0.21(debug@4.4.0)':
     dependencies:
