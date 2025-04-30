@@ -29,9 +29,6 @@ importers:
       '@parity/hardhat-polkadot-resolc':
         specifier: workspace:^
         version: link:../hardhat-polkadot-resolc
-      '@types/fs-extra':
-        specifier: 5.1.0
-        version: 5.1.0
       enquirer:
         specifier: 2.3.0
         version: 2.3.0
@@ -54,6 +51,9 @@ importers:
       '@types/chai':
         specifier: ^5.2.1
         version: 5.2.1
+      '@types/fs-extra':
+        specifier: 5.1.0
+        version: 5.1.0
       '@types/node':
         specifier: ^22.15.3
         version: 22.15.3

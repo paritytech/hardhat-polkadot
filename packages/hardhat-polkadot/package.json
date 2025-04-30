@@ -51,7 +51,6 @@
         "@openzeppelin/contracts": "^5.3.0",
         "@parity/hardhat-polkadot-node": "workspace:^",
         "@parity/hardhat-polkadot-resolc": "workspace:^",
-        "@types/fs-extra": "5.1.0",
         "enquirer": "2.3.0",
         "find-up": "5.0.0",
         "picocolors": "^1.1.1"
@@ -64,6 +63,7 @@
         "@parity/hardhat-polkadot-resolc"
     ],
     "devDependencies": {
+        "@types/fs-extra": "5.1.0",
         "@eslint/js": "^9.25.1",
         "@nomicfoundation/hardhat-ignition": "^0.15.11",
         "@types/chai": "^5.2.1",
