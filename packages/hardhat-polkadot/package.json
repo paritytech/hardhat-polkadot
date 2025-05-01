@@ -10,7 +10,7 @@
         "type": "git",
         "url": "https://github.com/paritytech/hardhat-polkadot.git"
     },
-    "description": "Polkadot bundle of Hardhat plugins",
+    "description": "Use Hardhat with Polkadot all-in-one plugin",
     "main": "dist/index.js",
     "publishConfig": {
         "access": "public"
@@ -31,7 +31,7 @@
         "smart-contracts",
         "hardhat",
         "hardhat-plugin",
-        "Polkadot"
+        "polkadot"
     ],
     "scripts": {
         "build": "tsc --build .",
@@ -62,10 +62,10 @@
         "@parity/hardhat-polkadot-resolc"
     ],
     "devDependencies": {
-        "@types/fs-extra": "5.1.0",
         "@eslint/js": "^9.25.1",
         "@nomicfoundation/hardhat-ignition": "^0.15.11",
         "@types/chai": "^5.2.1",
+        "@types/fs-extra": "5.1.0",
         "@types/node": "^22.15.3",
         "chai": "^5.2.0",
         "eslint": "^9.25.1",
