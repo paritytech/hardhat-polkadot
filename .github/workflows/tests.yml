@@ -33,3 +33,33 @@ jobs:
           chmod +x run.sh
           ./run.sh
         shell: bash
+
+      - name: Build
+        run: pnpm build
+        
+      - name: pack hardhat-polkadot-resolc
+        run: pnpm pack
+        working-directory: "./packages/hardhat-polkadot-resolc"
+
+      - name: pack hardhat-polkadot-node
+        run: pnpm pack
+        working-directory: "./packages/hardhat-polkadot-node"
+
+      - name: pack hardhat-polkadot
+        run: pnpm pack
+        working-directory: "./packages/hardhat-polkadot"
+
+      - name: move_to
+        run: |
+          mkdir -p packs
+          cp ./packages/hardhat-polkadot-resolc/*.tgz packs/
+          cp ./packages/hardhat-polkadot-node/*.tgz packs/
+          cp ./packages/hardhat-polkadot/*.tgz packs/
+          ls -ltr packs
+
+      - name: Check tarballs
+        run: |
+          cd tests
+          chmod +x check-tarballs.sh
+          ./check-tarballs.sh ./packs/*.tgz
+        shell: bash

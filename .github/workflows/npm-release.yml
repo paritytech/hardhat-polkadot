@@ -30,15 +30,15 @@ jobs:
               run: pnpm build
               
             - name: pack hardhat-polkadot-resolc
-              run: npm pack
+              run: pnpm pack
               working-directory: "./packages/hardhat-polkadot-resolc"
 
             - name: pack hardhat-polkadot-node
-              run: npm pack
+              run: pnpm pack
               working-directory: "./packages/hardhat-polkadot-node"
 
             - name: pack hardhat-polkadot
-              run: npm pack
+              run: pnpm pack
               working-directory: "./packages/hardhat-polkadot"
 
             - name: move_to
