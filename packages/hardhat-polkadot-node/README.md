@@ -1,24 +1,45 @@
 # hardhat-polkadot-node
 Polkadot [Hardhat](https://hardhat.org/) plugin to run a mock in-memory node.
 
-### Compatibility
+## Compatibility
 - Not compatible with hardhat-only helpers, such as `time` and `loadFixture` from `@nomicfoundation/hardhat-toolbox/network-helpers`
 
-## Getting Started
+## Installation
 
-### Installation
+Using npm:
 
 ```bash
-npm install -D @parity/hardhat-polkadot-node  # npm
-yarn add -D @parity/hardhat-polkadot-node     # yarn
+$ npm install -D @parity/hardhat-polkadot-node
 ```
 
-### Commands
+Using yarn:
+
+```bash
+$ yarn add -D @parity/hardhat-polkadot-node 
+```
+
+Using pnpm:
+
+```bash
+$ pnpm add -D @parity/hardhat-polkadot-node 
+```
+
+## Configuration
+
+Import the package in the `hardhat.config.ts` file:
+
+```js
+...
+import "@parity/hardhat-polkadot-node";
+...
+```
+
+## Usage
 
 Run a local Polkadot from a binary and initializes a JSON-RPC server.  
 
 ```bash
-npx hardhat node
+$ npx hardhat node
 \ --node-binary-path /path/to/node 
 \ --adapter-binary-path /path/to/adapter
 ```
@@ -26,7 +47,7 @@ npx hardhat node
 Run a fork of a live Polkadot chain and initializes a JSON-RPC.
 
 ```bash
-npx hardhat node --fork wss://asset-hub-westend-rpc.dwellir.com 
+$ npx hardhat node --fork wss://asset-hub-westend-rpc.dwellir.com 
 \ --adapter-binary-path /path/to/adapter
 ```
 

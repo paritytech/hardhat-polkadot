@@ -25,14 +25,13 @@ Overview of currently available plugins and those on the roadmap.
 | [hardhat-polkadot-resolc](https://github.com/paritytech/hardhat-polkadot/tree/main/packages/hardhat-polkadot-resolc)           | Compiles solidity smart contracts for the Polkadot network, creating PolkaVM compatible hardhat artifacts.                              |
 | [hardhat-polkadot-node](https://github.com/paritytech/hardhat-polkadot/blob/main/packages/hardhat-polkadot-node/README.md)         | Run a Polkadot node locally 
 
-## Getting Started
+## Documentation
 
-* Find instructions in [Develop -> Smart Contracts -> Dev Environments -> Hardhat](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/)
+* See [Examples](https://github.com/paritytech/hardhat-polkadot/tree/main/examples).
 
-## Usage
+* Learn how to use Hardhat with Polkadot in [Develop -> Smart Contracts -> Dev Environments -> Hardhat](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/).
 
-* See [Examples](https://github.com/paritytech/hardhat-polkadot/tree/main/examples)
-* Get started from a boilerplate by running `npx hardhat-polkadot init`.
+* Follow tutorial in [Tutorials -> Smart Contracts -> Launch Your First Project -> Test and Deploy with Hardhat](https://papermoonio.github.io/polkadot-mkdocs/tutorials/smart-contracts/launch-your-first-project/test-and-deploy-with-hardhat/).
 
 ## Getting Help
 
