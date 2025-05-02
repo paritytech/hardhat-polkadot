@@ -34,7 +34,7 @@
         "Polkadot"
     ],
     "scripts": {
-        "build": "tsc --build .",
+        "build": "tsc",
         "build:dev": "tsc --build . --watch",
         "clean": "rimraf dist",
         "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",

@@ -1,0 +1,8 @@
+{
+    "files": [],
+    "references": [
+      { "path": "./hardhat-polkadot-resolc" },
+      { "path": "./hardhat-polkadot-node" }
+    ]
+  }
+  

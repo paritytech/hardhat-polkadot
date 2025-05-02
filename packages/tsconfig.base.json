@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "paths": {
+      "@parity/hardhat-polkadot-resolc": ["./hardhat-polkadot-resolc"],
+      "@parity/hardhat-polkadot-node": ["./hardhat-polkadot-node"],
+      "@parity/hardhat-polkadot": ["./hardhat-polkadot"]
+    }
+  }
+}
