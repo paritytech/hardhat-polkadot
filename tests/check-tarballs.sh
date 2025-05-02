@@ -11,9 +11,16 @@ for tarball in "$@"; do
         echo "❌ ERROR: $tarball contains entries with '..' in their paths!"
         tar -tzf "$tarball" | grep '\.\.'
         found_invalid=1
-    else
-        echo "✅ OK: $tarball"
     fi
+
+    echo "🧪 Dry run publish for $tarball..."
+    if ! npm publish "$tarball" --dry-run > /dev/null 2>&1; then
+        echo "❌ ERROR: npm dry run failed for $tarball"
+        found_invalid=1
+        continue
+    fi
+
+    echo "✅ OK: $tarball"
 done
 
 if [ "$found_invalid" -ne 0 ]; then
