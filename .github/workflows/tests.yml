@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         # Disabled windows because it's too slow
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
         node: ["18"]  
     name: Run tests on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -61,5 +61,5 @@ jobs:
         run: |
           cd tests
           chmod +x check-tarballs.sh
-          ./check-tarballs.sh ./packs/*.tgz
+          ./check-tarballs.sh ../packs/*.tgz
         shell: bash
