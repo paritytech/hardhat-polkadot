@@ -7,7 +7,7 @@ set -e
 cd ../packages/hardhat-polkadot
 pnpm install
 pnpm build
-HARDHAT_TGZ_FILE=$(npm pack | grep "hardhat-*.*.*.tgz")
+HARDHAT_TGZ_FILE=$(pnpm pack | grep "hardhat-*.*.*.tgz")
 HARDHAT_POLKADOT_PACKAGE_PATH="$(pwd)/$HARDHAT_TGZ_FILE"
 export HARDHAT_POLKADOT_PACKAGE_PATH
 cd - >/dev/null
