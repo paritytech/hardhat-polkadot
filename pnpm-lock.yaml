@@ -49,8 +49,8 @@ importers:
         specifier: ^0.15.11
         version: 0.15.11(@nomicfoundation/hardhat-verify@2.0.13(hardhat@2.22.19(ts-node@10.9.2(@types/node@22.15.3)(typescript@5.8.3))(typescript@5.8.3)))(hardhat@2.22.19(ts-node@10.9.2(@types/node@22.15.3)(typescript@5.8.3))(typescript@5.8.3))
       '@types/chai':
-        specifier: ^5.2.1
-        version: 5.2.1
+        specifier: ^5.2.2
+        version: 5.2.2
       '@types/fs-extra':
         specifier: 5.1.0
         version: 5.1.0
@@ -549,8 +549,8 @@ packages:
   '@types/bn.js@5.1.6':
     resolution: {integrity: sha512-Xh8vSwUeMKeYYrj3cX4lGQgFSF/N03r+tv4AiLl1SucqV+uTQpxRcnM8AkXKHwYP9ZPXOYXRr2KPXpVlIvqh9w==}
 
-  '@types/chai@5.2.1':
-    resolution: {integrity: sha512-iu1JLYmGmITRzUgNiLMZD3WCoFzpYtueuyAgHTXqgwSRAMIlFTnZqG6/xenkpUGRJEzSfklUTI4GNSzks/dc0w==}
+  '@types/chai@5.2.2':
+    resolution: {integrity: sha512-8kB30R7Hwqf40JPiKhVzodJs2Qc1ZJ5zuT3uzw5Hq/dhNCl3G3l83jfpdI1e20BP348+fV7VIL/+FxaXkqBmWg==}
 
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
@@ -2517,7 +2517,7 @@ snapshots:
     dependencies:
       '@types/node': 22.15.3
 
-  '@types/chai@5.2.1':
+  '@types/chai@5.2.2':
     dependencies:
       '@types/deep-eql': 4.0.2
 
