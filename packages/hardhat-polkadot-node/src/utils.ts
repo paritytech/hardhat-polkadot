@@ -48,8 +48,8 @@ export function constructCommandArgs(args?: CommandArguments, cliCommands?: CliC
             throw new PolkadotNodePluginError('Adapter and node cannot share the same port.');
         }
 
-        if (cliCommands.buildBlockMode && cliCommands.fork) {
-            nodeCommands.push(`--build-block-mode=${cliCommands.buildBlockMode}`);
+        if (cliCommands.fork) {
+            nodeCommands.push(`--build-block-mode=${cliCommands.buildBlockMode || 'Instant'}`);
         }
 
         if (cliCommands.dev) {
@@ -90,8 +90,8 @@ export function constructCommandArgs(args?: CommandArguments, cliCommands?: CliC
         ) {
             throw new PolkadotNodePluginError('Adapter and node cannot share the same port.');
         }
-        if (args.adapterCommands?.buildBlockMode && !cliCommands?.buildBlockMode) {
-            nodeCommands.push(`--build-block-mode=${args.adapterCommands.buildBlockMode}`);
+        if (args.forking && !cliCommands?.buildBlockMode) {
+            nodeCommands.push(`--build-block-mode=${args.adapterCommands?.buildBlockMode || 'Instant'}`);
         }
 
         if (args.nodeCommands?.nodeBinaryPath && args.nodeCommands.dev && !cliCommands?.dev) {
