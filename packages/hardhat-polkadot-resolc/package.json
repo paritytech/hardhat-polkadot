@@ -36,7 +36,7 @@
     "@parity/revive": "^0.0.21",
     "@types/debug": "^4",
     "@types/node": "^22.15.3",
-    "chalk": "4",
+    "chalk": "5",
     "debug": "^4.4.0",
     "solc": "^0.8.28",
     "ts-node": "^10.9.2",
