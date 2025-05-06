@@ -20,4 +20,6 @@ updates:
     labels:
       - "dependencies"
     versioning-strategy: increase
+    ignore:
+      - dependency-name: "chalk"
     
