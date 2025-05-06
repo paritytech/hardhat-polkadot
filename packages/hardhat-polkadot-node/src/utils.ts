@@ -90,8 +90,7 @@ export function constructCommandArgs(args?: CommandArguments, cliCommands?: CliC
         ) {
             throw new PolkadotNodePluginError('Adapter and node cannot share the same port.');
         }
-
-        if (args.adapterCommands?.buildBlockMode && !!cliCommands?.buildBlockMode) {
+        if (args.adapterCommands?.buildBlockMode && !cliCommands?.buildBlockMode) {
             nodeCommands.push(`--build-block-mode=${args.adapterCommands.buildBlockMode}`);
         }
 

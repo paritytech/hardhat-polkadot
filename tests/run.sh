@@ -4,13 +4,14 @@
 set -e
 
 # 1) build and export packages/hardhat-polkadot
-cd ../packages/hardhat-polkadot
+cd ..
 pnpm install
 pnpm build
-HARDHAT_TGZ_FILE=$(npm pack | grep "hardhat-*.*.*.tgz")
+cd ./packages/hardhat-polkadot
+HARDHAT_TGZ_FILE=$(pnpm pack | grep "hardhat-*.*.*.tgz")
 HARDHAT_POLKADOT_PACKAGE_PATH="$(pwd)/$HARDHAT_TGZ_FILE"
 export HARDHAT_POLKADOT_PACKAGE_PATH
-cd - >/dev/null
+cd ../../tests >/dev/null
 
 # 2) create a temporary directory to run the tests
 TMP_DIR=$(mktemp -d -t hardhat-polkadot.XXXXXXX)
