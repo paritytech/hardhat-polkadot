@@ -21,5 +21,10 @@
     "prettier": "^3.3.0",
     "typescript": "^5.8.3"
   },
-  "packageManager": "pnpm@9.3.0"
+  "packageManager": "pnpm@9.3.0",
+  "pnpm": {
+    "overrides": {
+      "@parity/revive>solc": "0.8.29"
+    }
+  }
 }
