@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@parity/revive>solc': 0.8.29
+
 importers:
 
   .:
@@ -152,7 +155,7 @@ importers:
         specifier: <2.23.0
         version: 2.22.19(ts-node@10.9.2(@types/node@22.15.3)(typescript@5.8.3))(typescript@5.8.3)
       solc:
-        specifier: ^0.8.28
+        specifier: 0.8.29
         version: 0.8.29(debug@4.4.0)
       ts-node:
         specifier: ^10.9.2
