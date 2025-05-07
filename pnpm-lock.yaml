@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@parity/revive>solc': 0.8.29
+
 importers:
 
   .:
