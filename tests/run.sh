@@ -5,8 +5,8 @@ set -e
 
 # 1) build and export packages/hardhat-polkadot
 cd ..
-pnpm install
-pnpm build
+pnpm install >/dev/null 2>&1
+pnpm build >/dev/null 2>&1
 cd ./packages/hardhat-polkadot
 HARDHAT_TGZ_FILE=$(pnpm pack | grep "hardhat-*.*.*.tgz")
 HARDHAT_POLKADOT_PACKAGE_PATH="$(pwd)/$HARDHAT_TGZ_FILE"
@@ -30,13 +30,8 @@ for file in ./e2e/*; do
         FILE_NAME=$(basename "$file")
         cp "$file" "$TMP_TESTS_DIR/$FILE_NAME"
         chmod +x "$TMP_TESTS_DIR/$FILE_NAME"
-        echo "[e2e] Running file $(basename "$file")"
         pushd "$TMP_TESTS_DIR" >/dev/null  # cd into the fixture folder, saving old dir
         ./"$FILE_NAME"  # run $file inside tmp
         popd >/dev/null # cd back to start
     fi
 done
-printf "\n[e2e] All E2E tests passed\n"
-
-# remove the temporary directory
-rm -fr $TMP_TESTS_DIR
