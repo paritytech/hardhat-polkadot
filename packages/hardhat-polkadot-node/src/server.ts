@@ -4,6 +4,7 @@ import chalk from "chalk"
 import { NODE_START_PORT, ETH_RPC_ADAPTER_START_PORT } from "./constants"
 import { RpcServer } from "./types"
 import { PolkadotNodePluginError } from "./errors"
+import { runSimple } from "run-container"
 
 export class JsonRpcServer implements RpcServer {
     private serverProcess: ChildProcess | null = null
@@ -15,15 +16,49 @@ export class JsonRpcServer implements RpcServer {
         private readonly adapterBinaryPath: string | undefined,
     ) {}
 
-    public listen(nodeArgs: string[] = [], adapterArgs: string[] = [], blockProcess: boolean = true): Promise<void> {
+    public listen(
+        nodeArgs: string[] = [],
+        adapterArgs: string[] = [],
+        blockProcess: boolean = true,
+    ): Promise<void> {
+        if (!this.nodeBinaryPath && !this.adapterBinaryPath) {
+            return (async () => {
+                await runSimple({
+                    image: "paritypr/eth-rpc:latest",
+                    autoRemove: true,
+                    ports: {
+                        [`${ETH_RPC_ADAPTER_START_PORT}/tcp`]: `${ETH_RPC_ADAPTER_START_PORT}`,
+                    },
+                    cmd: ["--dev", "--port", `${ETH_RPC_ADAPTER_START_PORT}`],
+                    verbose: true,
+                })
+                console.info(
+                    chalk.green(
+                        `Dockerized Eth-RPC Adapter on 127.0.0.1:${ETH_RPC_ADAPTER_START_PORT}`,
+                    ),
+                )
+
+                const substrateNode = await runSimple({
+                    image: "paritypr/substrate:latest",
+                    autoRemove: true,
+                    ports: { [`${NODE_START_PORT}/tcp`]: `${NODE_START_PORT}` },
+                    cmd: ["--dev", "--rpc-port", `${NODE_START_PORT}`],
+                    verbose: true,
+                })
+                console.info(
+                    chalk.green(`Dockerized Substrate node on 127.0.0.1:${NODE_START_PORT}`),
+                )
+
+                await substrateNode.wait()
+            })()
+        }
+
         return new Promise((resolve, reject) => {
             const nodeCommand =
-                this.nodeBinaryPath && nodeArgs.find((arg) => arg.startsWith('--forking='))
+                this.nodeBinaryPath && nodeArgs.find((arg) => arg.startsWith("--forking="))
                     ? this.nodeBinaryPath
-                    : nodeArgs[0];
-            const nodeCommandArgs = nodeArgs.slice(1);
-
-
+                    : nodeArgs[0]
+            const nodeCommandArgs = nodeArgs.slice(1)
             const nodePortArg = nodeArgs.find((arg) => arg.startsWith("--rpc-port="))
             const nodePort = nodePortArg ? parseInt(nodePortArg.split("=")[1], 10) : NODE_START_PORT
 
@@ -46,13 +81,15 @@ export class JsonRpcServer implements RpcServer {
             const adapterCommand = this.adapterBinaryPath
 
             if (!adapterCommand) {
-                throw new PolkadotNodePluginError('A path for the Eth RPC Adapter must be provided.');
+                throw new PolkadotNodePluginError(
+                    "A path for the Eth RPC Adapter must be provided.",
+                )
             }
 
-            const adapterPortArg = adapterArgs.find((arg) => arg.startsWith('--port='));
+            const adapterPortArg = adapterArgs.find((arg) => arg.startsWith("--port="))
             const adapterPort = adapterPortArg
-                ? parseInt(adapterPortArg.split('=')[1], 10)
-                : ETH_RPC_ADAPTER_START_PORT;
+                ? parseInt(adapterPortArg.split("=")[1], 10)
+                : ETH_RPC_ADAPTER_START_PORT
 
             this.adapterProcess = spawn(adapterCommand, adapterArgs, { stdio: stdioConfig })
 

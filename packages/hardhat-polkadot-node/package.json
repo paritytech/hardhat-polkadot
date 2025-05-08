@@ -28,6 +28,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "build:dev": "tsc --build . --watch",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
     "eslint:check": "eslint 'src/**/*.ts'"
@@ -40,15 +41,16 @@
     "axios": "1.9.0",
     "chalk": "4",
     "debug": "^4.4.0",
+    "run-container": "^2.0.12",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.1",
-    "rimraf": "^6.0.1",
     "eslint": "^9.25.1",
     "globals": "^16.0.0",
     "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
     "typescript-eslint": "^8.31.0"
   },
   "peerDependencies": {
