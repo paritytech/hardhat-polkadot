@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4 (2025-05-08)
+### Internal
+- Bumped `@parity/hardhat-polkadot-resolc` to `0.1.2`.
+
+
 ## 0.1.3 (2025-05-08)
 ### Bug Fixes
 - Patch to `hardhat ignition` to bypass `ethereumjs-tx`'s `checkMaxInitCodeSize`. ([#106](https://github.com/paritytech/hardhat-polkadot/pull/106)) ([ee53654](https://github.com/paritytech/hardhat-polkadot/commit/ee5365440e05eba338feb979f6e739468327c799))
