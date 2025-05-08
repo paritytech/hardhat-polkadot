@@ -1,10 +1,10 @@
-import { CompilerInput } from 'hardhat/types';
-import { CompiledOutput, ResolcConfig } from '../types';
+import type { CompilerInput } from 'hardhat/types';
+import type { CompiledOutput, ResolcConfig } from '../types';
 import { compileWithBinary } from './binary';
 import { compileWithNpm } from './npm';
 import { ResolcPluginError } from '../errors';
 import chalk from 'chalk';
-import { SolcOutput } from '@parity/resolc';
+import type { SolcOutput } from '@parity/resolc';
 
 export interface ICompiler {
     compile(input: CompilerInput, config: ResolcConfig): Promise<CompiledOutput | SolcOutput>
@@ -46,6 +46,6 @@ export class NpmCompiler implements ICompiler {
     constructor(public config: ResolcConfig) {}
 
     public async compile(input: CompilerInput) {
-        return await compileWithNpm(input)
+        return await compileWithNpm(input, this.config)
     }
 }

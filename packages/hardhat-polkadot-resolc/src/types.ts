@@ -1,4 +1,4 @@
-import { CompilerInput, SolcConfig } from "hardhat/types"
+import type { CompilerInput, SolcConfig } from "hardhat/types"
 
 type EvmVersions =
     | 'homestead'
