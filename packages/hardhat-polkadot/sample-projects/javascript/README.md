@@ -9,5 +9,5 @@ This project demonstrates how to use Hardhat with Polkadot. It comes with a samp
 ```shell
 npx hardhat test
 npx hardhat node
-npx hardhat node && npx hardhat ignition deploy ./ignition/modules/MyToken.js --network localhost
+npx hardhat node && npx hardhat ignition deploy ./ignition/modules/Lock.js --network localhost
 ```
