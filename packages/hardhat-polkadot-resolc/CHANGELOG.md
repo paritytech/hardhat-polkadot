@@ -1,6 +1,9 @@
 # Changelog
 
 ## 0.1.2 (2025-05-08)
+### Bug Fixes
+- Updated npm optimization input. ([#113](https://github.com/paritytech/hardhat-polkadot/pull/113)) ([7055ff1](https://github.com/paritytech/hardhat-polkadot/commit/7055ff11553ee24c8a024f4959d3c7d000ddbf35))
+
 ### Chores
 - Updates `@parity/resolc` to enable inputting optimization settings to npm compiler. ([#111](https://github.com/paritytech/hardhat-polkadot/pull/111)) ([65c38ed](https://github.com/paritytech/hardhat-polkadot/commit/65c38ed417f150bcceabe92678cd9df8e6369c06))
 
