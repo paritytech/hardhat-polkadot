@@ -1,10 +1,27 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "moduleResolution": "node",
+    "declaration": true,
+    "sourceMap": true,
+    "composite": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "useUnknownInCatchVariables": true,
+    "types": ["node"],
     "paths": {
       "@parity/hardhat-polkadot-resolc": ["./hardhat-polkadot-resolc"],
       "@parity/hardhat-polkadot-node": ["./hardhat-polkadot-node"],
       "@parity/hardhat-polkadot": ["./hardhat-polkadot"]
     }
-  }
+  },
+  "exclude": ["node_modules", "dist"]
 }

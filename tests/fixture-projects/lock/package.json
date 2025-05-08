@@ -2,5 +2,10 @@
     "name": "lock",
     "dependencies": {
         "@nomicfoundation/hardhat-ethers": "^3.0.8"
-    }
+    },
+    "pnpm": {
+        "overrides": {
+            "@parity/revive>solc": "0.8.29"
+        }
+  }
 }
