@@ -10,7 +10,21 @@ const _exec = promisify(execCb)
 export async function compileWithNpm(input: CompilerInput, config: ResolcConfig): Promise<SolcOutput> {
     const sources = resolveInputs(input.sources)
 
-    const out = compile(sources)
+    if (!!config.settings?.optimizer?.enabled) {
+        const optimizer = {
+            enabled: true,
+            mode: config.settings?.optimizer?.parameters,
+            fallback_to_optimizing_for_size: config.settings?.optimizer?.fallbackOz,
+            runs: config.settings?.optimizer?.runs
+        }
 
-    return out
+        const out = compile(sources, { optimizer })
+
+        return out
+
+    } else {
+        const out = compile(sources)
+
+        return out
+    }
 }
