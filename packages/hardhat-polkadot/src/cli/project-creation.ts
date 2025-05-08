@@ -9,7 +9,7 @@ import { fromEntries } from './lang';
 import { getPackageJson, getPackageRoot, PackageJson } from './packageInfo';
 import { pluralize } from './strings';
 import { confirmRecommendedDepsInstallation, confirmProjectCreation } from './prompt';
-import { Dependencies, PackageManager } from './types';
+import type { Dependencies, PackageManager } from './types';
 
 enum Action {
     CREATE_JAVASCRIPT_PROJECT_ACTION = 'Create a JavaScript project',

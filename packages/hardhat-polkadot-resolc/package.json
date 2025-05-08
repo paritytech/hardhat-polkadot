@@ -33,7 +33,7 @@
     "eslint:check": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
-    "@parity/revive": "^0.0.21",
+    "@parity/resolc": "0.1.0-dev.16",
     "@types/debug": "^4",
     "@types/node": "^22.15.3",
     "chalk": "4",
@@ -44,9 +44,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.25.1",
-    "rimraf": "^6.0.1",
     "eslint": "^9.25.1",
     "globals": "^16.0.0",
+    "rimraf": "^6.0.1",
     "typescript-eslint": "^8.31.0"
   },
   "peerDependencies": {

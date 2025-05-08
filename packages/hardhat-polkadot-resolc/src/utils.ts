@@ -1,6 +1,6 @@
-import { Artifact, CompilerInput } from 'hardhat/types';
+import type { Artifact, CompilerInput } from 'hardhat/types';
 import { ARTIFACT_FORMAT_VERSION } from 'hardhat/internal/constants';
-import { CompiledOutput, ResolcConfig, SolcConfigData } from './types';
+import type { CompiledOutput, ResolcConfig, SolcConfigData } from './types';
 import { COMPILER_RESOLC_NEED_EVM_CODEGEN } from './constants';
 import chalk from 'chalk';
 import { ResolcPluginError } from './errors';

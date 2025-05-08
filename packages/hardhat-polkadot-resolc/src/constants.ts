@@ -1,4 +1,4 @@
-import { ResolcConfig } from './types';
+import type { ResolcConfig } from './types';
 
 export const PLUGIN_NAME = 'hardhat-polkadot';
 export const RESOLC_ARTIFACT_FORMAT_VERSION = 'hh-resolc-artifact-1';

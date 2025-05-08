@@ -2,7 +2,7 @@
     "name": "test-compile",
     "pnpm": {
         "overrides": {
-            "@parity/revive>solc": "0.8.29"
+            "@parity/resolc>solc": "0.8.29"
         }
     }
 }

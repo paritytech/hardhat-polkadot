@@ -1,7 +1,7 @@
 import axios from 'axios';
 import net from 'net';
 import { createProvider } from 'hardhat/internal/core/providers/construction';
-import { HardhatConfig } from 'hardhat/types';
+import type { HardhatConfig } from 'hardhat/types';
 
 import {
     BASE_URL,
@@ -16,7 +16,7 @@ import {
     RPC_ENDPOINT_PATH,
 } from './constants';
 import { PolkadotNodePluginError } from './errors';
-import { CliCommands, CommandArguments, SplitCommands } from './types';
+import type { CliCommands, CommandArguments, SplitCommands } from './types';
 import { JsonRpcServer } from './server';
 
 export function constructCommandArgs(args?: CommandArguments, cliCommands?: CliCommands): SplitCommands {
