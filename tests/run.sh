@@ -6,6 +6,7 @@ set -e
 # 1) build and export packages/hardhat-polkadot
 cd ..
 pnpm install
+pnpm install --save-dev "hardhat@<2.23.0"
 pnpm build
 cd ./packages/hardhat-polkadot
 HARDHAT_TGZ_FILE=$(pnpm pack | grep "hardhat-*.*.*.tgz")
