@@ -22,6 +22,15 @@ export async function compileWithNpm(input: CompilerInput, config: ResolcConfig)
 
         return out
 
+    } else if (config.settings?.optimizer?.enabled === false) {
+        const optimizer = {
+            enabled: false,
+        }
+
+        const out = compile(sources, { optimizer })
+
+        return out
+        
     } else {
         const out = compile(sources)
 
