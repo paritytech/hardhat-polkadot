@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@parity/revive>solc': 0.8.29
+  '@parity/resolc>solc': 0.8.29
 
 importers:
 
@@ -136,9 +136,9 @@ importers:
 
   packages/hardhat-polkadot-resolc:
     dependencies:
-      '@parity/revive':
-        specifier: ^0.0.21
-        version: 0.0.21(debug@4.4.0)
+      '@parity/resolc':
+        specifier: 0.1.0-dev.16
+        version: 0.1.0-dev.16(debug@4.4.0)
       '@types/debug':
         specifier: ^4
         version: 4.1.12
@@ -472,8 +472,8 @@ packages:
   '@openzeppelin/contracts@5.3.0':
     resolution: {integrity: sha512-zj/KGoW7zxWUE8qOI++rUM18v+VeLTTzKs/DJFkSzHpQFPD/jKKF0TrMxBfGLl3kpdELCNccvB3zmofSzm4nlA==}
 
-  '@parity/revive@0.0.21':
-    resolution: {integrity: sha512-D1GCsw+wJ42P9XND1ZNPxeY7dnbKtLn1Zcqwe7JOXo1c3+BIx+YOnrtJKlZ0kWBVBpeH5XlRFzv58EUsBIEu9w==}
+  '@parity/resolc@0.1.0-dev.16':
+    resolution: {integrity: sha512-ozqRv3FoZBV1XulpmBMab33Lv/SPkqnw/H+QQ3EeaMw18V/JM1VMV0MnLMHQH24k4F1fLBxM0Q84dw7iO3V3OA==}
     hasBin: true
 
   '@pnpm/config.env-replace@1.1.0':
@@ -2408,7 +2408,7 @@ snapshots:
 
   '@openzeppelin/contracts@5.3.0': {}
 
-  '@parity/revive@0.0.21(debug@4.4.0)':
+  '@parity/resolc@0.1.0-dev.16(debug@4.4.0)':
     dependencies:
       '@types/node': 22.15.3
       commander: 13.1.0

@@ -4,7 +4,7 @@ import { compileWithBinary } from './binary';
 import { compileWithNpm } from './npm';
 import { ResolcPluginError } from '../errors';
 import chalk from 'chalk';
-import { SolcOutput } from '@parity/revive';
+import { SolcOutput } from '@parity/resolc';
 
 export interface ICompiler {
     compile(input: CompilerInput, config: ResolcConfig): Promise<CompiledOutput | SolcOutput>

@@ -1,7 +1,7 @@
 import { exec as execCb } from 'child_process';
 import { promisify } from 'util';
-import { compile, resolveInputs } from '@parity/revive';
-import type { SolcOutput } from '@parity/revive';
+import { compile, resolveInputs } from '@parity/resolc';
+import type { SolcOutput } from '@parity/resolc';
 import { CompilerInput } from 'hardhat/types';
 
 const _exec = promisify(execCb)

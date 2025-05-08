@@ -11,7 +11,7 @@ updates:
     groups:
       parity:
         patterns:
-          - "@parity/revive"
+          - "@parity/resolc"
     commit-message:
       # Prefix all commit messages with "chore"
       # include a list of updated dependencies
