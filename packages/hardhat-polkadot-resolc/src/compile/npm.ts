@@ -7,7 +7,7 @@ import type { ResolcConfig } from 'src/types';
 
 const _exec = promisify(execCb)
 
-export async function compileWithNpm(input: CompilerInput): Promise<SolcOutput> {
+export async function compileWithNpm(input: CompilerInput, config: ResolcConfig): Promise<SolcOutput> {
     const sources = resolveInputs(input.sources)
 
     const out = compile(sources)

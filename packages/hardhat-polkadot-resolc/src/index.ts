@@ -18,7 +18,7 @@ import debug from 'debug';
 import { defaultNpmResolcConfig, defaultBinaryResolcConfig, RESOLC_ARTIFACT_FORMAT_VERSION } from './constants';
 import { extendEnvironment, extendConfig, subtask, task } from 'hardhat/internal/core/config/config-env';
 import { Artifacts } from 'hardhat/internal/artifacts';
-import {
+import type {
     ArtifactsEmittedPerFile,
     CompilationJob,
     CompilerInput,
@@ -34,7 +34,7 @@ import { compile } from './compile';
 import chalk from 'chalk';
 import fs from 'fs';
 import './type-extensions';
-import { ReviveCompilerInput } from './types';
+import type { ReviveCompilerInput } from './types';
 
 const logDebug = debug('hardhat:core:tasks:compile');
 
