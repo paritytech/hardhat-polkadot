@@ -1,6 +1,6 @@
 import { exec } from "child_process"
-import { CompiledOutput, ContractBatch, ContractSource, ResolcConfig } from "../types"
-import { CompilerInput } from "hardhat/types"
+import type { CompiledOutput, ContractBatch, ContractSource, ResolcConfig } from "../types"
+import type { CompilerInput } from "hardhat/types"
 import { deepUpdate, extractCommands, mapImports, orderSources } from "../utils"
 
 export async function compileWithBinary(input: CompilerInput, config: ResolcConfig): Promise<CompiledOutput> {

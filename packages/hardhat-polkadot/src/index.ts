@@ -1,5 +1,8 @@
-import "@parity/hardhat-polkadot-node"
-import "@parity/hardhat-polkadot-resolc"
+import { ignitionPatch } from "./ignitionPatch";
+ignitionPatch()
 
-export * from "@parity/hardhat-polkadot-node"
-export * from "@parity/hardhat-polkadot-resolc"
+import "@parity/hardhat-polkadot-node";
+import "@parity/hardhat-polkadot-resolc";
+
+export * from "@parity/hardhat-polkadot-node";
+export * from "@parity/hardhat-polkadot-resolc";

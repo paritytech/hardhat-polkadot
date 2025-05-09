@@ -1,4 +1,4 @@
-import { CompilerInput, SolcConfig } from "hardhat/types"
+import type { CompilerInput, SolcConfig } from "hardhat/types"
 
 type EvmVersions =
     | 'homestead'
@@ -43,7 +43,9 @@ export interface ResolcConfig {
             // Set the optimization parameter. Use `3` for best performance and `z` for minimal size. Defaults to `3`
             parameters?: "0" | "1" | "2" | "3" | "s" | "z"
             // Try to recompile with -Oz if the bytecode is too large.
-            fallbackOz?: boolean
+            fallbackOz?: boolean,
+            // How many times runs the optimizer
+            runs?: number,
         }
         // Specify the path to the `solc` executable.
         solcPath?: string
