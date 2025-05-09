@@ -38,7 +38,7 @@
         "build:dev": "tsc --build . --watch",
         "clean": "rimraf dist tsconfig.tsbuildinfo",
         "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
-        "eslint:check": "eslint 'src/**/*.ts'"
+        "eslint:check": "eslint --no-ignore --max-warnings=0 'src/**/*.ts'"
     },
     "files": [
         "dist/",
@@ -50,8 +50,10 @@
     ],
     "dependencies": {
         "@openzeppelin/contracts": "^5.3.0",
+        "@typescript-eslint/eslint-plugin": "^8.32.0",
         "enquirer": "2.3.0",
         "find-up": "5.0.0",
+        "fs-extra": "^11.3.0",
         "picocolors": "^1.1.1"
     },
     "peerDependencies": {
@@ -71,6 +73,7 @@
         "@types/node": "^22.15.3",
         "chai": "^5.2.0",
         "eslint": "^9.25.1",
+        "eslint-plugin-import": "^2.31.0",
         "globals": "^16.0.0",
         "rimraf": "^6.0.1",
         "typescript": "^5.8.3",
