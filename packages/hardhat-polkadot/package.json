@@ -66,7 +66,7 @@
     "devDependencies": {
         "@eslint/js": "^9.25.1",
         "@nomicfoundation/hardhat-ignition": "^0.15.11",
-        "@types/chai": "^5.2.1",
+        "@types/chai": "^5.2.2",
         "@types/fs-extra": "5.1.0",
         "@types/node": "^22.15.3",
         "chai": "^5.2.0",
