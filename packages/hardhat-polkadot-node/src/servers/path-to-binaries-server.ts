@@ -1,19 +1,19 @@
 import { spawn, ChildProcess, StdioOptions } from "child_process"
 import chalk from "chalk"
-
-import { NODE_START_PORT, ETH_RPC_ADAPTER_START_PORT } from "./constants"
-import { RpcServer } from "./types"
-import { PolkadotNodePluginError } from "./errors"
 import { runSimple } from "run-container"
 
-export class JsonRpcServer implements RpcServer {
+import { NODE_START_PORT, ETH_RPC_ADAPTER_START_PORT } from "../constants"
+import { RpcServer } from "../types"
+import { PolkadotNodePluginError } from "../errors"
+
+export class PathToBinariesRpcServer implements RpcServer {
     private serverProcess: ChildProcess | null = null
     private adapterProcess: ChildProcess | null = null
     private serverPort: number | null = null
 
     constructor(
-        private readonly nodeBinaryPath: string | undefined,
-        private readonly adapterBinaryPath: string | undefined,
+        private readonly nodeBinaryPath: string,
+        private readonly adapterBinaryPath: string,
     ) {}
 
     public listen(
@@ -21,38 +21,6 @@ export class JsonRpcServer implements RpcServer {
         adapterArgs: string[] = [],
         blockProcess: boolean = true,
     ): Promise<void> {
-        if (!this.nodeBinaryPath && !this.adapterBinaryPath) {
-            return (async () => {
-                await runSimple({
-                    image: "paritypr/eth-rpc:latest",
-                    autoRemove: true,
-                    ports: {
-                        [`${ETH_RPC_ADAPTER_START_PORT}/tcp`]: `${ETH_RPC_ADAPTER_START_PORT}`,
-                    },
-                    cmd: ["--dev", "--port", `${ETH_RPC_ADAPTER_START_PORT}`],
-                    verbose: true,
-                })
-                console.info(
-                    chalk.green(
-                        `Dockerized Eth-RPC Adapter on 127.0.0.1:${ETH_RPC_ADAPTER_START_PORT}`,
-                    ),
-                )
-
-                const substrateNode = await runSimple({
-                    image: "paritypr/substrate:latest",
-                    autoRemove: true,
-                    ports: { [`${NODE_START_PORT}/tcp`]: `${NODE_START_PORT}` },
-                    cmd: ["--dev", "--rpc-port", `${NODE_START_PORT}`],
-                    verbose: true,
-                })
-                console.info(
-                    chalk.green(`Dockerized Substrate node on 127.0.0.1:${NODE_START_PORT}`),
-                )
-
-                await substrateNode.wait()
-            })()
-        }
-
         return new Promise((resolve, reject) => {
             const nodeCommand =
                 this.nodeBinaryPath && nodeArgs.find((arg) => arg.startsWith("--forking="))

@@ -54,7 +54,8 @@
         "enquirer": "2.3.0",
         "find-up": "5.0.0",
         "fs-extra": "^11.3.0",
-        "picocolors": "^1.1.1"
+        "picocolors": "^1.1.1",
+        "run-container": "^2.0.12"
     },
     "peerDependencies": {
         "@parity/hardhat-polkadot-node": "workspace:^",
