@@ -44,7 +44,6 @@ export class DockerRpcServer implements RpcServer {
         await this.pruneContainerByName(NODE_CONTAINER_NAME)
 
         // start both containers
-
         this.nodeContainer = await runSimple({
             name: NODE_CONTAINER_NAME,
             image: "paritypr/substrate:8492-286a9fd2",
@@ -64,6 +63,7 @@ export class DockerRpcServer implements RpcServer {
                 [`${adapterPort}/tcp`]: `${adapterPort}`,
             },
             cmd: [
+                "--dev",
                 "--rpc-port",
                 `${adapterPort}`,
                 "--node-rpc-url",
