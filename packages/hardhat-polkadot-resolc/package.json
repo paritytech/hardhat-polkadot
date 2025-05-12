@@ -27,7 +27,7 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --build .",
     "build:dev": "tsc --build . --watch",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",

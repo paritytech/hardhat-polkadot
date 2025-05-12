@@ -27,7 +27,7 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --build .",
     "build:dev": "tsc --build . --watch",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
@@ -58,6 +58,6 @@
     "typescript-eslint": "^8.31.0"
   },
   "peerDependencies": {
-    "hardhat": "<2.23.0"
+    "hardhat": "2.24.0"
   }
 }
