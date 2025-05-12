@@ -71,7 +71,6 @@ task(TASK_NODE, "Start a Polkadot Node").setAction(
             return await runSuper()
         }
 
-        console.log("Starting Polkadot node...")
         await run(TASK_NODE_POLKADOT, args)
     },
 )

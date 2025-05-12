@@ -146,10 +146,8 @@ export async function waitForNodeToBeReady(
     adapter: boolean = false,
     maxAttempts: number = 20,
 ): Promise<void> {
-    console.log("port", port)
     const rpcEndpoint = `http://127.0.0.1:${port}`
     const payload = setPayload(adapter)
-    console.log("payload", payload)
     let attempts = 0
     let waitTime = 1000
     const backoffFactor = 2
@@ -158,7 +156,7 @@ export async function waitForNodeToBeReady(
     while (attempts < maxAttempts) {
         try {
             const response = await axios.post(rpcEndpoint, payload)
-            console.log("response", response)
+
             if (response.status == 200) {
                 return
             }
