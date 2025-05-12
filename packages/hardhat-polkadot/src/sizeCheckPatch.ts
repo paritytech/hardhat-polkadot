@@ -2,12 +2,12 @@ import Module from "module";
 import path from "path";
 
 
-function isIgnitionDeploy() {
-    return process.argv.includes('ignition') && process.argv.includes('deploy');
+function needsPatch() {
+    return (process.argv.includes('ignition') && process.argv.includes('deploy')) || process.argv.includes('test');
 }
 
-export function ignitionPatch() {
-    if (!isIgnitionDeploy()) {
+export function sizeCheckPatch() {
+    if (!needsPatch()) {
         return;
     }
     const originalLoad = (Module as any)._load;
@@ -49,5 +49,3 @@ export function ignitionPatch() {
         process.exit();
     });
 }
-
-ignitionPatch();

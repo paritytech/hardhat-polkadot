@@ -1,5 +1,5 @@
-import { ignitionPatch } from "./ignitionPatch";
-ignitionPatch()
+import { sizeCheckPatch } from "./sizeCheckPatch";
+sizeCheckPatch()
 
 import "@parity/hardhat-polkadot-node";
 import "@parity/hardhat-polkadot-resolc";
