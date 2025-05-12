@@ -203,9 +203,28 @@ async function printRecommendedDepsInstallationInstructions(projectType: SampleP
 }
 
 // exported so we can test that it uses the latest supported version of solidity
-export const EMPTY_HARDHAT_CONFIG = `/** @type import('hardhat/config').HardhatUserConfig */
+export const EMPTY_HARDHAT_CONFIG = `require('@parity/hardhat-polkadot');
+
+/** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: "0.8.28",
+  resolc: {
+        compilerSource: 'npm',
+    },
+    networks: {
+        hardhat: {
+            polkavm: true,
+            nodeConfig: {
+                nodeBinaryPath: './bin/substrate-node',
+                dev: true,
+                rpcPort: 8000
+            },
+            adapterConfig: {
+                adapterBinaryPath: './bin/eth-rpc',
+                dev: true,
+            },
+        },
+    }
 };
 `;
 
