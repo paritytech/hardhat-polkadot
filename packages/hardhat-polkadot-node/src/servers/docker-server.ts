@@ -58,7 +58,7 @@ export class DockerRpcServer implements RpcServer {
         this.adapterContainer = await runSimple({
             name: ADAPTER_CONTAINER_NAME,
             image: "paritypr/eth-rpc:master-f331a447",
-            autoRemove: false,
+            autoRemove: true,
             ports: {
                 [`${adapterPort}/tcp`]: `${adapterPort}`,
             },

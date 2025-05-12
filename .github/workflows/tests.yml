@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         # Disabled windows because it's too slow
-        os: [macos-latest]
+        os: [macos-latest, ubuntu-latest]
         node: ["18"]  
     name: Run tests on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}

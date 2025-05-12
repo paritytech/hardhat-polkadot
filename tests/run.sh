@@ -5,8 +5,8 @@ set -e
 
 # 1) build and export packages/hardhat-polkadot
 cd ..
-pnpm install >/dev/null 2>&1
-pnpm build >/dev/null 2>&1
+pnpm install
+pnpm build
 cd ./packages/hardhat-polkadot
 HARDHAT_TGZ_FILE=$(pnpm pack | grep "hardhat-*.*.*.tgz")
 HARDHAT_POLKADOT_PACKAGE_PATH="$(pwd)/$HARDHAT_TGZ_FILE"

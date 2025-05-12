@@ -1,8 +1,6 @@
 {
     "name": "foo",
-    "pnpm": {
-        "overrides": {
-            "@parity/resolc>solc": "0.8.29"
-        }
+    "dependencies": {
+        "hardhat": "<2.23.0"
     }
 }
