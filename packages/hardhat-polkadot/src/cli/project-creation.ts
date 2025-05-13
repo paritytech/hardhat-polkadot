@@ -33,7 +33,7 @@ const ETHERS_PROJECT_DEPENDENCIES: Dependencies = {
 };
 
 const PEER_DEPENDENCIES: Dependencies = {
-    hardhat: '^2.24.0',
+    hardhat: '<2.23.0',
     '@nomicfoundation/hardhat-verify': '^2.0.0',
     chai: '^4.2.0',
     'hardhat-gas-reporter': '^1.0.8',
