@@ -6,11 +6,11 @@ set -e
 # 1) build and export packages/hardhat-polkadot
 cd ..
 pnpm install
-pnpm build
+pnpm run build
 cd ./packages/hardhat-polkadot
-HARDHAT_TGZ_FILE=$(pnpm pack | grep "hardhat-*.*.*.tgz")
-HARDHAT_POLKADOT_PACKAGE_PATH="$(pwd)/$HARDHAT_TGZ_FILE"
-export HARDHAT_POLKADOT_PACKAGE_PATH
+./prepack.sh # run prepack script
+HARDHAT_POLKADOT_TGZ=$(pnpm pack --silent | grep "parity-hardhat-polkadot-*.*.*.tgz")
+export HARDHAT_POLKADOT_TGZ_PATH="$(pwd)/$HARDHAT_POLKADOT_TGZ"
 cd ../../tests >/dev/null
 
 # 2) create a temporary directory to run the tests
@@ -21,7 +21,7 @@ cp helpers.sh $TMP_TESTS_DIR/helpers.sh  # copy the helper script
 
 # 3) print relevant info
 printf "Package manager version: npm version $(npm --version)\n"
-printf "@parity/hardhat-polkadot package in $HARDHAT_POLKADOT_PACKAGE_PATH\n"
+printf "@parity/hardhat-polkadot package in $HARDHAT_POLKADOT_TGZ_PATH\n"
 printf "Running tests in $TMP_TESTS_DIR\n\n"
 
 # 4) run the E2E tests

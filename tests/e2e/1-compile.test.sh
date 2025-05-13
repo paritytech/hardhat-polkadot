@@ -6,8 +6,8 @@ set -e # Fail if any command fails
 # Given
 cp ./basic-compile.config.js ./foo/hardhat.config.js # relative to tmp folder
 cd ./foo # relative to tmp folder
-npm add $HARDHAT_POLKADOT_PACKAGE_PATH >/dev/null 2>&1
-npm install >/dev/null 2>&1 # install modules specified in the package.json
+npm add $HARDHAT_POLKADOT_TGZ_PATH
+npm install # install modules specified in the package.json
 
 # When
 run_test_and_handle_failure "npx hardhat compile" 0
