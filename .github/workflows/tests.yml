@@ -26,6 +26,8 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: pnpm
+      
+      - uses: docker/setup-buildx-action@v3
 
       - name: Run tests
         run: |
