@@ -8,6 +8,7 @@
 ### Internal
 - Bumped `@parity/hardhat-polkadot-resolc` to `0.1.3`.
 
+
 ## 0.1.4 (2025-05-08)
 ### Internal
 - Bumped `@parity/hardhat-polkadot-resolc` to `0.1.2`.
