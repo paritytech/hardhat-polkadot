@@ -6,8 +6,8 @@ set -e # Fail if any command fails
 # Given
 cp ./simple-local-test-deploy.config.js ./lock/hardhat.config.js
 cd ./lock # relative to tmp folder
-npm add $HARDHAT_POLKADOT_PACKAGE_PATH >/dev/null 2>&1
-npm install >/dev/null 2>&1 # install modules specified in the package.json
+npm add $HARDHAT_POLKADOT_TGZ_PATH
+npm install # install modules specified in the package.json
 npx hardhat node > hardhat-node.log 2>&1 & # Start the Hardhat node in the background
 HARDHAT_NODE_PID=$!
 while ! grep -q "Imported #5" hardhat-node.log; do  # Wait until producing blocks appears
