@@ -49,6 +49,6 @@
     "typescript-eslint": "^8.31.0"
   },
   "peerDependencies": {
-    "hardhat": "^2.24.0"
+    "hardhat": "<2.23.0"
   }
 }
