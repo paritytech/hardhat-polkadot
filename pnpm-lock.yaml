@@ -103,7 +103,7 @@ importers:
         specifier: ^4.4.0
         version: 4.4.0(supports-color@8.1.1)
       hardhat:
-        specifier: ^2.23.0
+        specifier: ^2.24.0
         version: 2.24.0(ts-node@10.9.2(@types/node@22.15.3)(typescript@5.8.3))(typescript@5.8.3)
       ts-node:
         specifier: ^10.9.2
