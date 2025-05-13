@@ -10,7 +10,7 @@ npm add $HARDHAT_POLKADOT_TGZ_PATH
 npm install # install modules specified in the package.json
 
 # When
-npx hardhat test  > test.log 2>&1
+npx hardhat test | tee test.log
 RUN_TESTS_OUTPUT=$(<test.log)
 
 # Then
