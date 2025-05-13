@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.5 (2025-05-13)
+### Bug Fixes
+- Update empty config file creation. ([#117](https://github.com/paritytech/hardhat-polkadot/pull/117)) ([4ac6133](https://github.com/paritytech/hardhat-polkadot/commit/4ac6133d54bd57c2e5462531558c0e475d666811))
+- Extends size check patch usage. ([#116](https://github.com/paritytech/hardhat-polkadot/pull/116)) ([c753764](https://github.com/paritytech/hardhat-polkadot/commit/c753764f3c7de159a9e1b1927e86907e8180c945))
+
+### Internal
+- Bumped `@parity/hardhat-polkadot-resolc` to `0.1.3`.
+
 ## 0.1.4 (2025-05-08)
 ### Internal
 - Bumped `@parity/hardhat-polkadot-resolc` to `0.1.2`.
