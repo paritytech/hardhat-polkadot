@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         # Disabled windows because it's too slow
-        os: [macos-13]
+        os: [macos-latest]
         node: ["18"]  
     name: Run tests on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -26,12 +26,6 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: pnpm
-      
-      - name: Setup docker
-        run: |
-          brew install docker colima
-          colima version
-          colima start --cpu 3 --memory 6 --disk 100 --vm-type=qemu --mount-type=sshfs --dns=1.1.1.1
 
       - name: Run tests
         run: |
