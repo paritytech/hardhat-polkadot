@@ -1,5 +1,5 @@
 import chalk from "chalk"
-import { runSimple, run } from "run-container"
+import { runSimple } from "run-container"
 import Docker from "dockerode"
 
 import { NODE_START_PORT, ETH_RPC_ADAPTER_START_PORT } from "../constants"
@@ -87,6 +87,7 @@ export class DockerRpcServer implements RpcServer {
                         stdout: true,
                         stderr: true,
                     })
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     ;(this.nodeContainer as any).modem.demuxStream(
                         stream as NodeJS.ReadableStream,
                         process.stdout,
@@ -100,10 +101,10 @@ export class DockerRpcServer implements RpcServer {
 
     public async stop(): Promise<void> {
         const dockerProcesses: Promise<unknown>[] = []
-        if (!!this.adapterContainer) {
+        if (this.adapterContainer) {
             dockerProcesses.push(this.adapterContainer.remove({ force: true }))
         }
-        if (!!this.nodeContainer) {
+        if (this.nodeContainer) {
             dockerProcesses.push(this.nodeContainer.remove({ force: true }))
         }
         await Promise.all(dockerProcesses)

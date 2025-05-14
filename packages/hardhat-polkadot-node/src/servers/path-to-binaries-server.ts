@@ -1,6 +1,5 @@
 import { spawn, ChildProcess, StdioOptions } from "child_process"
 import chalk from "chalk"
-import { runSimple } from "run-container"
 
 import { NODE_START_PORT, ETH_RPC_ADAPTER_START_PORT } from "../constants"
 import { RpcServer } from "../types"
