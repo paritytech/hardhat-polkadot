@@ -71,8 +71,9 @@
         "@types/node": "^22.15.3",
         "chai": "^5.2.0",
         "eslint": "^9.25.1",
+        "eslint-plugin-import": "^2.31.0",
         "globals": "^16.0.0",
-        "rimraf": "^6.0.1",
+        "rimraf": "^3.0.2",
         "typescript": "^5.8.3",
         "typescript-eslint": "^8.31.0",
         "viem": "^2.27.2"

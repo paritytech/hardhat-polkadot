@@ -1,0 +1,56 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    permissions:
+        contents: read
+    steps:
+        - uses: actions/checkout@v3 
+        - uses: pnpm/action-setup@v3
+        - uses: actions/setup-node@v3 
+          with:
+            node-version: 18
+            cache: pnpm
+
+        - name: Install dependencies
+          run: | 
+            pnpm install --frozen-lockfile --prefer-offline && \
+            pnpm add -Dw globals                                           # will invoke your root-script; keeps cache hits intact
+
+        - name: Run linter
+          run: |
+            pnpm --filter @parity/hardhat-polkadot-node run eslint:check && \
+            pnpm --filter @parity/hardhat-polkadot-node run prettier:check
+
+  comment-on-failure:
+    needs: [lint]
+    if: failure() && github.event_name == 'pull_request_target' && needs.lint.result == 'failure'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+    - uses: actions/github-script@v7
+      name: Comment on failure
+      with:
+        script: |
+            github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: "Thanks for submitting this PR!\n\nUnfortunately, it has some linter errors, so we can't merge it yet. Can you please fix them?\n\nRunning pnpm lint:fix in the root of the repository may fix them automatically."
+            })

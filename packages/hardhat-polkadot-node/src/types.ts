@@ -1,4 +1,4 @@
-import { HardhatNetworkForkingUserConfig } from 'hardhat/types';
+import { HardhatNetworkForkingUserConfig } from "hardhat/types"
 
 export interface CliCommands {
     nodeBinaryPath?: string
@@ -34,8 +34,8 @@ export interface CommandArguments {
 }
 
 export interface RpcServer {
-    listen(chopsticksArgs?: string[], adapterArgs?: string[], blockProcess?: boolean): Promise<void>;
-    stop(): Promise<void>;
+    listen(chopsticksArgs?: string[], adapterArgs?: string[], blockProcess?: boolean): Promise<void>
+    stop(): Promise<void>
 }
 
 export interface SplitCommands {

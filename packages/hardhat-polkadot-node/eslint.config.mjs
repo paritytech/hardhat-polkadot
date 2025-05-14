@@ -1,23 +1,3 @@
-import globals from 'globals';
-import pluginJs from '@eslint/js';
-import tseslint from 'typescript-eslint';
+import baseConfig from "../eslint.base.mjs"
 
-/** @type {import('eslint').Linter.Config[]} */
-export default [
-    {
-        files: ['**/*.{mjs,ts}'],
-        rules: {
-            "@typescript-eslint/no-unused-vars": [
-                "warn",
-                {
-                    argsIgnorePattern: "^_",
-                    varsIgnorePattern: "^_",
-                    caughtErrorsIgnorePattern: '^_'
-                }
-            ]
-        }
-    },
-    { languageOptions: { globals: globals.browser } },
-    pluginJs.configs.recommended,
-    ...tseslint.configs.recommended,
-];
+export default [...baseConfig]

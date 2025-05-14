@@ -2,8 +2,8 @@ import { isRunningHardhatCoreTests } from "hardhat/internal/core/execution-mode"
 import { HardhatArguments } from "hardhat/types"
 import { getEnvVariablesMap } from "hardhat/internal/core/params/env-variables"
 import path from "path"
-import { startServer, waitForNodeToBeReady } from "../utils"
 import { CommandArguments } from "src/types"
+import { startServer, waitForNodeToBeReady } from "../utils"
 
 export async function runScript(
     config: CommandArguments,
@@ -58,12 +58,12 @@ export async function runScriptWithHardhat(
         config,
         scriptPath,
         scriptArgs,
-        [...extraNodeArgs, '--require', path.join(__dirname, 'register')],
+        [...extraNodeArgs, "--require", path.join(__dirname, "register")],
         {
             ...getEnvVariablesMap(hardhatArguments),
             ...extraEnvVars,
         },
-    );
+    )
 }
 
 function withFixedInspectArg(argv: string[]) {
