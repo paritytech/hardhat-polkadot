@@ -28,6 +28,10 @@ const HARDHAT_PACKAGE_NAME = '@parity/hardhat-polkadot';
 
 const PROJECT_DEPENDENCIES: Dependencies = {};
 
+const EMPTY_PROJECT_DEPENDENCIES: Dependencies = {
+    'solc': '^0.28.0'
+};
+
 const ETHERS_PROJECT_DEPENDENCIES: Dependencies = {
     '@nomicfoundation/hardhat-toolbox': '^5.0.0',
 };
@@ -39,7 +43,6 @@ const PEER_DEPENDENCIES: Dependencies = {
     'hardhat-gas-reporter': '^1.0.8',
     'solidity-coverage': '^0.8.0',
     '@nomicfoundation/hardhat-ignition': '^0.15.9',
-    'solc': '^0.20.0'
 };
 
 const ETHERS_PEER_DEPENDENCIES: Dependencies = {
@@ -345,11 +348,14 @@ export async function createProject() {
             console.log(`You need to install @parity/hardhat-polkadot locally to use it. Please run:`);
             const cmd = await getRecommendedDependenciesInstallationCommand({
                 [HARDHAT_PACKAGE_NAME]: `^${(await getPackageJson()).version}`,
+                ...EMPTY_PROJECT_DEPENDENCIES
             });
 
             console.log('');
             console.log(cmd.join(' '));
             console.log('');
+
+            return installDependencies(cmd[0], cmd.slice(1));
         }
 
         return;
