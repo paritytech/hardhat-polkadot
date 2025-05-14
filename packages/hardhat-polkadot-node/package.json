@@ -14,11 +14,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
+  "files": ["dist", "README.md", "LICENSE"],
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -31,6 +27,7 @@
     "build:dev": "tsc --build . --watch",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
+    "prettier:write": "prettier --write '**/*.{md,yml,ts,js,json}'",
     "eslint:check": "eslint 'src/**/*.ts'",
     "eslint:fix": "eslint 'src/**/*.ts' --fix"
   },
@@ -52,9 +49,10 @@
     "@eslint/js": "^9.25.1",
     "@types/dockerode": "^3.3.38",
     "eslint": "^9.25.1",
+    "eslint-plugin-import": "^2.31.0",
     "globals": "^16.0.0",
     "prettier": "^3.5.3",
-    "rimraf": "^6.0.1",
+    "rimraf": "^3.0.2",
     "typescript-eslint": "^8.31.0"
   },
   "peerDependencies": {
