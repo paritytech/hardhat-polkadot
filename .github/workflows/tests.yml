@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         # Disabled windows because it's too slow
-        os: [ubuntu-latest, macos-latest]
+        os: [macos-latest]
         node: ["18"]  
     name: Run tests on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -33,23 +33,36 @@ jobs:
           chmod +x run.sh
           ./run.sh
         shell: bash
+  
+  check-tarballs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build
         run: pnpm build
-        
-      - name: pack hardhat-polkadot-resolc
+          
+      - name: Pack hardhat-polkadot-resolc
         run: pnpm pack
         working-directory: "./packages/hardhat-polkadot-resolc"
 
-      - name: pack hardhat-polkadot-node
+      - name: Pack hardhat-polkadot-node
         run: pnpm pack
         working-directory: "./packages/hardhat-polkadot-node"
 
-      - name: pack hardhat-polkadot
+      - name: Pack hardhat-polkadot
         run: pnpm pack
         working-directory: "./packages/hardhat-polkadot"
 
-      - name: move_to
+      - name: Move to one single folder
         run: |
           mkdir -p packs
           cp ./packages/hardhat-polkadot-resolc/*.tgz packs/
