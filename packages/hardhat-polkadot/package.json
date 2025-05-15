@@ -57,7 +57,7 @@
     "peerDependencies": {
         "@parity/hardhat-polkadot-node": "workspace:^",
         "@parity/hardhat-polkadot-resolc": "workspace:^",
-        "hardhat": "<2.23.0"
+        "hardhat": "2.24.0"
     },
     "bundledDependencies": [
         "@parity/hardhat-polkadot-node",
