@@ -151,6 +151,9 @@ importers:
       hardhat:
         specifier: <2.23.0
         version: 2.22.19(ts-node@10.9.2(@types/node@22.15.3)(typescript@5.8.3))(typescript@5.8.3)
+      solc:
+        specifier: ^0.8.30
+        version: 0.8.30(debug@4.4.0)
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@22.15.3)(typescript@5.8.3)
@@ -1744,8 +1747,8 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
 
-  solc@0.8.29:
-    resolution: {integrity: sha512-M1hmcsejAtT1RWC+wy45Oi8a82nSnDl65wDzA3/8uWTC7R7VcnrMVIHv6/LHqnQPZ7OM2RIeKh3zpNo4E5lYbw==}
+  solc@0.8.30:
+    resolution: {integrity: sha512-9Srk/gndtBmoUbg4CE6ypAzPQlElv8ntbnl6SigUBAzgXKn35v87sj04uZeoZWjtDkdzT0qKFcIo/wl63UMxdw==}
     engines: {node: '>=12.0.0'}
     hasBin: true
 
@@ -2407,7 +2410,7 @@ snapshots:
       '@types/node': 22.15.3
       commander: 13.1.0
       package-json: 10.0.1
-      solc: 0.8.29(debug@4.4.0)
+      solc: 0.8.30(debug@4.4.0)
     transitivePeerDependencies:
       - debug
 
@@ -3811,7 +3814,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  solc@0.8.29(debug@4.4.0):
+  solc@0.8.30(debug@4.4.0):
     dependencies:
       command-exists: 1.2.9
       commander: 8.3.0
