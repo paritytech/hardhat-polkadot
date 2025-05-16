@@ -49,14 +49,14 @@
         "sample-projects/"
     ],
     "dependencies": {
+        "@parity/hardhat-polkadot-node": "workspace:^",
+        "@parity/hardhat-polkadot-resolc": "workspace:^",
         "@openzeppelin/contracts": "^5.3.0",
         "enquirer": "2.3.0",
         "find-up": "5.0.0",
         "picocolors": "^1.1.1"
     },
     "peerDependencies": {
-        "@parity/hardhat-polkadot-node": "workspace:^",
-        "@parity/hardhat-polkadot-resolc": "workspace:^",
         "hardhat": "<2.23.0"
     },
     "bundledDependencies": [
