@@ -57,8 +57,6 @@
         "picocolors": "^1.1.1"
     },
     "peerDependencies": {
-        "@parity/hardhat-polkadot-node": "workspace:^",
-        "@parity/hardhat-polkadot-resolc": "workspace:^",
         "hardhat": "<2.23.0"
     },
     "bundledDependencies": [
