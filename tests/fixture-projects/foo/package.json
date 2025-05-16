@@ -1,7 +1,3 @@
 {
-    "name": "foo",
-    "dependencies": {
-        "@parity/resolc": "^0.1.0-dev.16",
-        "hardhat": "^2.24.0"
-    }
+    "name": "foo"
 }
