@@ -17,7 +17,7 @@ import {
 } from "./constants"
 import { PolkadotNodePluginError } from "./errors"
 import type { CliCommands, CommandArguments, SplitCommands } from "./types"
-import { JsonRpcServer } from "./server"
+import { createRpcServer } from "./servers"
 
 export function constructCommandArgs(
     args?: CommandArguments,
@@ -71,8 +71,6 @@ export function constructCommandArgs(
             nodeCommands.push(`--endpoint=${args.forking.url}`)
         } else if (args.nodeCommands?.nodeBinaryPath && !cliCommands?.nodeBinaryPath) {
             nodeCommands.push(args.nodeCommands?.nodeBinaryPath)
-        } else {
-            throw new PolkadotNodePluginError("Binary path not specified.")
         }
 
         if (args.nodeCommands?.rpcPort && !cliCommands?.rpcPort) {
@@ -149,9 +147,7 @@ export async function waitForNodeToBeReady(
     maxAttempts: number = 20,
 ): Promise<void> {
     const rpcEndpoint = `http://127.0.0.1:${port}`
-
     const payload = setPayload(adapter)
-
     let attempts = 0
     let waitTime = 1000
     const backoffFactor = 2
@@ -266,7 +262,7 @@ export async function startServer(
 
     return {
         commandArgs,
-        server: new JsonRpcServer(nodePath, adapterPath),
+        server: createRpcServer({ nodePath, adapterPath }),
         port: currentAdapterPort,
     }
 }
