@@ -44,8 +44,6 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
         optimizer = Object.assign({}, resolc.settings?.optimizer);
     } else if (resolc.settings?.optimizer?.enabled === false) {
         optimizer = Object.assign({}, { enabled: false  });
-    } else if (resolc.compilerSource !== 'binary'){
-        optimizer = Object.assign({}, { enabled: true, parameters: 'z'  });
     }
 
     compiler.settings = {
