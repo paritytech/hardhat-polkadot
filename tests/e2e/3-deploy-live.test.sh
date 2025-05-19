@@ -10,12 +10,11 @@ npm add $HARDHAT_POLKADOT_TGZ_PATH
 npm install # install modules specified in the package.json
 
 # When
-yes | npx hardhat ignition deploy ./ignition/modules/Lock.js --network westendHub > deploy.log 2>&1
-DEPLOY_LOCAL_NODE_OUTPUT=$(<deploy.log)
+DEPLOY_LIVE_NETWORK_OUTPUT=$(yes | npx hardhat ignition deploy ./ignition/modules/Lock.js --network westendHub)
 
 # Then
 assert_directory_not_empty "artifacts-pvm"
 assert_directory_not_empty "cache-pvm"
-check_log_value "$DEPLOY_LOCAL_NODE_OUTPUT" "LockModule#Lock - 0x"
+check_log_value "$DEPLOY_LIVE_NETWORK_OUTPUT" "LockModule#Lock - 0x"
 
 echo "Deploys on live network successfully in fixture-pojects/lock ✅"

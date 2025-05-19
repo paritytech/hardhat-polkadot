@@ -16,8 +16,7 @@ done
 trap "kill $HARDHAT_NODE_PID" EXIT
 
 # When
-yes | npx hardhat ignition deploy ./ignition/modules/Lock.js --network localNode > deploy.log 2>&1
-DEPLOY_LOCAL_NODE_OUTPUT=$(<deploy.log)
+DEPLOY_LOCAL_NODE_OUTPUT=$(yes | npx hardhat ignition deploy ./ignition/modules/Lock.js --network localNode)
 
 # Then
 assert_directory_not_empty "artifacts-pvm"
