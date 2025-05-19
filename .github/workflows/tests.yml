@@ -31,13 +31,13 @@ jobs:
         run: |
           cd tests
           chmod +x run.sh
-          ./run.sh  --unit
+          ./run.sh --unit
         shell: bash
   
   run-e2e-tests:
     strategy:
       matrix:
-        # Disabled windows because it's too slow
+        # Only ubuntu supports docker and windows is too slow
         os: [ubuntu-latest]
         node: ["18"]  
     name: Run tests on ${{ matrix.os }}
@@ -56,7 +56,7 @@ jobs:
         run: |
           cd tests
           chmod +x run.sh
-          ./run.sh  --e2e
+          ./run.sh --e2e
         shell: bash
 
   check-tarballs:

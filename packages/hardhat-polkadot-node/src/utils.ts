@@ -146,7 +146,7 @@ export async function waitForNodeToBeReady(
     adapter: boolean = false,
     maxAttempts: number = 20,
 ): Promise<void> {
-    const rpcEndpoint = `http://127.0.0.1:${port}`
+    const rpcEndpoint = `${BASE_URL}:${port}`
     const payload = setPayload(adapter)
     let attempts = 0
     let waitTime = 1000
@@ -217,8 +217,12 @@ export function getNetworkConfig(url: string, chainId?: number) {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function configureNetwork(config: HardhatConfig, network: any, port: number) {
+export async function configureNetwork(
+    config: HardhatConfig,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    network: any,
+    port: number,
+) {
     const url = `${BASE_URL}:${port}`
     const payload = setPayload(true)
     let chainId = 0

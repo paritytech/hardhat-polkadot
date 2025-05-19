@@ -15,7 +15,7 @@ export const RPC_ENDPOINT_PATH = "eth_chainId"
 
 export const POLKADOT_TEST_NODE_NETWORK_NAME = "Kitchensink"
 
-export const BASE_URL = `http://127.0.0.1`
+export const BASE_URL = process.env.CI ? "host.docker.internal" : `http://127.0.0.1`
 export const NETWORK_ACCOUNTS = {
     REMOTE: "remote",
     POLKADOT: [
