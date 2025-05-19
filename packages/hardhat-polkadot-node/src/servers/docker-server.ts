@@ -1,5 +1,5 @@
 import chalk from "chalk"
-import { runSimple } from "run-container"
+import { runSimple, run } from "run-container"
 import Docker from "dockerode"
 
 import { NODE_START_PORT, ETH_RPC_ADAPTER_START_PORT } from "../constants"
@@ -56,14 +56,22 @@ export class DockerRpcServer implements RpcServer {
             verbose: true,
         })
         await waitForNodeToBeReady(nodePort)
-        this.adapterContainer = await runSimple({
+        this.adapterContainer = await run({
+            Image: "paritypr/eth-rpc:master-f331a447",
             name: ADAPTER_CONTAINER_NAME,
-            image: "paritypr/eth-rpc:master-f331a447",
-            autoRemove: true,
-            ports: {
-                [`${adapterPort}/tcp`]: `${adapterPort}`,
+            HostConfig: {
+                NetworkMode: process.env.CI ? "host" : undefined,
+                AutoRemove: true,
+                PortBindings: process.env.CI
+                    ? undefined
+                    : {
+                          [`${adapterPort}/tcp`]: [{ HostPort: `${adapterPort}` }],
+                      },
             },
-            cmd: [
+            ExposedPorts: {
+                [`${adapterPort}/tcp`]: {},
+            },
+            Cmd: [
                 "--dev",
                 "--rpc-port",
                 `${adapterPort}`,
@@ -73,7 +81,8 @@ export class DockerRpcServer implements RpcServer {
                 "--rpc-cors",
                 "all",
             ],
-            verbose: true,
+            Tty: false,
+            Env: [],
         })
         await waitForNodeToBeReady(adapterPort, true)
 
