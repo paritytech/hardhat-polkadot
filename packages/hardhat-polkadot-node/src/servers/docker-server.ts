@@ -8,6 +8,7 @@ import { waitForNodeToBeReady } from "../utils"
 
 const ADAPTER_CONTAINER_NAME = "eth-rpc-adapter"
 const NODE_CONTAINER_NAME = "substrate-node"
+const NODE_RPC_URL_BASE_URL = process.env.CI ? "127.0.0.1" : "host.docker.internal"
 
 export class DockerRpcServer implements RpcServer {
     private adapterContainer: Docker.Container | null = null
@@ -67,7 +68,7 @@ export class DockerRpcServer implements RpcServer {
                 "--rpc-port",
                 `${adapterPort}`,
                 "--node-rpc-url",
-                `ws://host.docker.internal:${nodePort}`,
+                `ws://${NODE_RPC_URL_BASE_URL}:${nodePort}`,
                 "--unsafe-rpc-external",
                 "--rpc-cors",
                 "all",
