@@ -15,7 +15,7 @@ jobs:
         # Disabled windows because it's too slow
         os: [ubuntu-latest, macos-latest]
         node: ["18"]  
-    name: Run tests on ${{ matrix.os }}
+    name: Run unit tests on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -40,7 +40,7 @@ jobs:
         # Only ubuntu supports docker and windows is too slow
         os: [ubuntu-latest]
         node: ["18"]  
-    name: Run tests on ${{ matrix.os }}
+    name: Run E2E tests on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3

@@ -10,8 +10,7 @@ npm add $HARDHAT_POLKADOT_TGZ_PATH
 npm install # install modules specified in the package.json
 
 # When
-npx hardhat test | tee test.log
-RUN_TESTS_OUTPUT=$(<test.log)
+RUN_TESTS_OUTPUT=$(npx hardhat test)
 
 # Then
 assert_directory_not_empty "artifacts-pvm"
