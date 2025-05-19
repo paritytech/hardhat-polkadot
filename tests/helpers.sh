@@ -68,6 +68,7 @@ check_log_value() {
     if echo "$output" | grep -q "$expected_value"; then
       :
     else
+        echo "Expected log to contain '$expected_value'. Log output: '$output'"
         exit 1
     fi
 }
