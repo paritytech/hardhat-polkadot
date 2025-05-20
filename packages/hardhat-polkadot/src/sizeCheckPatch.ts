@@ -3,7 +3,7 @@ import path from "path";
 
 
 function needsPatch() {
-    return (process.argv.includes('ignition') && process.argv.includes('deploy')) || process.argv.includes('test');
+    return (process.argv.includes('ignition') && process.argv.includes('deploy')) || process.argv.includes('test') || process.argv.includes('run');
 }
 
 export function sizeCheckPatch() {
