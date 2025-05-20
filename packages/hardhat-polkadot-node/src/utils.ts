@@ -267,7 +267,11 @@ export async function startServer(
 
     return {
         commandArgs,
-        server: createRpcServer({ nodePath, adapterPath }),
+        server: createRpcServer({
+            nodePath,
+            adapterPath: adapterPath || commands.adapterCommands?.adapterBinaryPath,
+            isForking: commands.forking?.enabled,
+        }),
         port: currentAdapterPort,
     }
 }

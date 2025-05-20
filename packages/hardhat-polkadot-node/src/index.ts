@@ -60,17 +60,25 @@ subtask(TASK_NODE_POLKADOT_CREATE_SERVER, "Creates a JSON-RPC server for Polkado
         undefined,
         types.string,
     )
-    .setAction(async ({ nodePath, adapterPath }: { nodePath: string; adapterPath: string }) => {
-        const server: RpcServer = createRpcServer({ nodePath, adapterPath })
-        return server
-    })
+    .setAction(
+        async (
+            { nodePath, adapterPath }: { nodePath: string; adapterPath: string },
+            { config },
+        ) => {
+            const server: RpcServer = createRpcServer({
+                nodePath,
+                adapterPath,
+                isForking: config.networks.hardhat.forking?.enabled,
+            })
+            return server
+        },
+    )
 
 task(TASK_NODE, "Start a Polkadot Node").setAction(
     async (args: TaskArguments, { network, run }, runSuper) => {
         if (network.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
             return await runSuper()
         }
-
         await run(TASK_NODE_POLKADOT, args)
     },
 )
