@@ -11,7 +11,7 @@ export class PathToBinariesRpcServer implements RpcServer {
     private serverPort: number | null = null
 
     constructor(
-        private readonly nodeBinaryPath: string,
+        private readonly nodeBinaryPath: string | undefined,
         private readonly adapterBinaryPath: string,
     ) {}
 

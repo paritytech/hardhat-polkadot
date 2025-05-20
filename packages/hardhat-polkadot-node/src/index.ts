@@ -279,6 +279,7 @@ task(
         const server = createRpcServer({
             nodePath: userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath,
             adapterPath: userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath,
+            isForking: config.networks.hardhat.forking?.enabled || false,
         })
 
         try {
