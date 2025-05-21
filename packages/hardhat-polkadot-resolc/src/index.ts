@@ -189,7 +189,7 @@ subtask(
         hre,
         runSuper,
     ): Promise<{ output: CompilerOutput; solcBuild: SolcBuild }> => {
-        if (!hre.config.networks.polkavm) {
+        if (!hre.config.networks.hardhat.polkavm) {
             return await runSuper(args)
         }
 
