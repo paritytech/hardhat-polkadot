@@ -62,7 +62,9 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
         compiler.settings.forceEVMLA = true;
     }
 
-    updateSolc(compiler.version);
+    if (resolc.compilerSource === 'npm') {
+        updateSolc(compiler.version);
+    }
 
     delete compiler.settings.metadata;
 }
