@@ -58,3 +58,17 @@ assert_directory_not_empty() {
     exit 1
   fi
 }
+
+check_log_value() {
+    local output="$1"
+    local expected_value="$2"
+    
+    echo "$output"
+
+    if echo "$output" | grep -q "$expected_value"; then
+      :
+    else
+        echo "Expected log to contain '$expected_value'. Log output: '$output'"
+        exit 1
+    fi
+}
