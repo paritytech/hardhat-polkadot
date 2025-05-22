@@ -27,11 +27,11 @@ Overview of currently available plugins and those on the roadmap.
 
 ## Documentation
 
-* See [Examples](https://github.com/paritytech/hardhat-polkadot/tree/main/examples).
+* See [Examples](https://github.com/paritytech/hardhat-polkadot/tree/main/examples)
 
-* Learn how to use Hardhat with Polkadot in [Develop -> Smart Contracts -> Dev Environments -> Hardhat](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/).
+* Get started from scratch with [How to use Hardhat with Polkadot](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/)
 
-* Follow tutorial in [Tutorials -> Smart Contracts -> Launch Your First Project -> Test and Deploy with Hardhat](https://papermoonio.github.io/polkadot-mkdocs/tutorials/smart-contracts/launch-your-first-project/test-and-deploy-with-hardhat/).
+* Follow tutorial with [Test and Deploy with Hardhat](https://papermoonio.github.io/polkadot-mkdocs/tutorials/smart-contracts/launch-your-first-project/test-and-deploy-with-hardhat/)
 
 ## Getting Help
 
