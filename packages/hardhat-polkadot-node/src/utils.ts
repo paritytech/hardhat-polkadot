@@ -29,7 +29,11 @@ export function constructCommandArgs(
 
     if (cliCommands && Object.values(cliCommands).find((v) => v !== undefined)) {
         if (cliCommands.adapterEndpoint) {
-            console.log(chalk.yellow("The parameter adapterEndpoint is deprecated and will be ignored.\nThe endpoint the adapter connects to is defined by the node rpc port or the forking url."))
+            console.log(
+                chalk.yellow(
+                    "The parameter adapterEndpoint is deprecated and will be ignored.\nThe endpoint the adapter connects to is defined by the node rpc port or the forking url.",
+                ),
+            )
         }
         if (cliCommands.fork) {
             nodeCommands.push(`npx`)
@@ -66,7 +70,11 @@ export function constructCommandArgs(
 
     if (args && Object.values(args).find((v) => v !== undefined)) {
         if (args.adapterCommands?.adapterEndpoint) {
-            console.log(chalk.yellow("The parameter adapterEndpoint is deprecated and will be ignored.\nThe endpoint the adapter connects to is defined by the node rpc port or the forking url."))
+            console.log(
+                chalk.yellow(
+                    "The parameter adapterEndpoint is deprecated and will be ignored.\nThe endpoint the adapter connects to is defined by the node rpc port or the forking url.",
+                ),
+            )
         }
         if (args.forking && !cliCommands?.fork) {
             nodeCommands.push(`npx`)
@@ -250,9 +258,7 @@ export async function startServer(
         MAX_PORT_ATTEMPTS,
     )
     const currentAdapterPort = await getAvailablePort(
-        commands.nodeCommands?.rpcPort
-            ? commands.nodeCommands.rpcPort
-            : ETH_RPC_ADAPTER_START_PORT,
+        commands.nodeCommands?.rpcPort ? commands.nodeCommands.rpcPort : ETH_RPC_ADAPTER_START_PORT,
         MAX_PORT_ATTEMPTS,
     )
     const updatedCommands = Object.assign({}, commands, {

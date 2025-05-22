@@ -95,8 +95,8 @@ task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node")
         types.string,
     )
     /**
-    * @deprecated This property should not be used
-    */
+     * @deprecated This property should not be used
+     */
     .addOptionalParam(
         "adapterEndpoint",
         "Endpoint to which the adapter will connect to - default: ws://localhost:8000",
@@ -250,8 +250,9 @@ task(
         const nodePath = userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath
         const adapterPath = userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath
 
-        let nodePort = userConfig.networks?.hardhat?.nodeConfig?.rpcPort || NODE_START_PORT;
-        let adapterPort = userConfig.networks?.hardhat?.adapterConfig?.adapterPort || ETH_RPC_ADAPTER_START_PORT
+        let nodePort = userConfig.networks?.hardhat?.nodeConfig?.rpcPort || NODE_START_PORT
+        let adapterPort =
+            userConfig.networks?.hardhat?.adapterConfig?.adapterPort || ETH_RPC_ADAPTER_START_PORT
         if (!!nodePath && !!adapterPath) {
             nodePort = await getAvailablePort(nodePort, MAX_PORT_ATTEMPTS)
             adapterPort = await getAvailablePort(adapterPort, MAX_PORT_ATTEMPTS)

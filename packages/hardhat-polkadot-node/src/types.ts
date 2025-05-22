@@ -21,8 +21,8 @@ export interface NodeConfig {
 export interface AdapterConfig {
     adapterBinaryPath?: string
     /**
-    * @deprecated This property should not be used
-    */
+     * @deprecated This property should not be used
+     */
     adapterEndpoint?: string
     adapterPort?: number
     dev?: boolean
