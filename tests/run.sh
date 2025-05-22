@@ -2,6 +2,7 @@
 
 # fail if any commands fails
 set -e
+TESTS_TYPE=${1:-e2e} # default to flag 'e2e' if not provided
 
 # 1) build and export packages/hardhat-polkadot
 cd ..
@@ -24,19 +25,25 @@ printf "Package manager version: npm version $(npm --version)\n"
 printf "@parity/hardhat-polkadot package in $HARDHAT_POLKADOT_TGZ_PATH\n"
 printf "Running tests in $TMP_TESTS_DIR\n\n"
 
-# 4) run the E2E tests
-for file in ./e2e/*; do
-    if [ -f "$file" ]; then
+# 4) run tests according to flag passes
+if [[ "$TESTS_TYPE" == "--unit" || "$TESTS_TYPE" == "unit" ]]; then
+    for file in ./unit/*; do
         FILE_NAME=$(basename "$file")
         cp "$file" "$TMP_TESTS_DIR/$FILE_NAME"
         chmod +x "$TMP_TESTS_DIR/$FILE_NAME"
-        echo "[e2e] Running file $(basename "$file")"
         pushd "$TMP_TESTS_DIR" >/dev/null  # cd into the fixture folder, saving old dir
         ./"$FILE_NAME"  # run $file inside tmp
         popd >/dev/null # cd back to start
-    fi
-done
-printf "\n[e2e] All E2E tests passed\n"
+    done
+fi
 
-# remove the temporary directory
-rm -fr $TMP_TESTS_DIR
+if [[ "$TESTS_TYPE" == "--e2e" || "$TESTS_TYPE" == "e2e" ]]; then
+    for file in ./e2e/*; do
+        FILE_NAME=$(basename "$file")
+        cp "$file" "$TMP_TESTS_DIR/$FILE_NAME"
+        chmod +x "$TMP_TESTS_DIR/$FILE_NAME"
+        pushd "$TMP_TESTS_DIR" >/dev/null  # cd into the fixture folder, saving old dir
+        ./"$FILE_NAME"  # run $file inside tmp
+        popd >/dev/null # cd back to start
+    done
+fi

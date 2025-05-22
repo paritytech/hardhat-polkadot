@@ -17,7 +17,7 @@ import {
 } from "./constants"
 import { PolkadotNodePluginError } from "./errors"
 import type { CliCommands, CommandArguments, SplitCommands } from "./types"
-import { JsonRpcServer } from "./server"
+import { createRpcServer } from "./servers"
 
 export function constructCommandArgs(
     args?: CommandArguments,
@@ -71,8 +71,6 @@ export function constructCommandArgs(
             nodeCommands.push(`--endpoint=${args.forking.url}`)
         } else if (args.nodeCommands?.nodeBinaryPath && !cliCommands?.nodeBinaryPath) {
             nodeCommands.push(args.nodeCommands?.nodeBinaryPath)
-        } else {
-            throw new PolkadotNodePluginError("Binary path not specified.")
         }
 
         if (args.nodeCommands?.rpcPort && !cliCommands?.rpcPort) {
@@ -148,10 +146,8 @@ export async function waitForNodeToBeReady(
     adapter: boolean = false,
     maxAttempts: number = 20,
 ): Promise<void> {
-    const rpcEndpoint = `http://127.0.0.1:${port}`
-
+    const rpcEndpoint = `${BASE_URL}:${port}`
     const payload = setPayload(adapter)
-
     let attempts = 0
     let waitTime = 1000
     const backoffFactor = 2
@@ -221,8 +217,12 @@ export function getNetworkConfig(url: string, chainId?: number) {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function configureNetwork(config: HardhatConfig, network: any, port: number) {
+export async function configureNetwork(
+    config: HardhatConfig,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    network: any,
+    port: number,
+) {
     const url = `${BASE_URL}:${port}`
     const payload = setPayload(true)
     let chainId = 0
@@ -234,6 +234,7 @@ export async function configureNetwork(config: HardhatConfig, network: any, port
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (_e: any) {
+        console.log("configureNetwork", _e)
         // If it fails, it will just try again
     }
 
@@ -266,7 +267,7 @@ export async function startServer(
 
     return {
         commandArgs,
-        server: new JsonRpcServer(nodePath, adapterPath),
+        server: createRpcServer({ nodePath, adapterPath }),
         port: currentAdapterPort,
     }
 }

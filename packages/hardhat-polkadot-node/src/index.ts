@@ -20,7 +20,7 @@ import {
     TASK_NODE_POLKADOT_CREATE_SERVER,
     TASK_RUN_POLKADOT_NODE_IN_SEPARATE_PROCESS,
 } from "./constants"
-import { JsonRpcServer } from "./server"
+import { createRpcServer } from "./servers"
 import {
     adjustTaskArgsForPort,
     configureNetwork,
@@ -61,7 +61,7 @@ subtask(TASK_NODE_POLKADOT_CREATE_SERVER, "Creates a JSON-RPC server for Polkado
         types.string,
     )
     .setAction(async ({ nodePath, adapterPath }: { nodePath: string; adapterPath: string }) => {
-        const server: JsonRpcServer = new JsonRpcServer(nodePath, adapterPath)
+        const server: RpcServer = createRpcServer({ nodePath, adapterPath })
         return server
     })
 
@@ -244,52 +244,50 @@ task(
 
         const files = await run(TASK_TEST_GET_TEST_FILES, { testFiles })
 
-        const currentNodePort = await getAvailablePort(
-            userConfig.networks?.hardhat?.nodeConfig?.rpcPort
-                ? userConfig.networks.hardhat.nodeConfig.rpcPort
-                : NODE_START_PORT,
-            MAX_PORT_ATTEMPTS,
-        )
+        const nodePath = userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath
+        const adapterPath = userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath
 
-        const currentAdapterPort = await getAvailablePort(
-            userConfig.networks?.hardhat?.adapterConfig?.adapterPort
-                ? userConfig.networks.hardhat.adapterConfig.adapterPort
-                : ETH_RPC_ADAPTER_START_PORT,
-            MAX_PORT_ATTEMPTS,
-        )
+        let nodePort = NODE_START_PORT
+        let adapterPort = ETH_RPC_ADAPTER_START_PORT
+        if (!!nodePath && !!adapterPath) {
+            nodePort = await getAvailablePort(nodePort, MAX_PORT_ATTEMPTS)
+            adapterPort = await getAvailablePort(adapterPort, MAX_PORT_ATTEMPTS)
+        }
 
-        const nCommands: NodeConfig = Object.assign({}, userConfig.networks?.hardhat?.nodeConfig, {
-            port: currentNodePort,
-        })
-        const aCommands: AdapterConfig = Object.assign(
+        const nodeCommands: NodeConfig = Object.assign(
+            {},
+            userConfig.networks?.hardhat?.nodeConfig,
+            {
+                port: nodePort,
+            },
+        )
+        const adapterCommands: AdapterConfig = Object.assign(
             {},
             userConfig.networks?.hardhat?.adapterConfig,
             {
-                adapterPort: currentAdapterPort,
+                adapterPort,
             },
         )
 
         const commandArgs = constructCommandArgs({
             forking: config.networks.hardhat.forking,
             forkBlockNumber: config.networks.hardhat.forking?.blockNumber,
-            nodeCommands: nCommands,
-            adapterCommands: aCommands,
+            nodeCommands,
+            adapterCommands,
         })
 
-        const server = new JsonRpcServer(
-            userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath,
-            userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath,
-        )
+        const server = createRpcServer({
+            nodePath: userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath,
+            adapterPath: userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath,
+        })
 
         try {
             await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false)
-            await waitForNodeToBeReady(currentNodePort)
-            await waitForNodeToBeReady(currentAdapterPort, true)
-            await configureNetwork(
-                config,
-                network,
-                currentAdapterPort ? currentAdapterPort : currentNodePort,
-            )
+            if (!!nodePath && !!adapterPath) {
+                await waitForNodeToBeReady(nodePort)
+                await waitForNodeToBeReady(adapterPort, true)
+            }
+            await configureNetwork(config, network, adapterPort || nodePort)
 
             let testFailures = 0
             try {

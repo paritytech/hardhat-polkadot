@@ -45,12 +45,14 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
         optimizer = Object.assign({}, resolc.settings?.optimizer);
     } else if (resolc.settings?.optimizer?.enabled === false) {
         optimizer = Object.assign({}, { enabled: false });
+    } else {
+        optimizer = Object.assign({}, { enabled: false, runs: 200 })
     }
 
     compiler.settings = {
         ...settings,
         optimizer: { ...optimizer },
-        evmVersion: resolc.settings?.evmVersion,
+        evmVersion: resolc.settings?.evmVersion || compiler.settings.evmVersion,
     };
 
     const forceEVMLA = resolc.settings?.forceEVMLA && resolc.compilerSource === 'binary';
