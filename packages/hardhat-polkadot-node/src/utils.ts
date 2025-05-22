@@ -18,6 +18,7 @@ import {
 import { PolkadotNodePluginError } from "./errors"
 import type { CliCommands, CommandArguments, SplitCommands } from "./types"
 import { createRpcServer } from "./servers"
+import chalk from "chalk"
 
 export function constructCommandArgs(
     args?: CommandArguments,
@@ -27,6 +28,9 @@ export function constructCommandArgs(
     const adapterCommands: string[] | undefined = []
 
     if (cliCommands && Object.values(cliCommands).find((v) => v !== undefined)) {
+        if (cliCommands.adapterEndpoint) {
+            console.log(chalk.yellow("The parameter adapterEndpoint is deprecated and will be ignored.\nThe endpoint the adapter connects to is defined by the node rpc port or the forking url."))
+        }
         if (cliCommands.fork) {
             nodeCommands.push(`npx`)
             nodeCommands.push(`@acala-network/chopsticks@latest`)
@@ -37,10 +41,7 @@ export function constructCommandArgs(
         }
         if (cliCommands.rpcPort) {
             nodeCommands.push(`--rpc-port=${cliCommands.rpcPort}`)
-        }
-
-        if (cliCommands.adapterEndpoint) {
-            adapterCommands.push(`--node-rpc-url=${cliCommands.adapterEndpoint}`)
+            adapterCommands.push(`--node-rpc-url=ws://localhost:${cliCommands.rpcPort}`)
         } else {
             adapterCommands.push(`--node-rpc-url=ws://localhost:8000`)
         }
@@ -64,6 +65,9 @@ export function constructCommandArgs(
     }
 
     if (args && Object.values(args).find((v) => v !== undefined)) {
+        if (args.adapterCommands?.adapterEndpoint) {
+            console.log(chalk.yellow("The parameter adapterEndpoint is deprecated and will be ignored.\nThe endpoint the adapter connects to is defined by the node rpc port or the forking url."))
+        }
         if (args.forking && !cliCommands?.fork) {
             nodeCommands.push(`npx`)
             nodeCommands.push(`@acala-network/chopsticks@latest`)
@@ -75,20 +79,12 @@ export function constructCommandArgs(
 
         if (args.nodeCommands?.rpcPort && !cliCommands?.rpcPort) {
             nodeCommands.push(`--rpc-port=${args.nodeCommands.rpcPort}`)
-        }
-
-        if (args.adapterCommands?.adapterEndpoint && !cliCommands?.adapterEndpoint) {
-            adapterCommands.push(`--node-rpc-url=${args.adapterCommands.adapterEndpoint}`)
-        } else if (!cliCommands?.adapterEndpoint) {
+            adapterCommands.push(`--node-rpc-url=ws://localhost:${args.nodeCommands.rpcPort}`)
+        } else if (!cliCommands?.rpcPort) {
             adapterCommands.push(`--node-rpc-url=ws://localhost:8000`)
         }
 
         if (
-            args.adapterCommands?.adapterPort &&
-            args.adapterCommands?.adapterPort !== args.nodeCommands?.rpcPort
-        ) {
-            adapterCommands.push(`--rpc-port=${args.adapterCommands.adapterPort}`)
-        } else if (
             args.adapterCommands?.adapterPort &&
             args.adapterCommands?.adapterPort === args.nodeCommands?.rpcPort
         ) {
@@ -254,8 +250,8 @@ export async function startServer(
         MAX_PORT_ATTEMPTS,
     )
     const currentAdapterPort = await getAvailablePort(
-        commands.adapterCommands?.adapterPort
-            ? commands.adapterCommands.adapterPort
+        commands.nodeCommands?.rpcPort
+            ? commands.nodeCommands.rpcPort
             : ETH_RPC_ADAPTER_START_PORT,
         MAX_PORT_ATTEMPTS,
     )
