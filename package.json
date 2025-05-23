@@ -12,9 +12,11 @@
   "scripts": {
     "build": "pnpm run clean && pnpm --recursive run build",
     "clean": "pnpm --recursive run clean",
-    "prettier:check": "pnpm run --recursive prettier:check && npx prettier --check '{.examples}/**/*.{md,yml,ts,js,json}'",
-    "prettier:write": "pnpm run --recursive prettier:write && npx prettier --write '{.examples}/**/*.{md,yml,ts,js,json}'",
-    "eslint:check": "pnpm run --recursive eslint:check"
+    "prettier:check": "pnpm run --recursive prettier:check && npx prettier --check 'examples/**/*.{md,yml,ts,js,json}'",
+    "prettier:fix": "pnpm run --recursive prettier:fix && npx prettier --write 'examples/**/*.{md,yml,ts,js,json}'",
+    "eslint:check": "pnpm run --recursive eslint:check && npx eslint 'examples/**/*'",
+    "eslint:fix": "pnpm run --recursive eslint:fix && npx eslint 'examples/**/*' --fix",
+    "lint:fix": "pnpm run eslint:fix && pnpm run prettier:fix"
   },
   "devDependencies": {
     "@types/node": "^22.15.3",

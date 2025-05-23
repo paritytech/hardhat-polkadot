@@ -1,4 +1,5 @@
 # hardhat-polkadot-resolc
+
 Polkadot [Hardhat](https://hardhat.org/) plugin to compile Ethereum-compatible solidity smart contracts.
 
 ## Compatibility
@@ -16,13 +17,13 @@ $ npm install -D @parity/hardhat-polkadot-resolc
 Using yarn:
 
 ```bash
-$ yarn add -D @parity/hardhat-polkadot-resolc 
+$ yarn add -D @parity/hardhat-polkadot-resolc
 ```
 
 Using pnpm:
 
 ```bash
-$ pnpm add -D @parity/hardhat-polkadot-resolc 
+$ pnpm add -D @parity/hardhat-polkadot-resolc
 ```
 
 ## Configuration
