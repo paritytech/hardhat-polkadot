@@ -1,23 +1,23 @@
-import type { HardhatUserConfig } from 'hardhat/config';
-import '@parity/hardhat-polkadot';
+import type { HardhatUserConfig } from "hardhat/config"
+import "@parity/hardhat-polkadot"
 
 const config: HardhatUserConfig = {
-    solidity: '0.8.28',
+    solidity: "0.8.28",
     resolc: {
-        compilerSource: 'npm',
+        compilerSource: "npm",
     },
     networks: {
         hardhat: {
             polkavm: true,
             forking: {
-                url: 'wss://westend-asset-hub-rpc.polkadot.io',
+                url: "wss://westend-asset-hub-rpc.polkadot.io",
             },
             adapterConfig: {
-                adapterBinaryPath: './bin/eth-rpc',
+                adapterBinaryPath: "./bin/eth-rpc",
                 dev: true,
             },
         },
-    }
-};
+    },
+}
 
-export default config;
+export default config

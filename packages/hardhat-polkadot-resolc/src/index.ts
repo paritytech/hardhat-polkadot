@@ -13,11 +13,15 @@ import {
     TASK_COMPILE_SOLIDITY_EMIT_ARTIFACTS,
     TASK_COMPILE,
     TASK_COMPILE_SOLIDITY_GET_COMPILER_INPUT,
-} from 'hardhat/builtin-tasks/task-names';
-import debug from 'debug';
-import { defaultNpmResolcConfig, defaultBinaryResolcConfig, RESOLC_ARTIFACT_FORMAT_VERSION } from './constants';
-import { extendEnvironment, extendConfig, subtask, task } from 'hardhat/internal/core/config/config-env';
-import { Artifacts } from 'hardhat/internal/artifacts';
+} from "hardhat/builtin-tasks/task-names"
+import debug from "debug"
+import {
+    extendEnvironment,
+    extendConfig,
+    subtask,
+    task,
+} from "hardhat/internal/core/config/config-env"
+import { Artifacts } from "hardhat/internal/artifacts"
 import type {
     ArtifactsEmittedPerFile,
     CompilationJob,
@@ -28,15 +32,20 @@ import type {
     RunSuperFunction,
     SolcBuild,
     TaskArguments,
-} from 'hardhat/types';
-import { getArtifactFromContractOutput, pluralize, updateDefaultCompilerConfig } from './utils';
-import { compile } from './compile';
-import chalk from 'chalk';
-import fs from 'fs';
-import './type-extensions';
-import type { ReviveCompilerInput } from './types';
+} from "hardhat/types"
+import chalk from "chalk"
+import fs from "fs"
+import { getArtifactFromContractOutput, pluralize, updateDefaultCompilerConfig } from "./utils"
+import { compile } from "./compile"
+import {
+    defaultNpmResolcConfig,
+    defaultBinaryResolcConfig,
+    RESOLC_ARTIFACT_FORMAT_VERSION,
+} from "./constants"
+import "./type-extensions"
+import type { ReviveCompilerInput } from "./types"
 
-const logDebug = debug('hardhat:core:tasks:compile');
+const logDebug = debug("hardhat:core:tasks:compile")
 
 extendConfig((config, userConfig) => {
     if (config.resolc.compilerSource !== "binary") {
@@ -52,15 +61,15 @@ extendConfig((config, userConfig) => {
             ...userConfig?.resolc?.settings,
         }
     }
-});
+})
 
 extendEnvironment((hre) => {
     if (hre.network.config.polkavm) {
-        hre.network.polkavm = hre.network.config.polkavm;
+        hre.network.polkavm = hre.network.config.polkavm
 
-        let artifactsPath = hre.config.paths.artifacts;
-        if (!artifactsPath.endsWith('-pvm')) {
-            artifactsPath = `${artifactsPath}-pvm`;
+        let artifactsPath = hre.config.paths.artifacts
+        if (!artifactsPath.endsWith("-pvm")) {
+            artifactsPath = `${artifactsPath}-pvm`
         }
 
         let cachePath = hre.config.paths.cache
@@ -69,9 +78,9 @@ extendEnvironment((hre) => {
         }
 
         hre.config.paths.artifacts = artifactsPath
-        hre.config.paths.cache = cachePath;
+        hre.config.paths.cache = cachePath
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (hre as any).artifacts = new Artifacts(artifactsPath)
+        ;(hre as any).artifacts = new Artifacts(artifactsPath)
         hre.config.solidity.compilers.forEach(async (compiler) =>
             updateDefaultCompilerConfig({ compiler }, hre.config.resolc),
         )
@@ -123,12 +132,12 @@ subtask(TASK_COMPILE_SOLIDITY_GET_COMPILATION_JOBS, async (args, hre, runSuper) 
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     jobs.forEach((job: any) => {
-        job.solidityConfig.resolc = hre.config.resolc;
-        job.solidityConfig.resolc.settings.compilerPath = hre.config.resolc.settings?.compilerPath;
-    });
+        job.solidityConfig.resolc = hre.config.resolc
+        job.solidityConfig.resolc.settings.compilerPath = hre.config.resolc.settings?.compilerPath
+    })
 
-    return { jobs, errors };
-});
+    return { jobs, errors }
+})
 
 subtask(
     TASK_COMPILE_SOLIDITY_GET_ARTIFACT_FROM_COMPILATION_OUTPUT,
@@ -143,7 +152,7 @@ subtask(
             contractOutput: CompilerOutputContract
         },
         hre,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): Promise<any> => {
         if (!hre.network.polkavm) {
             return getArtifactFromContractOutput(sourceName, contractName, contractOutput)
@@ -234,7 +243,7 @@ subtask(
 subtask(
     TASK_COMPILE_SOLIDITY_LOG_COMPILATION_RESULT,
     async ({ compilationJobs }: { compilationJobs: CompilationJob[] }, _hre, _runSuper) => {
-        let count = 0;
+        let count = 0
         for (const job of compilationJobs) {
             count += job.getResolvedFiles().filter((file) => job.emitsArtifacts(file)).length
         }
@@ -245,7 +254,7 @@ subtask(
             )
         }
     },
-);
+)
 
 subtask(TASK_COMPILE_SOLIDITY_LOG_RUN_COMPILER_START).setAction(
     async ({

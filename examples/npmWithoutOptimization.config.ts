@@ -12,3 +12,5 @@ const config: HardhatUserConfig = {
         compilerSource: "npm",
     },
 }
+
+export default config

@@ -1,31 +1,31 @@
 import type { CompilerInput, SolcConfig } from "hardhat/types"
 
 type EvmVersions =
-    | 'homestead'
-    | 'tangerineWhistle'
-    | 'spuriousDragon'
-    | 'byzantium'
-    | 'constantinople'
-    | 'petersburg'
-    | 'istanbul'
-    | 'berlin'
-    | 'london'
-    | 'paris'
-    | 'shanghai'
-    | 'cancun';
+    | "homestead"
+    | "tangerineWhistle"
+    | "spuriousDragon"
+    | "byzantium"
+    | "constantinople"
+    | "petersburg"
+    | "istanbul"
+    | "berlin"
+    | "london"
+    | "paris"
+    | "shanghai"
+    | "cancun"
 
 type SuppresWarningsOpts =
-    | 'ecrecover'
-    | 'sendtransfer'
-    | 'extcodesize'
-    | 'txorigin'
-    | 'blocktimestamp'
-    | 'blocknumber'
-    | 'blockhash';
+    | "ecrecover"
+    | "sendtransfer"
+    | "extcodesize"
+    | "txorigin"
+    | "blocktimestamp"
+    | "blocknumber"
+    | "blockhash"
 
 export interface ResolcConfig {
-    version: string;
-    compilerSource?: 'binary' | 'npm';
+    version: string
+    compilerSource?: "binary" | "npm"
 
     settings?: {
         // Set the given path as the root of the source tree instead of the root of the filesystem. Passed to `solc` without changes.
@@ -43,9 +43,9 @@ export interface ResolcConfig {
             // Set the optimization parameter. Use `3` for best performance and `z` for minimal size. Defaults to `3`
             parameters?: "0" | "1" | "2" | "3" | "s" | "z"
             // Try to recompile with -Oz if the bytecode is too large.
-            fallbackOz?: boolean,
+            fallbackOz?: boolean
             // How many times runs the optimizer
-            runs?: number,
+            runs?: number
         }
         // Specify the path to the `solc` executable.
         solcPath?: string
@@ -98,16 +98,16 @@ export interface ContractSource {
 
 export interface Sources {
     [key: string]: {
-        id: number;
-        ast: object;
-    };
+        id: number
+        ast: object
+    }
 }
 
 export interface CompiledOutput {
-    contracts: ContractSource;
-    sources: Sources;
-    errors: string[];
-    version: string;
-    long_version: string;
-    revive_version: string;
+    contracts: ContractSource
+    sources: Sources
+    errors: string[]
+    version: string
+    long_version: string
+    revive_version: string
 }

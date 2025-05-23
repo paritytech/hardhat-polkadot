@@ -38,7 +38,9 @@
         "build:dev": "tsc --build . --watch",
         "clean": "rimraf dist tsconfig.tsbuildinfo",
         "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
-        "eslint:check": "eslint --no-ignore --max-warnings=0 'src/**/*.ts'"
+        "prettier:fix": "prettier --write '**/*.{md,yml,ts,js,json}'",
+        "eslint:check": "eslint 'src/**/*.ts'",
+        "eslint:fix": "eslint 'src/**/*.ts' --fix"
     },
     "files": [
         "dist/",

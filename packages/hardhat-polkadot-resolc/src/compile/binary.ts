@@ -1,10 +1,13 @@
 import { exec } from "child_process"
-import type { CompiledOutput, ContractBatch, ContractSource, ResolcConfig } from "../types"
 import type { CompilerInput } from "hardhat/types"
+import type { CompiledOutput, ContractBatch, ContractSource, ResolcConfig } from "../types"
 import { deepUpdate, extractCommands, mapImports, orderSources } from "../utils"
 
-export async function compileWithBinary(input: CompilerInput, config: ResolcConfig): Promise<CompiledOutput> {
-    const { compilerPath, batchSize } = config.settings!;
+export async function compileWithBinary(
+    input: CompilerInput,
+    config: ResolcConfig,
+): Promise<CompiledOutput> {
+    const { compilerPath, batchSize } = config.settings!
 
     const commands = extractCommands(config)
 
@@ -12,21 +15,21 @@ export async function compileWithBinary(input: CompilerInput, config: ResolcConf
 
     const map = mapImports(input)
 
-    const ordered = orderSources(map);
+    const ordered = orderSources(map)
 
     let parsedOutput: CompiledOutput = {
         contracts: {},
         sources: {},
         errors: [],
-        version: '',
-        long_version: '',
-        revive_version: '',
-    };
+        version: "",
+        long_version: "",
+        revive_version: "",
+    }
     if (batchSize) {
         console.log(
-            '`batchSize` is an experimental feature and may fail when used with smart contracts that employ relative imports.',
-        );
-        let selectedContracts: ContractBatch = {};
+            "`batchSize` is an experimental feature and may fail when used with smart contracts that employ relative imports.",
+        )
+        let selectedContracts: ContractBatch = {}
         for (let i = 0; i < ordered.length; i += batchSize!) {
             selectedContracts = ordered.slice(i, i + batchSize).reduce((acc, key) => {
                 acc[key] = input.sources[key]
@@ -37,7 +40,7 @@ export async function compileWithBinary(input: CompilerInput, config: ResolcConf
                 language: input.language,
                 sources: selectedContracts,
                 settings: input.settings,
-            };
+            }
 
             const output: string = await new Promise((resolve, reject) => {
                 const process = exec(
@@ -53,14 +56,14 @@ export async function compileWithBinary(input: CompilerInput, config: ResolcConf
                     },
                 )
 
-                process.stdin!.write(JSON.stringify(contractBatch));
-                process.stdin!.end();
-            });
-            const parsed: CompiledOutput = JSON.parse(output);
-            parsedOutput = deepUpdate(parsedOutput, parsed);
+                process.stdin!.write(JSON.stringify(contractBatch))
+                process.stdin!.end()
+            })
+            const parsed: CompiledOutput = JSON.parse(output)
+            parsedOutput = deepUpdate(parsedOutput, parsed)
         }
 
-        return parsedOutput;
+        return parsedOutput
     } else {
         const output: string = await new Promise((resolve, reject) => {
             const process = exec(

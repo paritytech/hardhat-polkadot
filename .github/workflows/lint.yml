@@ -34,8 +34,8 @@ jobs:
 
         - name: Run linter
           run: |
-            pnpm --filter @parity/hardhat-polkadot-node run eslint:check && \
-            pnpm --filter @parity/hardhat-polkadot-node run prettier:check
+            pnpm run eslint:check && \
+            pnpm run prettier:check
 
   comment-on-failure:
     needs: [lint]

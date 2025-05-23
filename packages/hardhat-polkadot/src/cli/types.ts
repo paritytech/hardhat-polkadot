@@ -1,5 +1,5 @@
 export interface Dependencies {
-    [name: string]: string;
+    [name: string]: string
 }
 
-export type PackageManager = 'npm' | 'yarn' | 'pnpm';
+export type PackageManager = "npm" | "yarn" | "pnpm"
