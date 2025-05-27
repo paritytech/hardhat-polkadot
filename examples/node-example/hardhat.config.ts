@@ -27,15 +27,15 @@ const config: HardhatUserConfig = {
             url: `http://127.0.0.1:8545`,
             polkavm: true,
             nodeConfig: {
-                nodeBinaryPath: './polkadot-sdk/target/release/substrate-node',
+                nodeBinaryPath: 'PATH_TO_POLKADOT_BINARY',
                 rpcPort: 8000,
                 dev: true,
             },
             adapterConfig: {
-                adapterBinaryPath: './polkadot-sdk/target/release/eth-rpc',
+                adapterBinaryPath: 'PATH_TO_ADAPTER_BINARY',
                 dev: true,
             },
-            accounts: ['0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'],
+            accounts: [],
         },
     },
     solidity: {
