@@ -7,9 +7,17 @@ declare module "hardhat/types/config" {
         nodeConfig?: NodeConfig
         adapterConfig?: AdapterConfig
     }
+    
+    interface NetworksUserConfig {
+        polkavm?: never;
+        forking?: never;
+        adapterConfig?: never;
+    }
 
     interface HttpNetworkUserConfig {
         polkavm?: boolean
+        nodeConfig?: NodeConfig
+        adapterConfig?: AdapterConfig
     }
 
     interface HardhatNetworkConfig {
