@@ -6,18 +6,9 @@ module.exports = {
         version: "1.5.2",
         compilerSource: "npm",
     },
-networks: {
-        polkavm: true,
-        forking: {
-            url: 'wss://westend-asset-hub-rpc.polkadot.io',
+    networks: {
+        hardhat: {
+            polkavm: true,
         },
-        accounts: [{
-            privateKey: process.env.PRIVATE_KEY,
-            balance: '10000000000'
-        }],
-        adapterConfig: {
-            adapterBinaryPath: '/Users/tiago/Projects/polkadot-sdk/target/release/eth-rpc',
-            dev: true
-        }
-}
+    },
 }

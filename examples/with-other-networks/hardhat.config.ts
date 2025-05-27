@@ -8,22 +8,7 @@ const config: HardhatUserConfig = {
         hardhat: {
             allowUnlimitedContractSize: false,
         },
-        mainnet: {
-            url: `https://eth.llamarpc.com`,
-        },
-        arbitrum: {
-            url: `wss://arbitrum.callstaticrpc.com`,
-        },
-        optimism: {
-            url: `wss://optimism-rpc.publicnode.com`,
-        },
-        polygon: {
-            url: `wss://polygon-bor-rpc.publicnode.com`,
-        },
-        bnb: {
-            url: `https://binance.llamarpc.com`,
-        },
-        polkadot: {
+        local: {
             url: 'URL_TO_POLKADOT_RPC',
             polkavm: true,
             nodeConfig: {
@@ -36,6 +21,29 @@ const config: HardhatUserConfig = {
                 dev: true,
             },
             accounts: [],
+        },
+        westend: {
+            url: 'wss://westend-rpc.polkadot.io',
+            polkavm: true,
+            nodeConfig: {
+                nodeBinaryPath: 'PATH_TO_POLKADOT_BINARY',
+                rpcPort: 9944,
+                dev: true,
+            },
+            adapterConfig: {
+                adapterBinaryPath: 'PATH_TO_ADAPTER_BINARY',
+                dev: true,
+            },
+            accounts: [],
+        },
+        sepolia: {
+            url: 'https://sepolia.infura.io/v3/YOUR_INFURA_KEY',
+        },
+        polygon: {
+            url: 'wss://polygon-bor-rpc.publicnode.com',
+        },
+        base: {
+            url: 'https://mainnet.base.org',
         },
     },
     solidity: {
