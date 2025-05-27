@@ -1,11 +1,19 @@
 {
   "name": "Hardhat-Polkadot Ubuntu",
   "image": "mcr.microsoft.com/devcontainers/base:bullseye",
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
   "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "mountDockerSocket": true
+    },
     "ghcr.io/devcontainers/features/node:1": {
       "version": "18"
     }
   },
+  "postStartCommand": "sudo chgrp docker /var/run/docker.sock",
   "containerEnv": {},
   "customizations": {
     "vscode": {

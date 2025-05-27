@@ -34,11 +34,11 @@
         "polkadot"
     ],
     "scripts": {
-        "build": "tsc",
+        "build": "tsc --build .",
         "build:dev": "tsc --build . --watch",
         "clean": "rimraf dist tsconfig.tsbuildinfo",
         "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
-        "eslint:check": "eslint 'src/**/*.ts'"
+        "eslint:check": "eslint --no-ignore --max-warnings=0 'src/**/*.ts'"
     },
     "files": [
         "dist/",
@@ -54,10 +54,11 @@
         "@parity/hardhat-polkadot-resolc": "workspace:^",
         "enquirer": "2.3.0",
         "find-up": "5.0.0",
+        "fs-extra": "^11.3.0",
         "picocolors": "^1.1.1"
     },
     "peerDependencies": {
-        "hardhat": "<2.23.0"
+        "hardhat": "^2.24.0"
     },
     "bundledDependencies": [
         "@parity/hardhat-polkadot-node",

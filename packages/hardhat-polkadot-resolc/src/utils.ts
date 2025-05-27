@@ -4,6 +4,7 @@ import type { CompiledOutput, ResolcConfig, SolcConfigData } from './types';
 import { COMPILER_RESOLC_NEED_EVM_CODEGEN } from './constants';
 import chalk from 'chalk';
 import { ResolcPluginError } from './errors';
+import { execSync } from 'child_process';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getArtifactFromContractOutput(sourceName: string, contractName: string, contractOutput: any): Artifact {
@@ -43,13 +44,15 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
     if (resolc.settings?.optimizer && resolc.settings?.optimizer?.enabled) {
         optimizer = Object.assign({}, resolc.settings?.optimizer);
     } else if (resolc.settings?.optimizer?.enabled === false) {
-        optimizer = Object.assign({}, { enabled: false  });
+        optimizer = Object.assign({}, { enabled: false });
+    } else {
+        optimizer = Object.assign({}, { enabled: false, runs: 200 })
     }
 
     compiler.settings = {
         ...settings,
         optimizer: { ...optimizer },
-        evmVersion: resolc.settings?.evmVersion,
+        evmVersion: resolc.settings?.evmVersion || compiler.settings.evmVersion,
     };
 
     const forceEVMLA = resolc.settings?.forceEVMLA && resolc.compilerSource === 'binary';
@@ -59,6 +62,10 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
     if (major === 0 && minor < 7 && resolc.compilerSource === 'binary') {
         console.warn(chalk.blue(COMPILER_RESOLC_NEED_EVM_CODEGEN));
         compiler.settings.forceEVMLA = true;
+    }
+
+    if (resolc.compilerSource === 'npm') {
+        updateSolc(compiler.version);
     }
 
     delete compiler.settings.metadata;
@@ -188,4 +195,13 @@ export function deepUpdate(a: CompiledOutput, b: CompiledOutput): CompiledOutput
         });
     }
     return a;
+}
+
+function updateSolc(version: string) {
+    try {
+        console.log(chalk.yellow(`Installing solc@${version}...`));
+        execSync(`npm install --save-dev --save-exact solc@${version}`, { stdio: 'inherit' });
+    } catch (error) {
+        console.error(chalk.red('Failed to install solc:'), error);
+    }
 }
