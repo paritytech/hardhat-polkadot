@@ -24,7 +24,7 @@ const config: HardhatUserConfig = {
             url: `https://binance.llamarpc.com`,
         },
         polkadot: {
-            url: `http://127.0.0.1:8545`,
+            url: 'URL_TO_POLKADOT_RPC',
             polkavm: true,
             nodeConfig: {
                 nodeBinaryPath: 'PATH_TO_POLKADOT_BINARY',
