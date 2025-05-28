@@ -255,9 +255,6 @@ task(
 
         const files = await run(TASK_TEST_GET_TEST_FILES, { testFiles })
 
-        const nodePath = userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath
-        const adapterPath = userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath
-
         let nodePort = userConfig.networks?.hardhat?.nodeConfig?.rpcPort || NODE_START_PORT
         let adapterPort =
             userConfig.networks?.hardhat?.adapterConfig?.adapterPort || ETH_RPC_ADAPTER_START_PORT
