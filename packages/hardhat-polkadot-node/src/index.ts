@@ -268,7 +268,7 @@ task(
             {},
             userConfig.networks?.hardhat?.nodeConfig,
             {
-                port: nodePort,
+                rpcPort: nodePort,
             },
         )
         const adapterCommands: AdapterConfig = Object.assign(
