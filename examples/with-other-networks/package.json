@@ -36,7 +36,8 @@
     "@nomicfoundation/hardhat-ignition": "^0.15.11",
     "chai": "^4.3.4",
     "ethers": "^6.12.2",
-    "hardhat": "^2.22.19"
+    "hardhat": "^2.22.19",
+    "rimraf": "^5.0.7"
   },
   "prettier": {
     "tabWidth": 4,
