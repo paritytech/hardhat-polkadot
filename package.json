@@ -10,11 +10,11 @@
   },
   "bugs": "https://github.com/paritytech/hardhat-polkadot/issues",
   "scripts": {
-    "build": "pnpm run clean && pnpm --filter '!examples/**' --recursive run build",
+    "build": "pnpm --filter '!examples/**' run clean && pnpm --filter '!examples/**' --recursive run build",
     "clean": "pnpm --recursive run clean",
-    "prettier:check": "pnpm --recursive run prettier:check && npx prettier --check 'examples/**/*.{md,yml,ts,js,json}'",
-    "prettier:write": "pnpm '!examples/**' --recursive run prettier:write && npx prettier --write 'examples/**/*.{md,yml,ts,js,json}'",
-    "eslint:check": "pnpm --recursive run eslint:check"
+    "prettier:check": "pnpm --filter '!examples/**' --recursive run prettier:check && npx prettier --check 'examples/**/*.{md,yml,ts,js,json}'",
+    "prettier:write": "pnpm --filter '!examples/**' --recursive run prettier:write && npx prettier --check 'examples/**/*.{md,yml,ts,js,json}'",
+    "eslint:check": "pnpm --filter '!examples/**' --recursive run eslint:check"
   },
   "devDependencies": {
     "@types/node": "^22.15.3",
