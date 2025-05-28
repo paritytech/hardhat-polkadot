@@ -60,17 +60,25 @@ subtask(TASK_NODE_POLKADOT_CREATE_SERVER, "Creates a JSON-RPC server for Polkado
         undefined,
         types.string,
     )
-    .setAction(async ({ nodePath, adapterPath }: { nodePath: string; adapterPath: string }) => {
-        const server: RpcServer = createRpcServer({ nodePath, adapterPath })
-        return server
-    })
+    .setAction(
+        async (
+            { nodePath, adapterPath }: { nodePath: string; adapterPath: string },
+            { config },
+        ) => {
+            const server: RpcServer = createRpcServer({
+                nodePath,
+                adapterPath,
+                isForking: config.networks.hardhat.forking?.enabled,
+            })
+            return server
+        },
+    )
 
 task(TASK_NODE, "Start a Polkadot Node").setAction(
     async (args: TaskArguments, { network, run }, runSuper) => {
         if (network.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
             return await runSuper()
         }
-
         await run(TASK_NODE_POLKADOT, args)
     },
 )
@@ -94,6 +102,9 @@ task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node")
         undefined,
         types.string,
     )
+    /**
+     * @deprecated This property should not be used
+     */
     .addOptionalParam(
         "adapterEndpoint",
         "Endpoint to which the adapter will connect to - default: ws://localhost:8000",
@@ -247,8 +258,9 @@ task(
         const nodePath = userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath
         const adapterPath = userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath
 
-        let nodePort = NODE_START_PORT
-        let adapterPort = ETH_RPC_ADAPTER_START_PORT
+        let nodePort = userConfig.networks?.hardhat?.nodeConfig?.rpcPort || NODE_START_PORT
+        let adapterPort =
+            userConfig.networks?.hardhat?.adapterConfig?.adapterPort || ETH_RPC_ADAPTER_START_PORT
         if (!!nodePath && !!adapterPath) {
             nodePort = await getAvailablePort(nodePort, MAX_PORT_ATTEMPTS)
             adapterPort = await getAvailablePort(adapterPort, MAX_PORT_ATTEMPTS)
@@ -279,6 +291,7 @@ task(
         const server = createRpcServer({
             nodePath: userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath,
             adapterPath: userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath,
+            isForking: config.networks.hardhat.forking?.enabled || false,
         })
 
         try {
