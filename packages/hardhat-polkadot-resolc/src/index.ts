@@ -48,47 +48,41 @@ import type { ReviveCompilerInput } from "./types"
 const logDebug = debug("hardhat:core:tasks:compile")
 
 extendConfig((config, userConfig) => {
-    if (config.resolc.compilerSource !== "binary") {
-        config.resolc = { ...defaultNpmResolcConfig, ...userConfig?.resolc }
-        config.resolc.settings = {
-            ...defaultNpmResolcConfig.settings,
-            ...userConfig?.resolc?.settings,
-        }
-    } else {
-        config.resolc = { ...defaultBinaryResolcConfig, ...userConfig?.resolc }
-        config.resolc.settings = {
-            ...defaultBinaryResolcConfig.settings,
-            ...userConfig?.resolc?.settings,
-        }
+    if (!config.networks.hardhat.polkavm) return
+
+    const isBinary = config.resolc?.compilerSource === "binary"
+    const baseConfig = isBinary ? defaultBinaryResolcConfig : defaultNpmResolcConfig
+    const userResolc = userConfig?.resolc || {}
+
+    config.resolc = {
+        ...baseConfig,
+        ...userResolc,
+        settings: {
+            ...baseConfig.settings,
+            ...userResolc.settings,
+        },
     }
 })
 
 extendEnvironment((hre) => {
-    if (hre.network.config.polkavm) {
-        hre.network.polkavm = hre.network.config.polkavm
+    if (!hre.network.config.polkavm) return
 
-        let artifactsPath = hre.config.paths.artifacts
-        if (!artifactsPath.endsWith("-pvm")) {
-            artifactsPath = `${artifactsPath}-pvm`
-        }
+    hre.network.polkavm = hre.network.config.polkavm
 
-        let cachePath = hre.config.paths.cache
-        if (!cachePath.endsWith("-pvm")) {
-            cachePath = `${cachePath}-pvm`
-        }
-
-        hre.config.paths.artifacts = artifactsPath
-        hre.config.paths.cache = cachePath
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(hre as any).artifacts = new Artifacts(artifactsPath)
-        hre.config.solidity.compilers.forEach(async (compiler) =>
-            updateDefaultCompilerConfig({ compiler }, hre.config.resolc),
-        )
-
-        for (const [file, compiler] of Object.entries(hre.config.solidity.overrides)) {
-            updateDefaultCompilerConfig({ compiler, file }, hre.config.resolc)
-        }
+    let artifactsPath = hre.config.paths.artifacts
+    if (!artifactsPath.endsWith("-pvm")) {
+        artifactsPath = `${artifactsPath}-pvm`
     }
+
+    let cachePath = hre.config.paths.cache
+    if (!cachePath.endsWith("-pvm")) {
+        cachePath = `${cachePath}-pvm`
+    }
+
+    hre.config.paths.artifacts = artifactsPath
+    hre.config.paths.cache = cachePath
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(hre as any).artifacts = new Artifacts(artifactsPath)
 })
 
 task(TASK_COMPILE).setAction(
@@ -179,6 +173,13 @@ subtask(
 subtask(TASK_COMPILE_SOLIDITY_RUN_SOLC, async (args: { input: any }, hre, runSuper) => {
     if (!hre.config.networks.hardhat.polkavm) {
         return await runSuper(args)
+    }
+
+    hre.config.solidity.compilers.forEach(async (compiler) =>
+        updateDefaultCompilerConfig({ compiler }, hre.config.resolc),
+    )
+    for (const [file, compiler] of Object.entries(hre.config.solidity.overrides)) {
+        updateDefaultCompilerConfig({ compiler, file }, hre.config.resolc)
     }
 
     return await compile(hre.config.resolc, args.input)
