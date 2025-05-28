@@ -9,7 +9,6 @@ const config: HardhatUserConfig = {
             allowUnlimitedContractSize: false,
         },
         local: {
-            url: 'URL_TO_POLKADOT_RPC',
             polkavm: true,
             nodeConfig: {
                 nodeBinaryPath: 'PATH_TO_POLKADOT_BINARY',
@@ -25,16 +24,7 @@ const config: HardhatUserConfig = {
         westend: {
             url: 'wss://westend-rpc.polkadot.io',
             polkavm: true,
-            nodeConfig: {
-                nodeBinaryPath: 'PATH_TO_POLKADOT_BINARY',
-                rpcPort: 9944,
-                dev: true,
-            },
-            adapterConfig: {
-                adapterBinaryPath: 'PATH_TO_ADAPTER_BINARY',
-                dev: true,
-            },
-            accounts: [],
+            accounts: [process.env.POLKADOT_PRIVATE_KEY || ''],
         },
         sepolia: {
             url: 'https://sepolia.infura.io/v3/YOUR_INFURA_KEY',
@@ -57,13 +47,7 @@ const config: HardhatUserConfig = {
     },
     resolc: {
         version: '1.5.2',
-        compilerSource: 'npm',
-        settings: {
-            optimizer: {
-                enabled: true,
-                runs: 200,
-            },
-        },
+        compilerSource: 'npm'
     },
 };
 
