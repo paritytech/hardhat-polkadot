@@ -14,11 +14,8 @@
     "clean": "rimraf dist"
   },
   "devDependencies": {
-    "@nomicfoundation/hardhat-ethers": "^3.0.8",
     "@nomicfoundation/hardhat-verify": "^2.0.14",
     "@parity/hardhat-polkadot": "^0.1.5",
-    "@parity/hardhat-polkadot-node": "^0.1.1",
-    "@parity/hardhat-polkadot-resolc": "^0.1.3",
     "@types/chai": "^4.3.16",
     "@types/mocha": "^10.0.6",
     "@typescript-eslint/eslint-plugin": "^7.12.0",
@@ -35,7 +32,6 @@
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.7",
     "@nomicfoundation/hardhat-ignition": "^0.15.11",
     "chai": "^4.3.4",
-    "ethers": "^6.12.2",
     "hardhat": "^2.22.19",
     "rimraf": "^5.0.7"
   },
