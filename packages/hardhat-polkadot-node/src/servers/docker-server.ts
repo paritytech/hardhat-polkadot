@@ -4,7 +4,6 @@ import Docker from "dockerode"
 
 import { NODE_START_PORT, ETH_RPC_ADAPTER_START_PORT } from "../constants"
 import { RpcServer } from "../types"
-import { waitForNodeToBeReady } from "../utils"
 
 const ADAPTER_CONTAINER_NAME = "eth-rpc-adapter"
 const NODE_CONTAINER_NAME = "substrate-node"
@@ -55,7 +54,6 @@ export class DockerRpcServer implements RpcServer {
             cmd: ["--dev", "--rpc-port", `${nodePort}`, "--unsafe-rpc-external"],
             verbose: true,
         })
-        await waitForNodeToBeReady(nodePort)
         this.adapterContainer = await run({
             Image: "paritypr/eth-rpc:master-f331a447",
             name: ADAPTER_CONTAINER_NAME,
@@ -84,7 +82,6 @@ export class DockerRpcServer implements RpcServer {
             Tty: false,
             Env: [],
         })
-        await waitForNodeToBeReady(adapterPort, true)
 
         if (blockProcess) {
             console.info(chalk.green(`Starting the Eth RPC Adapter at 127.0.0.1:${adapterPort}`))
