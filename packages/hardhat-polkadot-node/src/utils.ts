@@ -104,7 +104,12 @@ export function constructCommandArgs(
             )
         }
 
-        if (args.nodeCommands?.nodeBinaryPath && args.nodeCommands.dev && !cliCommands?.dev && !args.forking) {
+        if (
+            args.nodeCommands?.nodeBinaryPath &&
+            args.nodeCommands.dev &&
+            !cliCommands?.dev &&
+            !args.forking
+        ) {
             nodeCommands.push(`--dev`)
         }
 
