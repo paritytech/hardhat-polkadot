@@ -562,11 +562,9 @@ async function getDependencies(
         projectType === Action.CREATE_TYPESCRIPT_PROJECT_ACTION ||
         projectType === Action.CREATE_TYPESCRIPT_VIEM_PROJECT_ACTION
 
-    console.log(" shouldInstallTypescriptDependencies0 ", shouldInstallTypescriptDependencies)
     const shouldInstallTypescriptPeerDependencies =
         shouldInstallTypescriptDependencies && shouldInstallPeerDependencies
 
-    console.log(shouldInstallTypescriptPeerDependencies, "shouldInstallTypescriptPeerDependencies")
     const commonDependencies: Dependencies = {
         [HARDHAT_PACKAGE_NAME]: `^${(await getPackageJson()).version}`,
         ...PROJECT_DEPENDENCIES,
