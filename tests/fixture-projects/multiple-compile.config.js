@@ -4,7 +4,7 @@ module.exports = {
     solidity: {
         compilers: [
             {
-                version: "0.8.20",
+                version: "0.8.2",
                 settings: {
                     optimizer: {
                         enabled: true,
@@ -13,7 +13,7 @@ module.exports = {
                 },
             },
             {
-                version: "0.7.6",
+                version: "0.8.3",
                 settings: {
                     optimizer: {
                         enabled: true,
@@ -24,7 +24,7 @@ module.exports = {
         ],
         overrides: {
             "contracts/Foo.sol": {
-                version: "0.8.1",
+                version: "0.8.4",
                 settings: {
                     viaIR: false,
                 },
