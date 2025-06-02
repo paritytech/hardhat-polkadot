@@ -14,15 +14,15 @@ jobs:
       matrix:
         # Disabled windows because it's too slow
         os: [ubuntu-latest, macos-latest]
-        node: ["18"]  
+        node: ["22"]  
     name: Run unit tests on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v4
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
           cache: pnpm
@@ -39,15 +39,15 @@ jobs:
       matrix:
         # Only ubuntu supports docker and windows is too slow
         os: [ubuntu-latest]
-        node: ["18"]  
+        node: ["22"]  
     name: Run E2E tests on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v4
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
           cache: pnpm
@@ -62,11 +62,11 @@ jobs:
   check-tarballs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
           cache: pnpm
 
       - name: Install dependencies

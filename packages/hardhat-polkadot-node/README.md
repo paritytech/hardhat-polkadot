@@ -55,9 +55,8 @@ $ npx hardhat node --fork wss://asset-hub-westend-rpc.dwellir.com
 
 | 🔧 Command | 📄 Description |
 | --- | --- |
-| --rpc-port | Port on which the server should listen. Defaults to 8000. |
+| --rpc-port | Port on which the server should listen. Defaults to 8000. It is also where the adapter will connect to when using the binaries. |
 | --node-binary-path | Path to the substrate node binary. |
-| --adapter-endpoint | Endpoint to which the adapter will connect to. Defaults to ws://localhost:8000. |
 | --adapter-binary-path | Path to the eth-rpc-adapter binary. |
 | --adapter-port | Port on which the adapter will listen to. Defaults to 8545. |
 | --dev | Whether to run the fork in dev mode. Defaults to false. |

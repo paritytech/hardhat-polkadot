@@ -68,7 +68,6 @@ const config: HardhatUserConfig = {
     },
   },
   resolc: {
-    version: "1.5.2",
     compilerSource: "npm",
   },
 };
@@ -88,19 +87,19 @@ Compile solidity smart contracts for the Polkadot network, creating PolkaVM comp
 $ npx hardhat compile
 ```
 
-Test smart contracts locally. Instructions in [Testing Your Contract](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#testing-your-contract).
+Test smart contracts locally. See more in [Testing Your Contract](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#testing-your-contract).
 
 ```bash
 $ npx hardhat test
 ```
 
-Deploy smart contracts locally or to a Live Network. Instructions in [Deploying with a Local Node](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#deploying-with-a-local-node) and [Deploying to a live Network](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#deploying-to-a-live-network).
+Deploy smart contracts locally or to a Live Network. See more in [Deploying with a Local Node](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#deploying-with-a-local-node) and [Deploying to a live Network](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#deploying-to-a-live-network).
 
 ```bash
 $ npx hardhat ignition deploy ./ignition/modules/deploy.js
 ```
 
-Run custom scripts locally or on a Live Network. Instructions in [Interacting with Your Contract](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#interacting-with-your-contract).
+Run custom scripts locally or on a Live Network. See more in [Interacting with Your Contract](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#interacting-with-your-contract).
 
 ```bash
 $ npx hardhat run scripts/interact.js
