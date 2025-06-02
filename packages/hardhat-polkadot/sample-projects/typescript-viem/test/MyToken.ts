@@ -51,7 +51,9 @@ describe("MyToken (Hardhat + Viem)", () => {
         const amount = toWei("1000")
 
         const tokenAsAddr1 = token.connect(addr1)
-        await expect(() => tokenAsAddr1.write.mint([addr2.account.address, amount])).to.throw()
+        await expect(() => tokenAsAddr1.write.mint([addr2.account.address, amount])).to.throw(
+            /AccessControlUnauthorizedAccount/,
+        )
     })
 
     it("allows burning", async () => {
@@ -65,13 +67,13 @@ describe("MyToken (Hardhat + Viem)", () => {
     it("pauses transfers", async () => {
         await token.write.pause()
         await expect(() => token.write.transfer([addr1.account.address, 1n])).to.throw(
-            "Pausable: paused",
+            /EnforcedPause/,
         )
     })
 
     it("rejects pause by non-pauser", async () => {
         const tokenAsAddr1 = token.connect(addr1)
-        await expect(() => tokenAsAddr1.write.pause()).to.throw("AccessControl:")
+        await expect(() => tokenAsAddr1.write.pause()).to.throw(/AccessControlUnauthorizedAccount/)
     })
 
     it("unpauses transfers", async () => {

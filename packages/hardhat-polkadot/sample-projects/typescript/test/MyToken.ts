@@ -31,9 +31,10 @@ describe("MyToken", () => {
 
     it("rejects minting by non-minters", async () => {
         const amount = toWei("1000")
-        await expect(token.connect(addr1).mint(addr2.address, amount)).to.be.revertedWith(
-            "AccessControl:",
-        )
+        const MINTER_ROLE = await token.MINTER_ROLE()
+        await expect(token.connect(addr1).mint(addr2.address, amount))
+            .to.be.revertedWithCustomError(token, "AccessControlUnauthorizedAccount")
+            .withArgs(addr1.address, MINTER_ROLE)
     })
 
     it("allows burning", async () => {
@@ -45,11 +46,17 @@ describe("MyToken", () => {
 
     it("pauses transfers", async () => {
         await token.pause()
-        await expect(token.transfer(addr1.address, 1)).to.be.revertedWith("Pausable: paused")
+        await expect(token.transfer(addr1.address, 1)).to.be.revertedWithCustomError(
+            token,
+            "EnforcedPause",
+        )
     })
 
     it("rejects pause by non-pauser", async () => {
-        await expect(token.connect(addr1).pause()).to.be.revertedWith("AccessControl:")
+        const PAUSER_ROLE = await token.PAUSER_ROLE()
+        await expect(token.connect(addr1).pause())
+            .to.be.revertedWithCustomError(token, "AccessControlUnauthorizedAccount")
+            .withArgs(addr1.address, PAUSER_ROLE)
     })
 
     it("unpauses transfers", async () => {

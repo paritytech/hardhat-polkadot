@@ -26,9 +26,9 @@ describe("MyToken", function () {
 
     it("should not allow minting by non-minters", async () => {
         const amount = ethers.parseUnits("1000", 18)
-        await expect(token.connect(addr1).mint(addr2.address, amount)).to.be.revertedWith(
-            `AccessControl: account ${addr1.address.toLowerCase()} is missing role`,
-        )
+        await expect(token.connect(addr1).mint(addr2.address, amount))
+            .to.be.revertedWithCustomError(token, "AccessControlUnauthorizedAccount")
+            .withArgs(addr1.address, await token.MINTER_ROLE())
     })
 
     it("should allow burning tokens", async () => {
@@ -40,13 +40,18 @@ describe("MyToken", function () {
 
     it("should allow pausing by PAUSER_ROLE", async () => {
         await token.pause()
-        await expect(token.transfer(addr1.address, 1)).to.be.revertedWith("Pausable: paused")
+        await expect(token.transfer(addr1.address, 1)).to.be.revertedWithCustomError(
+            token,
+            "EnforcedPause",
+        )
     })
 
     it("should not allow pausing by non-pauser", async () => {
-        await expect(token.connect(addr1).pause()).to.be.revertedWith(
-            `AccessControl: account ${addr1.address.toLowerCase()} is missing role`,
-        )
+        const PAUSER_ROLE = await token.PAUSER_ROLE()
+
+        await expect(token.connect(addr1).pause())
+            .to.be.revertedWithCustomError(token, "AccessControlUnauthorizedAccount")
+            .withArgs(addr1.address, PAUSER_ROLE)
     })
 
     it("should allow unpausing", async () => {
