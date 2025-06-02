@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { parseUnits, encodeBytes32String, keccak256 } from "viem"
+import { parseUnits } from "viem"
 import hre from "hardhat"
 
 describe("MyToken (Hardhat + Viem)", () => {
@@ -13,6 +13,7 @@ describe("MyToken (Hardhat + Viem)", () => {
     let addr2: any
 
     beforeEach(async () => {
+        // Hardhat automatically provides signers with walletClients
         const accounts = await hre.viem.getWalletClients()
         ;[walletClient, addr1, addr2] = accounts
         deployer = walletClient.account
@@ -48,14 +49,11 @@ describe("MyToken (Hardhat + Viem)", () => {
 
     it("rejects minting by non-minters", async () => {
         const amount = toWei("1000")
-        const tokenAsAddr1 = token.connect(addr1)
 
-        try {
-            await tokenAsAddr1.write.mint([addr2.account.address, amount])
-            expect.fail("Minting by non-minter should have thrown")
-        } catch (err: any) {
-            expect(err.shortMessage || err.message).to.include("AccessControlUnauthorizedAccount")
-        }
+        const tokenAsAddr1 = token.connect(addr1)
+        await expect(() => tokenAsAddr1.write.mint([addr2.account.address, amount])).to.throw(
+            /AccessControlUnauthorizedAccount/,
+        )
     })
 
     it("allows burning", async () => {
@@ -68,22 +66,14 @@ describe("MyToken (Hardhat + Viem)", () => {
 
     it("pauses transfers", async () => {
         await token.write.pause()
-        try {
-            await token.write.transfer([addr1.account.address, 1n])
-            expect.fail("Transfer while paused should have thrown")
-        } catch (err: any) {
-            expect(err.shortMessage || err.message).to.include("EnforcedPause")
-        }
+        await expect(() => token.write.transfer([addr1.account.address, 1n])).to.throw(
+            /EnforcedPause/,
+        )
     })
 
     it("rejects pause by non-pauser", async () => {
         const tokenAsAddr1 = token.connect(addr1)
-        try {
-            await tokenAsAddr1.write.pause()
-            expect.fail("Non-pauser should not be able to pause")
-        } catch (err: any) {
-            expect(err.shortMessage || err.message).to.include("AccessControlUnauthorizedAccount")
-        }
+        await expect(() => tokenAsAddr1.write.pause()).to.throw(/AccessControlUnauthorizedAccount/)
     })
 
     it("unpauses transfers", async () => {
