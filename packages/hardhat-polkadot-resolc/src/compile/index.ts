@@ -15,7 +15,7 @@ export async function compile(resolcConfig: ResolcConfig, input: CompilerInput) 
 
     if (resolcConfig.compilerSource === "binary") {
         if (resolcConfig.settings?.solcPath === null) {
-            throw new ResolcPluginError("resolc executable is not specified")
+            throw new ResolcPluginError("The path to the resolc binary is not specified.")
         }
         compiler = new BinaryCompiler(resolcConfig)
     } else if (resolcConfig.compilerSource === "npm") {

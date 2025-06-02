@@ -1,7 +1,7 @@
 import type { Artifact, CompilerInput } from "hardhat/types"
 import { ARTIFACT_FORMAT_VERSION } from "hardhat/internal/constants"
 import chalk from "chalk"
-import { execSync } from "child_process"
+import { updateSolc } from "./compile/npm"
 import type { CompiledOutput, ResolcConfig, SolcConfigData } from "./types"
 import { COMPILER_RESOLC_NEED_EVM_CODEGEN } from "./constants"
 import { ResolcPluginError } from "./errors"
@@ -205,13 +205,4 @@ export function deepUpdate(a: CompiledOutput, b: CompiledOutput): CompiledOutput
         })
     }
     return a
-}
-
-function updateSolc(version: string) {
-    try {
-        console.log(chalk.yellow(`Installing solc@${version}...`))
-        execSync(`npm install --save-dev --save-exact solc@${version}`, { stdio: "inherit" })
-    } catch (error) {
-        console.error(chalk.red("Failed to install solc:"), error)
-    }
 }
