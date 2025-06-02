@@ -46,8 +46,10 @@ describe("MyToken", () => {
 
     it("pauses transfers", async () => {
         await token.pause()
-        await expect(token.transfer(addr1.address, 1))
-            .to.be.revertedWithCustomError(token, "EnforcedPause")
+        await expect(token.transfer(addr1.address, 1)).to.be.revertedWithCustomError(
+            token,
+            "EnforcedPause",
+        )
     })
 
     it("rejects pause by non-pauser", async () => {
