@@ -255,22 +255,17 @@ task(
 
         const files = await run(TASK_TEST_GET_TEST_FILES, { testFiles })
 
-        const nodePath = userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath
-        const adapterPath = userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath
-
         let nodePort = userConfig.networks?.hardhat?.nodeConfig?.rpcPort || NODE_START_PORT
         let adapterPort =
             userConfig.networks?.hardhat?.adapterConfig?.adapterPort || ETH_RPC_ADAPTER_START_PORT
-        if (!!nodePath && !!adapterPath) {
-            nodePort = await getAvailablePort(nodePort, MAX_PORT_ATTEMPTS)
-            adapterPort = await getAvailablePort(adapterPort, MAX_PORT_ATTEMPTS)
-        }
+        nodePort = await getAvailablePort(nodePort, MAX_PORT_ATTEMPTS)
+        adapterPort = await getAvailablePort(adapterPort, MAX_PORT_ATTEMPTS)
 
         const nodeCommands: NodeConfig = Object.assign(
             {},
             userConfig.networks?.hardhat?.nodeConfig,
             {
-                port: nodePort,
+                rpcPort: nodePort,
             },
         )
         const adapterCommands: AdapterConfig = Object.assign(
@@ -296,10 +291,8 @@ task(
 
         try {
             await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false)
-            if (!!nodePath && !!adapterPath) {
-                await waitForNodeToBeReady(nodePort)
-                await waitForNodeToBeReady(adapterPort, true)
-            }
+            await waitForNodeToBeReady(nodePort)
+            await waitForNodeToBeReady(adapterPort, true)
             await configureNetwork(config, network, adapterPort || nodePort)
 
             let testFailures = 0

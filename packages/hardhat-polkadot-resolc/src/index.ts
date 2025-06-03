@@ -44,51 +44,46 @@ import {
 } from "./constants"
 import "./type-extensions"
 import type { ReviveCompilerInput } from "./types"
+import { ResolcPluginError } from "./errors"
 
 const logDebug = debug("hardhat:core:tasks:compile")
 
 extendConfig((config, userConfig) => {
-    if (config.resolc.compilerSource !== "binary") {
-        config.resolc = { ...defaultNpmResolcConfig, ...userConfig?.resolc }
-        config.resolc.settings = {
-            ...defaultNpmResolcConfig.settings,
-            ...userConfig?.resolc?.settings,
-        }
-    } else {
-        config.resolc = { ...defaultBinaryResolcConfig, ...userConfig?.resolc }
-        config.resolc.settings = {
-            ...defaultBinaryResolcConfig.settings,
-            ...userConfig?.resolc?.settings,
-        }
+    if (!config.networks.hardhat.polkavm) return
+
+    const isBinary = config.resolc?.compilerSource === "binary"
+    const deafaulConfig = isBinary ? defaultBinaryResolcConfig : defaultNpmResolcConfig
+    const customConfig = userConfig?.resolc || {}
+
+    config.resolc = {
+        ...deafaulConfig,
+        ...customConfig,
+        settings: {
+            ...deafaulConfig.settings,
+            ...customConfig.settings,
+        },
     }
 })
 
 extendEnvironment((hre) => {
-    if (hre.network.config.polkavm) {
-        hre.network.polkavm = hre.network.config.polkavm
+    if (!hre.network.config.polkavm) return
 
-        let artifactsPath = hre.config.paths.artifacts
-        if (!artifactsPath.endsWith("-pvm")) {
-            artifactsPath = `${artifactsPath}-pvm`
-        }
+    hre.network.polkavm = hre.network.config.polkavm
 
-        let cachePath = hre.config.paths.cache
-        if (!cachePath.endsWith("-pvm")) {
-            cachePath = `${cachePath}-pvm`
-        }
-
-        hre.config.paths.artifacts = artifactsPath
-        hre.config.paths.cache = cachePath
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(hre as any).artifacts = new Artifacts(artifactsPath)
-        hre.config.solidity.compilers.forEach(async (compiler) =>
-            updateDefaultCompilerConfig({ compiler }, hre.config.resolc),
-        )
-
-        for (const [file, compiler] of Object.entries(hre.config.solidity.overrides)) {
-            updateDefaultCompilerConfig({ compiler, file }, hre.config.resolc)
-        }
+    let artifactsPath = hre.config.paths.artifacts
+    if (!artifactsPath.endsWith("-pvm")) {
+        artifactsPath = `${artifactsPath}-pvm`
     }
+
+    let cachePath = hre.config.paths.cache
+    if (!cachePath.endsWith("-pvm")) {
+        cachePath = `${cachePath}-pvm`
+    }
+
+    hre.config.paths.artifacts = artifactsPath
+    hre.config.paths.cache = cachePath
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(hre as any).artifacts = new Artifacts(artifactsPath)
 })
 
 task(TASK_COMPILE).setAction(
@@ -175,10 +170,28 @@ subtask(
     },
 )
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-subtask(TASK_COMPILE_SOLIDITY_RUN_SOLC, async (args: { input: any }, hre, runSuper) => {
-    if (!hre.config.networks.hardhat.polkavm) {
+subtask(TASK_COMPILE_SOLIDITY_RUN_SOLC, async (args: { input: CompilerInput }, hre, runSuper) => {
+    if (!hre.network.polkavm) {
         return await runSuper(args)
+    }
+
+    const solidityConfig = hre.config.solidity
+
+    const versions = new Set<string>()
+    for (const compiler of hre.config.solidity.compilers) {
+        versions.add(compiler.version)
+    }
+    for (const override of Object.values(hre.config.solidity.overrides)) {
+        versions.add(override.version)
+    }
+    if (versions.size > 1)
+        throw new ResolcPluginError("Multiple Solidity versions are not supported yet.")
+
+    solidityConfig.compilers.forEach(async (compiler) =>
+        updateDefaultCompilerConfig({ compiler }, hre.config.resolc),
+    )
+    for (const [file, compiler] of Object.entries(solidityConfig.overrides)) {
+        updateDefaultCompilerConfig({ compiler, file }, hre.config.resolc)
     }
 
     return await compile(hre.config.resolc, args.input)
@@ -198,7 +211,7 @@ subtask(
         hre,
         runSuper,
     ): Promise<{ output: CompilerOutput; solcBuild: SolcBuild }> => {
-        if (!hre.config.networks.hardhat.polkavm) {
+        if (!hre.network.polkavm) {
             return await runSuper(args)
         }
 

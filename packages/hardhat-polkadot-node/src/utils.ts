@@ -62,7 +62,7 @@ export function constructCommandArgs(
 
         if (cliCommands.dev) {
             adapterCommands.push("--dev")
-            if (cliCommands.nodeBinaryPath) {
+            if (cliCommands.nodeBinaryPath && !cliCommands.fork) {
                 nodeCommands.push("--dev")
             }
         }
@@ -104,7 +104,12 @@ export function constructCommandArgs(
             )
         }
 
-        if (args.nodeCommands?.nodeBinaryPath && args.nodeCommands.dev && !cliCommands?.dev) {
+        if (
+            args.nodeCommands?.nodeBinaryPath &&
+            args.nodeCommands.dev &&
+            !cliCommands?.dev &&
+            !args.forking
+        ) {
             nodeCommands.push(`--dev`)
         }
 

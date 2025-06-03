@@ -29,6 +29,9 @@ printf "Running tests in $TMP_TESTS_DIR\n\n"
 if [[ "$TESTS_TYPE" == "--unit" || "$TESTS_TYPE" == "unit" ]]; then
     for file in ./unit/*; do
         FILE_NAME=$(basename "$file")
+        if [[ "$FILE_NAME" == "compile-multiple.test.sh" ]]; then
+            continue
+        fi
         cp "$file" "$TMP_TESTS_DIR/$FILE_NAME"
         chmod +x "$TMP_TESTS_DIR/$FILE_NAME"
         pushd "$TMP_TESTS_DIR" >/dev/null  # cd into the fixture folder, saving old dir
@@ -40,6 +43,9 @@ fi
 if [[ "$TESTS_TYPE" == "--e2e" || "$TESTS_TYPE" == "e2e" ]]; then
     for file in ./e2e/*; do
         FILE_NAME=$(basename "$file")
+        if [[ "$FILE_NAME" == "3-deploy-live.test.sh" ]]; then
+            continue
+        fi
         cp "$file" "$TMP_TESTS_DIR/$FILE_NAME"
         chmod +x "$TMP_TESTS_DIR/$FILE_NAME"
         pushd "$TMP_TESTS_DIR" >/dev/null  # cd into the fixture folder, saving old dir

@@ -58,6 +58,7 @@ const ETHERS_PEER_DEPENDENCIES: Dependencies = {
 const VIEM_PEER_DEPENDENCIES: Dependencies = {
     "@nomicfoundation/hardhat-viem": "2.0.6",
     viem: "^2.7.6",
+    chai: "^4.2.0",
 }
 
 const TYPESCRIPT_DEPENDENCIES: Dependencies = {}
@@ -582,8 +583,8 @@ async function getDependencies(
     }
 
     const viemToolboxDependencies: Dependencies = {
-        ...(shouldInstallPeerDependencies ? VIEM_PEER_DEPENDENCIES : {}),
-        ...(shouldInstallTypescriptPeerDependencies ? TYPESCRIPT_VIEM_PEER_DEPENDENCIES : {}),
+        ...VIEM_PEER_DEPENDENCIES,
+        ...TYPESCRIPT_VIEM_PEER_DEPENDENCIES,
     }
 
     const toolboxDependencies: Dependencies = shouldInstallDefaultToolbox

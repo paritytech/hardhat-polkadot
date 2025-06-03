@@ -14,7 +14,11 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -37,11 +41,13 @@
     "@types/node": "^22.15.3",
     "chalk": "4",
     "debug": "^4.4.0",
+    "semver": "^7.7.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.1",
+    "@types/semver": "^7.7.0",
     "eslint": "^9.25.1",
     "globals": "^16.0.0",
     "rimraf": "^3.0.2",

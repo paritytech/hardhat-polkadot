@@ -11,6 +11,7 @@
   "bugs": "https://github.com/paritytech/hardhat-polkadot/issues",
   "scripts": {
     "build": "pnpm --filter '!examples/**' run clean && pnpm --filter '!examples/**' --recursive run build",
+    "build:dev": "pnpm --recursive run build:dev",
     "clean": "pnpm --recursive run clean",
     "prettier:check": "pnpm --filter '!examples/**' --recursive run prettier:check && npx prettier --check 'examples/**/*.{md,yml,ts,js,json}'",
     "prettier:write": "pnpm --filter '!examples/**' --recursive run prettier:write && npx prettier --check 'examples/**/*.{md,yml,ts,js,json}'",
