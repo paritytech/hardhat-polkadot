@@ -1,1 +1,21 @@
+# Dependencies
 node_modules
+.yarn
+.env
+
+# Hardhat files
+/cache
+/artifacts
+/cache-pvm
+/artifacts-pvm
+
+# TypeChain files
+/typechain
+/typechain-types
+
+# solidity-coverage files
+/coverage
+/coverage.json
+
+# Hardhat Ignition default folder for deployments against a local node
+ignition/deployments/chain-31337

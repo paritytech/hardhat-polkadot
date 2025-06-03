@@ -4,6 +4,7 @@ import '@nomicfoundation/hardhat-ignition';
 import { HardhatUserConfig } from 'hardhat/types';
 
 const config: HardhatUserConfig = {
+    solidity: '0.8.28',
     networks: {
         hardhat: {
             allowUnlimitedContractSize: false,
@@ -36,17 +37,7 @@ const config: HardhatUserConfig = {
             url: 'https://mainnet.base.org',
         },
     },
-    solidity: {
-        version: '0.8.28',
-        settings: {
-            optimizer: {
-                enabled: true,
-                runs: 200,
-            },
-        },
-    },
     resolc: {
-        version: '1.5.2',
         compilerSource: 'npm',
     },
 };

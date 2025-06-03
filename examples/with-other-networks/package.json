@@ -1,18 +1,7 @@
 {
-  "name": "hardhat-polkadot-example-node",
+  "name": "hardhat-polkadot-with-other-networks-example",
   "version": "0.1.0",
   "author": "Parity Technologies",
-  "scripts": {
-    "lint": "pnpm eslint",
-    "prettier:check": "pnpm prettier --check",
-    "lint:fix": "pnpm eslint --fix",
-    "fmt": "pnpm prettier --write",
-    "eslint": "eslint test/**/*.ts",
-    "prettier": "prettier test/**/*.ts",
-    "test": "npx hardhat test",
-    "build": "tsc --build .",
-    "clean": "rimraf dist"
-  },
   "devDependencies": {
     "@nomicfoundation/hardhat-verify": "^2.0.14",
     "@parity/hardhat-polkadot": "^0.1.5",
