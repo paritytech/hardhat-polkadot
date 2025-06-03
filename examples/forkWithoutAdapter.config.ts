@@ -7,7 +7,7 @@ const config: HardhatUserConfig = {
         hardhat: {
             polkavm: true,
             forking: {
-                url: "https://westend-asset-hub-eth-rpc.polkadot.io",
+                url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
             },
             accounts: [
                 {

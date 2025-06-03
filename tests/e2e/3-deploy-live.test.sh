@@ -10,7 +10,7 @@ npm add $HARDHAT_POLKADOT_TGZ_PATH
 npm install # install modules specified in the package.json
 
 # When
-DEPLOY_LIVE_NETWORK_OUTPUT=$(yes | npx hardhat ignition deploy ./ignition/modules/Lock.js --network westendHub)
+DEPLOY_LIVE_NETWORK_OUTPUT=$(yes | npx hardhat ignition deploy ./ignition/modules/Lock.js --network passetHub)
 
 # Then
 assert_directory_not_empty "artifacts-pvm"

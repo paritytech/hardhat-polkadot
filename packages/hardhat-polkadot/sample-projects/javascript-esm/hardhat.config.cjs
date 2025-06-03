@@ -11,7 +11,7 @@ module.exports = {
     hardhat: {
       polkavm: true,
       forking: {
-        url: 'wss://westend-asset-hub-rpc.polkadot.io',
+        url: 'https://testnet-passet-hub-eth-rpc.polkadot.io',
       },
       adapterConfig: {
         adapterBinaryPath: './bin/eth-rpc',
