@@ -15,6 +15,11 @@
 - Add network config examples. ([#154](https://github.com/paritytech/hardhat-polkadot/pull/154)) ([35a7ce8](https://github.com/paritytech/hardhat-polkadot/commit/35a7ce8d4f8314da2ba2796950daa356579b54e7)) (thanks [@brianspha](https://github.com/Brianspha))
 - Remove `version` from `resolcConfig` examples and docs. ([#165](https://github.com/paritytech/hardhat-polkadot/pull/165)) ([7060d8d](https://github.com/paritytech/hardhat-polkadot/commit/7060d8d2671b22e7275e83df0ddfebdc91dd1328))
 
+### Internal
+
+- Bumped `@parity/hardhat-polkadot-resolc` to `0.1.4`.
+- Bumped `@parity/hardhat-polkadot-node` to `0.1.2`.
+
 
 ## 0.1.5 (2025-05-13)
 ### Bug Fixes
