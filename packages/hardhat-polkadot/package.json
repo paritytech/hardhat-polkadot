@@ -55,7 +55,7 @@
         "@parity/hardhat-polkadot-node": "workspace:^",
         "@parity/hardhat-polkadot-resolc": "workspace:^",
         "enquirer": "2.3.0",
-        "find-up": "5.0.0",
+        "find-up": "7.0.0",
         "fs-extra": "^11.3.0",
         "picocolors": "^1.1.1"
     },
