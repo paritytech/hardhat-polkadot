@@ -4,7 +4,7 @@
   "author": "Parity Technologies",
   "devDependencies": {
     "@nomicfoundation/hardhat-verify": "^2.0.14",
-    "@parity/hardhat-polkadot": "^0.1.5",
+    "@parity/hardhat-polkadot": "^0.1.6",
     "@types/chai": "^4.3.16",
     "@types/mocha": "^10.0.6",
     "@typescript-eslint/eslint-plugin": "^7.12.0",
