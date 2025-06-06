@@ -10,7 +10,7 @@
         "@nomicfoundation/hardhat-verify": "^2.0.13",
         "@nomicfoundation/ignition-core": "^0.15.10",
         "@openzeppelin/hardhat-upgrades": "^3.9.0",
-        "@parity/resolc": "^0.1.0-dev.16",
+        "@parity/resolc": "0.2.0",
         "@typechain/ethers-v6": "^0.5.1",
         "@typechain/hardhat": "^9.1.0",
         "@types/chai": "^4.2.0",
