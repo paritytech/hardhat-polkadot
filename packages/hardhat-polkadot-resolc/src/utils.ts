@@ -2,7 +2,7 @@ import type { Artifact, CompilerInput } from "hardhat/types"
 import { ARTIFACT_FORMAT_VERSION } from "hardhat/internal/constants"
 import chalk from "chalk"
 import { updateSolc } from "./compile/npm"
-import type { CompiledOutput, ResolcConfig, SolcConfigData } from "./types"
+import type { ResolcConfig, SolcConfigData } from "./types"
 import { COMPILER_RESOLC_NEED_EVM_CODEGEN } from "./constants"
 import { ResolcPluginError } from "./errors"
 
@@ -52,7 +52,7 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
     if (resolc.settings?.optimizer && resolc.settings?.optimizer?.enabled) {
         optimizer = Object.assign({}, resolc.settings?.optimizer)
     } else if (resolc.settings?.optimizer?.enabled === false) {
-        optimizer = Object.assign({}, { enabled: false })
+        optimizer = Object.assign({}, { enabled: false, runs: 200 })
     } else {
         optimizer = Object.assign({}, { enabled: false, runs: 200 })
     }
