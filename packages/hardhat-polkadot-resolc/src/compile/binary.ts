@@ -1,10 +1,10 @@
 import { spawn } from "child_process"
 import type { CompilerInput } from "hardhat/types"
+import { resolveInputs, SolcOutput } from "@parity/resolc"
+import chalk from "chalk"
 import type { ResolcConfig } from "../types"
 import { extractCommands } from "../utils"
 import { ResolcPluginError } from "../errors"
-import { resolveInputs, SolcOutput } from "@parity/resolc"
-import chalk from "chalk"
 
 export async function compileWithBinary(
     input: CompilerInput,
@@ -20,7 +20,7 @@ export async function compileWithBinary(
 
     let optimizerSettings: object | undefined;
 
-    if (!!optimizer?.enabled) {
+    if (optimizer?.enabled) {
         optimizerSettings = {
             mode: optimizer?.parameters,
             fallback_to_optimizing_for_size: optimizer?.fallbackOz,
