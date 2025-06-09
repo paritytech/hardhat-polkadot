@@ -1,4 +1,4 @@
-import { exec } from "child_process"
+import { spawn } from "child_process"
 import type { CompilerInput } from "hardhat/types"
 import type { ResolcConfig } from "../types"
 import { extractCommands } from "../utils"
@@ -60,26 +60,22 @@ export async function compileWithBinary(
             output += data.toString()
         })
 
-        return parsedOutput
-    } else {
-        const output: string = await new Promise((resolve, reject) => {
-            const process = exec(
-                processCommand,
-                {
-                    maxBuffer: 1024 * 1024 * 500,
-                },
-                (err, stdout, _stderr) => {
-                    if (err !== null) {
-                        return reject(err)
-                    }
-                    resolve(stdout)
-                },
-            )
-
-            process.stdin!.write(JSON.stringify(input))
-            process.stdin!.end()
+        process.stderr.on('data', (data) => {
+            error += data.toString()
         })
 
-        return JSON.parse(output)
-    }
+        process.on('close', (code) => {
+            if (code === 0) {
+                try {
+                    const result = JSON.parse(output)
+                    resolve(result)
+                } catch {
+                    reject(new ResolcPluginError(`Failed to parse output`))
+                }
+            } else {
+                reject(new ResolcPluginError(`Process exited with code ${code}: ${error}`))
+            }
+        })
+    })
 }
+

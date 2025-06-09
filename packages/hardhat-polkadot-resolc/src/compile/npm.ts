@@ -17,9 +17,9 @@ export async function compileWithNpm(
 
     if (config.settings?.optimizer?.enabled) {
         const optimizer = {
-            enabled: true,
             mode: config.settings?.optimizer?.parameters,
             fallback_to_optimizing_for_size: config.settings?.optimizer?.fallbackOz,
+            enabled: true,
             runs: config.settings?.optimizer?.runs,
         }
 
