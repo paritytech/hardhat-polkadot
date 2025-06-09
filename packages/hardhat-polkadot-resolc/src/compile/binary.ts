@@ -1,6 +1,6 @@
 import { spawn } from "child_process"
 import type { CompilerInput } from "hardhat/types"
-import { resolveInputs, SolcOutput } from "@parity/resolc"
+import { resolveInputs, type SolcOutput } from "@parity/resolc"
 import chalk from "chalk"
 import type { ResolcConfig } from "../types"
 import { extractCommands } from "../utils"
