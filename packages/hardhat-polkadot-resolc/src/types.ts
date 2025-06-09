@@ -65,7 +65,9 @@ export interface ResolcConfig {
         emitDourceDebugInfo?: boolean
         // Disable the `solc` optimizer.
         disableSolcOptimizer?: boolean
-        // Compile in batches. Useful for environmnents with limited resources and large number of files.
+        /**
+        * @deprecated This property should not be used
+        */
         batchSize?: number
     }
 }
@@ -88,10 +90,6 @@ export interface SolcConfigData {
     file?: string
 }
 
-export interface ContractBatch {
-    [key: string]: object | string
-}
-
 export interface ContractSource {
     [key: string]: object
 }
@@ -101,13 +99,4 @@ export interface Sources {
         id: number
         ast: object
     }
-}
-
-export interface CompiledOutput {
-    contracts: ContractSource
-    sources: Sources
-    errors: string[]
-    version: string
-    long_version: string
-    revive_version: string
 }
