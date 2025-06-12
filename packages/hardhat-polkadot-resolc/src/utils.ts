@@ -2,7 +2,7 @@ import type { Artifact, CompilerInput } from "hardhat/types"
 import { ARTIFACT_FORMAT_VERSION } from "hardhat/internal/constants"
 import chalk from "chalk"
 import { updateSolc } from "./compile/npm"
-import type { CompiledOutput, ResolcConfig, SolcConfigData } from "./types"
+import type { ResolcConfig, SolcConfigData } from "./types"
 import { COMPILER_RESOLC_NEED_EVM_CODEGEN } from "./constants"
 import { ResolcPluginError } from "./errors"
 
@@ -52,7 +52,7 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
     if (resolc.settings?.optimizer && resolc.settings?.optimizer?.enabled) {
         optimizer = Object.assign({}, resolc.settings?.optimizer)
     } else if (resolc.settings?.optimizer?.enabled === false) {
-        optimizer = Object.assign({}, { enabled: false })
+        optimizer = Object.assign({}, { enabled: false, runs: 200 })
     } else {
         optimizer = Object.assign({}, { enabled: false, runs: 200 })
     }
@@ -187,22 +187,4 @@ export function orderSources(mapped: Map<string, string[]>): string[] {
     })
 
     return ordered
-}
-
-export function deepUpdate(a: CompiledOutput, b: CompiledOutput): CompiledOutput {
-    const keys = Object.keys(b.sources)
-    const lastId = Object.keys(a.sources).length - 1
-    let nextIds = lastId + Object.keys(b.sources).length
-    if (Object.keys(a.sources).length === 0) {
-        return b
-    } else {
-        keys.forEach((key) => {
-            a.contracts = Object.assign({}, a.contracts, { [key]: b.contracts[key] })
-            a.sources = Object.assign({}, a.sources, {
-                [key]: { id: nextIds, ast: b.sources[key].ast },
-            })
-            nextIds++
-        })
-    }
-    return a
 }

@@ -3,7 +3,6 @@ import {
     TASK_COMPILE_SOLIDITY_RUN_SOLCJS,
     TASK_COMPILE_SOLIDITY_GET_ARTIFACT_FROM_COMPILATION_OUTPUT,
     TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD,
-    TASK_COMPILE_SOLIDITY_GET_COMPILATION_JOBS,
     TASK_COMPILE_SOLIDITY_LOG_COMPILATION_RESULT,
     TASK_COMPILE_SOLIDITY_LOG_RUN_COMPILER_START,
     TASK_COMPILE_SOLIDITY_GET_SOURCE_NAMES,
@@ -84,6 +83,14 @@ extendEnvironment((hre) => {
     hre.config.paths.cache = cachePath
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(hre as any).artifacts = new Artifacts(artifactsPath)
+
+    hre.config.solidity.compilers.forEach(async (compiler) =>
+        updateDefaultCompilerConfig({ compiler }, hre.config.resolc),
+    )
+
+    for (const [file, compiler] of Object.entries(hre.config.solidity.overrides)) {
+        updateDefaultCompilerConfig({ compiler, file }, hre.config.resolc)
+    }
 })
 
 task(TASK_COMPILE).setAction(
@@ -117,22 +124,6 @@ subtask(
         )
     },
 )
-
-subtask(TASK_COMPILE_SOLIDITY_GET_COMPILATION_JOBS, async (args, hre, runSuper) => {
-    const { jobs, errors } = await runSuper(args)
-
-    if (!hre.network.polkavm || hre.config.resolc.compilerSource !== "binary") {
-        return { jobs, errors }
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    jobs.forEach((job: any) => {
-        job.solidityConfig.resolc = hre.config.resolc
-        job.solidityConfig.resolc.settings.compilerPath = hre.config.resolc.settings?.compilerPath
-    })
-
-    return { jobs, errors }
-})
 
 subtask(
     TASK_COMPILE_SOLIDITY_GET_ARTIFACT_FROM_COMPILATION_OUTPUT,
@@ -175,8 +166,6 @@ subtask(TASK_COMPILE_SOLIDITY_RUN_SOLC, async (args: { input: CompilerInput }, h
         return await runSuper(args)
     }
 
-    const solidityConfig = hre.config.solidity
-
     const versions = new Set<string>()
     for (const compiler of hre.config.solidity.compilers) {
         versions.add(compiler.version)
@@ -186,13 +175,6 @@ subtask(TASK_COMPILE_SOLIDITY_RUN_SOLC, async (args: { input: CompilerInput }, h
     }
     if (versions.size > 1)
         throw new ResolcPluginError("Multiple Solidity versions are not supported yet.")
-
-    solidityConfig.compilers.forEach(async (compiler) =>
-        updateDefaultCompilerConfig({ compiler }, hre.config.resolc),
-    )
-    for (const [file, compiler] of Object.entries(solidityConfig.overrides)) {
-        updateDefaultCompilerConfig({ compiler, file }, hre.config.resolc)
-    }
 
     return await compile(hre.config.resolc, args.input)
 })
