@@ -13,12 +13,14 @@ export async function compileWithBinary(
     const { compilerPath, optimizer } = config.settings!
 
     if (config.settings?.batchSize) {
-        console.log(chalk.yellow('This property is deprecated and will be removed. Treating as no effect.'))
+        console.log(
+            chalk.yellow("This property is deprecated and will be removed. Treating as no effect."),
+        )
     }
 
     const commands = extractCommands(config)
 
-    let optimizerSettings: object | undefined;
+    let optimizerSettings: object | undefined
 
     if (optimizer?.enabled) {
         optimizerSettings = {
@@ -33,15 +35,14 @@ export async function compileWithBinary(
         }
     }
 
-
     const inputs = JSON.stringify({
-        language: 'Solidity',
+        language: "Solidity",
         sources: resolveInputs(input.sources),
         settings: {
             optimizer: optimizerSettings,
             outputSelection: {
-                '*': {
-                    '*': ['abi'],
+                "*": {
+                    "*": ["abi"],
                 },
             },
         },
@@ -50,21 +51,21 @@ export async function compileWithBinary(
     return new Promise((resolve, reject) => {
         const process = spawn(compilerPath!, commands)
 
-        let output = ''
-        let error = ''
+        let output = ""
+        let error = ""
 
         process.stdin.write(inputs)
         process.stdin.end()
 
-        process.stdout.on('data', (data) => {
+        process.stdout.on("data", (data) => {
             output += data.toString()
         })
 
-        process.stderr.on('data', (data) => {
+        process.stderr.on("data", (data) => {
             error += data.toString()
         })
 
-        process.on('close', (code) => {
+        process.on("close", (code) => {
             if (code === 0) {
                 try {
                     const result = JSON.parse(output)
@@ -78,4 +79,3 @@ export async function compileWithBinary(
         })
     })
 }
-

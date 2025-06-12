@@ -66,8 +66,8 @@ export interface ResolcConfig {
         // Disable the `solc` optimizer.
         disableSolcOptimizer?: boolean
         /**
-        * @deprecated This property should not be used
-        */
+         * @deprecated This property should not be used
+         */
         batchSize?: number
     }
 }

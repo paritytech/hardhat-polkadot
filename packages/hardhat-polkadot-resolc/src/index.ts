@@ -80,16 +80,16 @@ extendEnvironment((hre) => {
     }
 
     hre.config.paths.artifacts = artifactsPath
-    hre.config.paths.cache = cachePath;
+    hre.config.paths.cache = cachePath
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (hre as any).artifacts = new Artifacts(artifactsPath)
+    ;(hre as any).artifacts = new Artifacts(artifactsPath)
 
     hre.config.solidity.compilers.forEach(async (compiler) =>
         updateDefaultCompilerConfig({ compiler }, hre.config.resolc),
-    );
+    )
 
     for (const [file, compiler] of Object.entries(hre.config.solidity.overrides)) {
-        updateDefaultCompilerConfig({ compiler, file }, hre.config.resolc);
+        updateDefaultCompilerConfig({ compiler, file }, hre.config.resolc)
     }
 })
 
@@ -175,7 +175,6 @@ subtask(TASK_COMPILE_SOLIDITY_RUN_SOLC, async (args: { input: CompilerInput }, h
     }
     if (versions.size > 1)
         throw new ResolcPluginError("Multiple Solidity versions are not supported yet.")
-
 
     return await compile(hre.config.resolc, args.input)
 })
