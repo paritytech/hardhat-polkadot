@@ -32,7 +32,7 @@ export class DockerRpcServer implements RpcServer {
         adapterArgs: string[] = [],
         blockProcess: boolean = true,
     ): Promise<void> {
-        const adapterPortArg = adapterArgs.find((arg) => arg.startsWith("--port="))
+        const adapterPortArg = adapterArgs.find((arg) => arg.startsWith("--rpc-port="))
         const adapterPort = adapterPortArg
             ? parseInt(adapterPortArg.split("=")[1], 10)
             : ETH_RPC_ADAPTER_START_PORT

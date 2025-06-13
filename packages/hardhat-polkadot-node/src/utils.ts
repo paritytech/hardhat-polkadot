@@ -94,6 +94,18 @@ export function constructCommandArgs(
 
         if (
             args.adapterCommands?.adapterPort &&
+            args.adapterCommands?.adapterPort !== args.nodeCommands?.rpcPort
+        ) {
+            adapterCommands.push(`--rpc-port=${args.adapterCommands?.adapterPort}`)
+        } else if (
+            args.adapterCommands?.adapterPort &&
+            args.adapterCommands?.adapterPort === args.nodeCommands?.rpcPort
+        ) {
+            throw new PolkadotNodePluginError("Adapter and node cannot share the same port.")
+        }
+
+        if (
+            args.adapterCommands?.adapterPort &&
             args.adapterCommands?.adapterPort === args.nodeCommands?.rpcPort
         ) {
             throw new PolkadotNodePluginError("Adapter and node cannot share the same port.")
@@ -139,49 +151,6 @@ export async function isPortAvailable(port: number): Promise<boolean> {
     const availableIPv4 = await isPortAvailableForIP(port, "0.0.0.0")
     const availableIPv6 = await isPortAvailableForIP(port, "::")
     return availableIPv4 && availableIPv6
-}
-
-function setPayload(adapter?: boolean): object {
-    return {
-        jsonrpc: "2.0",
-        method: adapter ? RPC_ENDPOINT_PATH : "state_getRuntimeVersion",
-        params: [],
-        id: 1,
-    }
-}
-
-export async function waitForNodeToBeReady(
-    port: number,
-    adapter: boolean = false,
-    maxAttempts: number = 20,
-): Promise<void> {
-    const rpcEndpoint = `${BASE_URL}:${port}`
-    const payload = setPayload(adapter)
-    let attempts = 0
-    let waitTime = 1000
-    const backoffFactor = 2
-    const maxWaitTime = 30000
-
-    while (attempts < maxAttempts) {
-        try {
-            const response = await axios.post(rpcEndpoint, payload)
-
-            if (response.status == 200) {
-                return
-            }
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (_e: any) {
-            // If it fails, it will just try again
-        }
-
-        attempts++
-
-        await new Promise((r) => setTimeout(r, waitTime))
-
-        waitTime = Math.min(waitTime * backoffFactor, maxWaitTime)
-    }
-
-    throw new PolkadotNodePluginError("Server didn't respond after multiple attempts")
 }
 
 export async function getAvailablePort(startPort: number, maxAttempts: number): Promise<number> {
@@ -233,7 +202,12 @@ export async function configureNetwork(
     port: number,
 ) {
     const url = `${BASE_URL}:${port}`
-    const payload = setPayload(true)
+    const payload = {
+        jsonrpc: "2.0",
+        method: RPC_ENDPOINT_PATH,
+        params: [],
+        id: 1,
+    }
     let chainId = 0
     try {
         const response = await axios.post(url, payload)

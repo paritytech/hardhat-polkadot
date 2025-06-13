@@ -3,7 +3,8 @@ import { HardhatArguments } from "hardhat/types"
 import { getEnvVariablesMap } from "hardhat/internal/core/params/env-variables"
 import path from "path"
 import { CommandArguments } from "src/types"
-import { startServer, waitForNodeToBeReady } from "../utils"
+import { startServer } from "../utils"
+import { waitForNodeToBeReady } from "../servers/utils"
 
 export async function runScript(
     config: CommandArguments,
