@@ -53,11 +53,10 @@ export class PathToBinariesRpcServer implements RpcServer {
                 )
             }
 
-            const adapterPortArg = adapterArgs.find((arg) => arg.startsWith("--port="))
+            const adapterPortArg = adapterArgs.find((arg) => arg.startsWith("--rpc-port="))
             const adapterPort = adapterPortArg
                 ? parseInt(adapterPortArg.split("=")[1], 10)
                 : ETH_RPC_ADAPTER_START_PORT
-
             this.adapterProcess = spawn(adapterCommand, adapterArgs, { stdio: stdioConfig })
 
             if (blockProcess) {

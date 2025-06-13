@@ -94,6 +94,18 @@ export function constructCommandArgs(
 
         if (
             args.adapterCommands?.adapterPort &&
+            args.adapterCommands?.adapterPort !== args.nodeCommands?.rpcPort
+        ) {
+            adapterCommands.push(`--rpc-port=${args.adapterCommands?.adapterPort}`)
+        } else if (
+            args.adapterCommands?.adapterPort &&
+            args.adapterCommands?.adapterPort === args.nodeCommands?.rpcPort
+        ) {
+            throw new PolkadotNodePluginError("Adapter and node cannot share the same port.")
+        }
+
+        if (
+            args.adapterCommands?.adapterPort &&
             args.adapterCommands?.adapterPort === args.nodeCommands?.rpcPort
         ) {
             throw new PolkadotNodePluginError("Adapter and node cannot share the same port.")
@@ -190,7 +202,12 @@ export async function configureNetwork(
     port: number,
 ) {
     const url = `${BASE_URL}:${port}`
-    const payload = setPayload(true)
+    const payload = {
+        jsonrpc: "2.0",
+        method: RPC_ENDPOINT_PATH,
+        params: [],
+        id: 1,
+    }
     let chainId = 0
     try {
         const response = await axios.post(url, payload)

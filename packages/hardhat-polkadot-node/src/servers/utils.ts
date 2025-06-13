@@ -4,29 +4,27 @@ import { BASE_URL, RPC_ENDPOINT_PATH } from "../constants"
 import { PolkadotNodePluginError } from "../errors"
 
 export async function waitForNodeToBeReady(port: number, maxAttempts = 20): Promise<void> {
-    const endpoint = `${BASE_URL}:${port}`
     const payload = {
         jsonrpc: "2.0",
         method: "state_getRuntimeVersion",
         params: [],
         id: 1,
     }
-    await waitForServiceToBeReady(endpoint, payload, maxAttempts)
+    await waitForServiceToBeReady(port, payload, maxAttempts)
 }
 
 export async function waitForEthRpcToBeReady(port: number, maxAttempts = 20): Promise<void> {
-    const endpoint = `${BASE_URL}:${port}`
     const payload = {
         jsonrpc: "2.0",
         method: RPC_ENDPOINT_PATH,
         params: [],
         id: 1,
     }
-    await waitForServiceToBeReady(endpoint, payload, maxAttempts)
+    await waitForServiceToBeReady(port, payload, maxAttempts)
 }
 
 async function waitForServiceToBeReady(
-    endpoint: string,
+    port: number,
     payload: object,
     maxAttempts: number,
 ): Promise<void> {
@@ -34,6 +32,7 @@ async function waitForServiceToBeReady(
     let waitTime = 1000
     const backoffFactor = 2
     const maxWaitTime = 30000
+    const endpoint = `${BASE_URL}:${port}`
 
     while (attempts < maxAttempts) {
         try {

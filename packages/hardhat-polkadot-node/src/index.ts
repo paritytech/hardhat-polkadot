@@ -26,13 +26,13 @@ import {
     configureNetwork,
     constructCommandArgs,
     getAvailablePort,
-    waitForNodeToBeReady,
 } from "./utils"
 import { PolkadotNodePluginError } from "./errors"
 import { interceptAndWrapTasksWithNode } from "./core/global-interceptor"
 import { runScriptWithHardhat } from "./core/script-runner"
 import { AdapterConfig, NodeConfig, RpcServer } from "./types"
 import "./type-extensions"
+import { waitForNodeToBeReady, waitForEthRpcToBeReady } from "./servers/utils"
 
 task(TASK_RUN).setAction(async (args, hre, runSuper) => {
     if (!hre.network.polkavm || hre.network.name !== HARDHAT_NETWORK_NAME) {
@@ -292,7 +292,7 @@ task(
         try {
             await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false)
             await waitForNodeToBeReady(nodePort)
-            await waitForNodeToBeReady(adapterPort, true)
+            await waitForEthRpcToBeReady(adapterPort)
             await configureNetwork(config, network, adapterPort || nodePort)
 
             let testFailures = 0
