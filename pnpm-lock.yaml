@@ -112,8 +112,8 @@ importers:
         version: 1.1.1
     devDependencies:
       '@eslint/js':
-        specifier: ^9.25.1
-        version: 9.27.0
+        specifier: ^9.29.0
+        version: 9.29.0
       '@nomicfoundation/hardhat-ignition':
         specifier: ^0.15.11
         version: 0.15.11(@nomicfoundation/hardhat-verify@2.0.14(hardhat@2.24.1(ts-node@10.9.2(@types/node@22.15.24)(typescript@5.8.3))(typescript@5.8.3)))(hardhat@2.24.1(ts-node@10.9.2(@types/node@22.15.24)(typescript@5.8.3))(typescript@5.8.3))
@@ -134,7 +134,7 @@ importers:
         version: 9.27.0
       eslint-plugin-import:
         specifier: ^2.31.0
-        version: 2.31.0(eslint@9.27.0)
+        version: 2.31.0(@typescript-eslint/parser@8.33.0(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)
       globals:
         specifier: ^16.0.0
         version: 16.2.0
@@ -194,8 +194,8 @@ importers:
         version: 5.8.3
     devDependencies:
       '@eslint/js':
-        specifier: ^9.25.1
-        version: 9.27.0
+        specifier: ^9.29.0
+        version: 9.29.0
       '@types/dockerode':
         specifier: ^3.3.38
         version: 3.3.39
@@ -204,7 +204,7 @@ importers:
         version: 9.27.0
       eslint-plugin-import:
         specifier: ^2.31.0
-        version: 2.31.0(eslint@9.27.0)
+        version: 2.31.0(@typescript-eslint/parser@8.33.0(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)
       globals:
         specifier: ^16.0.0
         version: 16.2.0
@@ -249,8 +249,8 @@ importers:
         version: 5.8.3
     devDependencies:
       '@eslint/js':
-        specifier: ^9.25.1
-        version: 9.27.0
+        specifier: ^9.29.0
+        version: 9.29.0
       '@types/semver':
         specifier: ^7.7.0
         version: 7.7.0
@@ -318,6 +318,10 @@ packages:
 
   '@eslint/js@9.27.0':
     resolution: {integrity: sha512-G5JD9Tu5HJEu4z2Uo4aHY2sLV64B7CDMXxFzqzjl3NKd6RVzSXNoE80jk7Y0lJkTTkjiIhBAqmlYwjuBY3tvpA==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@eslint/js@9.29.0':
+    resolution: {integrity: sha512-3PIF4cBw/y+1u2EazflInpV+lYsSG0aByVIQzAgb1m1MhHFSbqTyNqtBKHgWf/9Ykud+DhILS9EGkmekVhbKoQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@eslint/object-schema@2.1.6':
@@ -2975,6 +2979,8 @@ snapshots:
 
   '@eslint/js@9.27.0': {}
 
+  '@eslint/js@9.29.0': {}
+
   '@eslint/object-schema@2.1.6': {}
 
   '@eslint/plugin-kit@0.3.1':
@@ -4327,10 +4333,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.0(eslint-import-resolver-node@0.3.9)(eslint@9.27.0):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.33.0(eslint@9.27.0)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint@9.27.0):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
+      '@typescript-eslint/parser': 8.33.0(eslint@9.27.0)(typescript@5.8.3)
       eslint: 9.27.0
       eslint-import-resolver-node: 0.3.9
     transitivePeerDependencies:
@@ -4365,7 +4372,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-plugin-import@2.31.0(eslint@9.27.0):
+  eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.33.0(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.8
@@ -4376,7 +4383,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.27.0
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(eslint-import-resolver-node@0.3.9)(eslint@9.27.0)
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.33.0(eslint@9.27.0)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint@9.27.0)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -4387,6 +4394,8 @@ snapshots:
       semver: 6.3.1
       string.prototype.trimend: 1.0.9
       tsconfig-paths: 3.15.0
+    optionalDependencies:
+      '@typescript-eslint/parser': 8.33.0(eslint@9.27.0)(typescript@5.8.3)
     transitivePeerDependencies:
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
