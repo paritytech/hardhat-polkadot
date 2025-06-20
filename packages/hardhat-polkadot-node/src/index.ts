@@ -254,9 +254,9 @@ task(
             await run(TASK_COMPILE, { quiet: true })
         }
 
-        const files = await run(TASK_TEST_GET_TEST_FILES, { testFiles });
+        const files = await run(TASK_TEST_GET_TEST_FILES, { testFiles })
 
-        await run(TASK_TEST_SETUP_TEST_ENVIRONMENT);
+        await run(TASK_TEST_SETUP_TEST_ENVIRONMENT)
 
         let nodePort = userConfig.networks?.hardhat?.nodeConfig?.rpcPort || NODE_START_PORT
         let adapterPort =
