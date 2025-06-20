@@ -7,6 +7,7 @@ import {
     TASK_TEST,
     TASK_TEST_GET_TEST_FILES,
     TASK_TEST_RUN_MOCHA_TESTS,
+    TASK_TEST_SETUP_TEST_ENVIRONMENT,
 } from "hardhat/builtin-tasks/task-names"
 
 import { HARDHAT_NETWORK_NAME } from "hardhat/plugins"
@@ -253,7 +254,9 @@ task(
             await run(TASK_COMPILE, { quiet: true })
         }
 
-        const files = await run(TASK_TEST_GET_TEST_FILES, { testFiles })
+        const files = await run(TASK_TEST_GET_TEST_FILES, { testFiles });
+
+        await run(TASK_TEST_SETUP_TEST_ENVIRONMENT);
 
         let nodePort = userConfig.networks?.hardhat?.nodeConfig?.rpcPort || NODE_START_PORT
         let adapterPort =
