@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.5 (2025-06-24)
+### Bug Fixes
+
+- Fix binary cache not working. ([#184](https://github.com/paritytech/hardhat-polkadot/pull/184)) ([07e325f](https://github.com/paritytech/hardhat-polkadot/commit/07e325f93a8fdf6f4afaed9c740859cb002330a6))
+
+### Chores
+
+- Bump `@parity/resolc` to `v0.2.0`. ([#173](https://github.com/paritytech/hardhat-polkadot/pull/173)) ([3857c66](https://github.com/paritytech/hardhat-polkadot/commit/3857c666800d02a3b7c9bf3eb4e98b8e35394c90))
+
+
 ## 0.1.4 (2025-06-03)
 ### Bug Fixes
 
