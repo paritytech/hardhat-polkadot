@@ -1,6 +1,13 @@
 # Changelog
 
-## 0.1.2 (2025-06/03)
+## 0.1.3 (2025-06-24)
+### Bug fixes
+
+- Include setup task in test override. ([#194](https://github.com/paritytech/hardhat-polkadot/pull/194)) ([a605b18](https://github.com/paritytech/hardhat-polkadot/commit/a605b181cbaec747e3ddeeffc7f98f19f5d45116))
+- Fix node and eth-rpc restart. ([#186](https://github.com/paritytech/hardhat-polkadot/pull/186)) ([9e9d4cb](https://github.com/paritytech/hardhat-polkadot/commit/9e9d4cbac6cf9ce3fe9dfc33daed68ce6ff7287d))
+
+
+## 0.1.2 (2025-06-03)
 ### Bug fixes
 
 - Remove check for node and adapter path to decide if we wait for the port to be ready or not. ([#159](https://github.com/paritytech/hardhat-polkadot/pull/159)) ([172515b](https://github.com/paritytech/hardhat-polkadot/commit/172515b0c8bea891123d74208fd07f56cffb974b))

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.6 (2025-06-24)
+### Internal
+
+- Bumped `@parity/hardhat-polkadot-resolc` to `0.1.5`.
+- Bumped `@parity/hardhat-polkadot-node` to `0.1.3`.
+
+
 ## 0.1.6 (2025-06-03)
 ### Bug Fixes
 
