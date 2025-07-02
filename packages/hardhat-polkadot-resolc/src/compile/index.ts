@@ -10,14 +10,14 @@ export interface ICompiler {
     compile(input: CompilerInput, config: ResolcConfig): Promise<SolcOutput>
 }
 
-export async function compile(resolcConfig: ResolcConfig, input: CompilerInput, solcPath?: string ) {
+export async function compile(resolcConfig: ResolcConfig, input: CompilerInput) {
     let compiler: ICompiler
 
     if (resolcConfig.compilerSource === "binary") {
         if (resolcConfig.settings?.solcPath === null) {
             throw new ResolcPluginError("The path to the resolc binary is not specified.")
         }
-        compiler = new BinaryCompiler(resolcConfig, solcPath)
+        compiler = new BinaryCompiler(resolcConfig)
     } else if (resolcConfig.compilerSource === "npm") {
         if (resolcConfig.settings?.batchSize)
             console.warn(
@@ -35,10 +35,10 @@ export async function compile(resolcConfig: ResolcConfig, input: CompilerInput, 
 }
 
 export class BinaryCompiler implements ICompiler {
-    constructor(public config: ResolcConfig, public solcPath?: string) {}
+    constructor(public config: ResolcConfig) {}
 
     public async compile(input: CompilerInput) {
-        return await compileWithBinary(input, this.config, this.solcPath)
+        return await compileWithBinary(input, this.config)
     }
 }
 
