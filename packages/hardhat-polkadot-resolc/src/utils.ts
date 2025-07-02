@@ -1,6 +1,5 @@
 import type { Artifact, CompilerInput } from "hardhat/types"
 import { ARTIFACT_FORMAT_VERSION } from "hardhat/internal/constants"
-import chalk from "chalk"
 import { updateSolc } from "./compile/npm"
 import type { ResolcConfig, SolcConfigData } from "./types"
 import { ResolcPluginError } from "./errors"

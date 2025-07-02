@@ -224,8 +224,7 @@ subtask(
             quiet: args.quiet,
         })
 
-        let output
-        output = await hre.run(TASK_COMPILE_SOLIDITY_RUN_SOLC, {
+        const output = await hre.run(TASK_COMPILE_SOLIDITY_RUN_SOLC, {
             input: args.input,
             solcPath: solcBuild.compilerPath,
             solcVersion: args.solcVersion,
