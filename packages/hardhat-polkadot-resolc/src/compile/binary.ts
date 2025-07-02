@@ -1,6 +1,6 @@
 import { spawn } from "child_process"
 import type { CompilerInput } from "hardhat/types"
-import { resolveInputs, type SolcOutput } from "@parity/resolc"
+import { type SolcOutput } from "@parity/resolc"
 import chalk from "chalk"
 import type { ResolcConfig } from "../types"
 import { extractCommands } from "../utils"
@@ -38,7 +38,7 @@ export async function compileWithBinary(
 
     const inputs = JSON.stringify({
         language: "Solidity",
-        sources: resolveInputs(input.sources),
+        sources: input.sources,
         settings: {
             optimizer: optimizerSettings,
             outputSelection: {
