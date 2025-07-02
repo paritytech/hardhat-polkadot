@@ -59,8 +59,8 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
         ...settings,
         optimizer: { ...optimizer },
         outputSelection: {
-            '*': {
-                '*': ['abi'],
+            "*": {
+                "*": ["abi"],
             },
         },
         evmVersion: resolc.settings?.evmVersion || compiler.settings.evmVersion,

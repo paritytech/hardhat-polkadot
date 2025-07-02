@@ -17,7 +17,7 @@ export const defaultBinaryResolcConfig: ResolcConfig = {
         compilerPath: "resolc",
         optimizer: {
             enabled: true,
-            runs: 200
+            runs: 200,
         },
     },
 }
