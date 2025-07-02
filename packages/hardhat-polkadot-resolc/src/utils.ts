@@ -96,10 +96,6 @@ function extractStandardJSONCommands(config: ResolcConfig, commandArgs: string[]
 
     commandArgs.push(`--standard-json`)
 
-    if (settings.solcPath) {
-        commandArgs.push(`--solc=${settings.solcPath}`)
-    }
-
     if (settings.forceEVMLA) {
         commandArgs.push(`--force-evmla`)
     }
@@ -140,8 +136,10 @@ function extractStandardJSONCommands(config: ResolcConfig, commandArgs: string[]
     return commandArgs
 }
 
-export function extractCommands(config: ResolcConfig): string[] {
+export function extractCommands(config: ResolcConfig, solcPath?: string): string[] {
     const commandArgs: string[] = []
+
+    if (solcPath) commandArgs.push(`--solc=${solcPath}`)
 
     return extractStandardJSONCommands(config, commandArgs)
 }

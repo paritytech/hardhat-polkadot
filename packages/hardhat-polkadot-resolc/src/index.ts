@@ -161,7 +161,7 @@ subtask(
     },
 )
 
-subtask(TASK_COMPILE_SOLIDITY_RUN_SOLC, async (args: { input: CompilerInput }, hre, runSuper) => {
+subtask(TASK_COMPILE_SOLIDITY_RUN_SOLC, async (args: { input: CompilerInput, solcPath: string }, hre, runSuper) => {
     if (!hre.network.polkavm) {
         return await runSuper(args)
     }
@@ -176,7 +176,7 @@ subtask(TASK_COMPILE_SOLIDITY_RUN_SOLC, async (args: { input: CompilerInput }, h
     if (versions.size > 1)
         throw new ResolcPluginError("Multiple Solidity versions are not supported yet.")
 
-    return await compile(hre.config.resolc, args.input)
+    return await compile(hre.config.resolc, args.input, args.solcPath)
 })
 
 subtask(

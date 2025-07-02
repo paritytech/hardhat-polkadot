@@ -9,6 +9,7 @@ import { ResolcPluginError } from "../errors"
 export async function compileWithBinary(
     input: CompilerInput,
     config: ResolcConfig,
+    solcPath?: string,
 ): Promise<SolcOutput> {
     const { compilerPath, optimizer } = config.settings!
 
@@ -18,7 +19,7 @@ export async function compileWithBinary(
         )
     }
 
-    const commands = extractCommands(config)
+    const commands = extractCommands(config, solcPath)
 
     let optimizerSettings: object | undefined
 
