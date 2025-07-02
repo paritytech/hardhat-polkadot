@@ -50,15 +50,17 @@ extendConfig((config, userConfig) => {
     if (!config.networks.hardhat.polkavm) return
 
     const isBinary = config.resolc?.compilerSource === "binary"
-    const deafaulConfig = isBinary ? defaultBinaryResolcConfig : defaultNpmResolcConfig
+    const deafaultConfig = isBinary ? defaultBinaryResolcConfig : defaultNpmResolcConfig
     const customConfig = userConfig?.resolc || {}
 
+    const optimizer = Object.assign({}, deafaultConfig.settings?.optimizer, customConfig.settings?.optimizer)
+
     config.resolc = {
-        ...deafaulConfig,
+        ...deafaultConfig,
         ...customConfig,
         settings: {
-            ...deafaulConfig.settings,
             ...customConfig.settings,
+            optimizer
         },
     }
 })
@@ -80,8 +82,8 @@ extendEnvironment((hre) => {
 
     hre.config.paths.artifacts = artifactsPath
     hre.config.paths.cache = cachePath
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(hre as any).artifacts = new Artifacts(artifactsPath)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ; (hre as any).artifacts = new Artifacts(artifactsPath)
 
     if (
         (hre.config.solidity.compilers.length > 1 && hre.config.resolc.compilerSource === "npm") ||
