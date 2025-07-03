@@ -50,15 +50,21 @@ extendConfig((config, userConfig) => {
     if (!config.networks.hardhat.polkavm) return
 
     const isBinary = config.resolc?.compilerSource === "binary"
-    const deafaulConfig = isBinary ? defaultBinaryResolcConfig : defaultNpmResolcConfig
+    const defaultConfig = isBinary ? defaultBinaryResolcConfig : defaultNpmResolcConfig
     const customConfig = userConfig?.resolc || {}
 
+    const optimizer = Object.assign(
+        {},
+        defaultConfig.settings?.optimizer,
+        customConfig.settings?.optimizer,
+    )
+
     config.resolc = {
-        ...deafaulConfig,
+        ...defaultConfig,
         ...customConfig,
         settings: {
-            ...deafaulConfig.settings,
             ...customConfig.settings,
+            optimizer,
         },
     }
 })
