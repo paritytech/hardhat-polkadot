@@ -1,6 +1,5 @@
 import {
     TASK_COMPILE_SOLIDITY_RUN_SOLC,
-    TASK_COMPILE_SOLIDITY_RUN_SOLCJS,
     TASK_COMPILE_SOLIDITY_GET_ARTIFACT_FROM_COMPILATION_OUTPUT,
     TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD,
     TASK_COMPILE_SOLIDITY_LOG_COMPILATION_RESULT,
@@ -84,6 +83,16 @@ extendEnvironment((hre) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(hre as any).artifacts = new Artifacts(artifactsPath)
 
+    if (
+        (hre.config.solidity.compilers.length > 1 && hre.config.resolc.compilerSource === "npm") ||
+        (Object.entries(hre.config.solidity.overrides).length > 1 &&
+            hre.config.resolc.compilerSource === "npm")
+    ) {
+        throw new ResolcPluginError(
+            `Multiple solidity versions are not available when using npm as the compiler.`,
+        )
+    }
+
     hre.config.solidity.compilers.forEach(async (compiler) =>
         updateDefaultCompilerConfig({ compiler }, hre.config.resolc),
     )
@@ -161,23 +170,28 @@ subtask(
     },
 )
 
-subtask(TASK_COMPILE_SOLIDITY_RUN_SOLC, async (args: { input: CompilerInput }, hre, runSuper) => {
-    if (!hre.network.polkavm) {
-        return await runSuper(args)
-    }
+subtask(
+    TASK_COMPILE_SOLIDITY_RUN_SOLC,
+    async (
+        args: { input: CompilerInput; solcPath: string; solcVersion: string },
+        hre,
+        runSuper,
+    ) => {
+        if (!hre.network.polkavm) {
+            return await runSuper(args)
+        }
 
-    const versions = new Set<string>()
-    for (const compiler of hre.config.solidity.compilers) {
-        versions.add(compiler.version)
-    }
-    for (const override of Object.values(hre.config.solidity.overrides)) {
-        versions.add(override.version)
-    }
-    if (versions.size > 1)
-        throw new ResolcPluginError("Multiple Solidity versions are not supported yet.")
+        const config = {
+            ...hre.config.resolc,
+            settings: {
+                ...hre.config.resolc.settings,
+                solcPath: args.solcPath,
+            },
+        }
 
-    return await compile(hre.config.resolc, args.input)
-})
+        return await compile(config, args.input)
+    },
+)
 
 subtask(
     TASK_COMPILE_SOLIDITY_COMPILE_SOLC,
@@ -210,18 +224,11 @@ subtask(
             quiet: args.quiet,
         })
 
-        let output
-        if (solcBuild.isSolcJs) {
-            output = await hre.run(TASK_COMPILE_SOLIDITY_RUN_SOLCJS, {
-                input: args.input,
-                solcJsPath: solcBuild.compilerPath,
-            })
-        } else {
-            output = await hre.run(TASK_COMPILE_SOLIDITY_RUN_SOLC, {
-                input: args.input,
-                solcPath: solcBuild.compilerPath,
-            })
-        }
+        const output = await hre.run(TASK_COMPILE_SOLIDITY_RUN_SOLC, {
+            input: args.input,
+            solcPath: solcBuild.compilerPath,
+            solcVersion: args.solcVersion,
+        })
 
         await hre.run(TASK_COMPILE_SOLIDITY_LOG_RUN_COMPILER_END, {
             compilationJob: args.compilationJob,

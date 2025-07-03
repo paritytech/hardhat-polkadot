@@ -51,8 +51,6 @@ export interface ResolcConfig {
         solcPath?: string
         // The EVM target version to generate IR for. See https://github.com/paritytech/revive/blob/main/crates/common/src/evm_version.rs for reference.
         evmVersion?: EvmVersions
-        // Forcibly switch to EVM legacy assembly pipeline. It is useful for older revisions of `solc` 0.8, where Yul was considered highly experimental and contained more bugs than today
-        forceEVMLA?: boolean
         // Suppress specified warnings.
         suppressWarnings?: SuppresWarningsOpts[]
         // Dump all IRs to files in the specified directory. Only for testing and debugging.

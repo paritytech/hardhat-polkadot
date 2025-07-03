@@ -1,9 +1,7 @@
 import type { Artifact, CompilerInput } from "hardhat/types"
 import { ARTIFACT_FORMAT_VERSION } from "hardhat/internal/constants"
-import chalk from "chalk"
 import { updateSolc } from "./compile/npm"
 import type { ResolcConfig, SolcConfigData } from "./types"
-import { COMPILER_RESOLC_NEED_EVM_CODEGEN } from "./constants"
 import { ResolcPluginError } from "./errors"
 
 export function getArtifactFromContractOutput(
@@ -63,20 +61,16 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
         evmVersion: resolc.settings?.evmVersion || compiler.settings.evmVersion,
     }
 
-    const forceEVMLA = resolc.settings?.forceEVMLA && resolc.compilerSource === "binary"
-    resolc.settings!.forceEVMLA = forceEVMLA
-
     const [major, minor] = getVersionComponents(compiler.version)
     if (major === 0 && minor < 7 && resolc.compilerSource === "binary") {
-        console.warn(chalk.blue(COMPILER_RESOLC_NEED_EVM_CODEGEN))
-        compiler.settings.forceEVMLA = true
+        throw new ResolcPluginError(
+            `Solidity versions below 0.8.0 are not supported. Trying to use ${compiler.version}`,
+        )
     }
 
     if (resolc.compilerSource === "npm") {
         updateSolc(compiler.version)
     }
-
-    delete compiler.settings.metadata
 }
 
 export function pluralize(n: number, singular: string, plural?: string) {
@@ -98,10 +92,6 @@ function extractStandardJSONCommands(config: ResolcConfig, commandArgs: string[]
 
     if (settings.solcPath) {
         commandArgs.push(`--solc=${settings.solcPath}`)
-    }
-
-    if (settings.forceEVMLA) {
-        commandArgs.push(`--force-evmla`)
     }
 
     if (settings.basePath) {

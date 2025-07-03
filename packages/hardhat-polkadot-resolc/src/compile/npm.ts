@@ -42,20 +42,25 @@ export async function compileWithNpm(
 }
 
 export function updateSolc(version: string) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const packagePath = require(path.resolve("node_modules/solc/package.json"))
-
-    if (semver.satisfies(packagePath.version, version)) {
-        return
-    }
+    let currentVersion: string | null = null
 
     try {
-        execSync(`npm install --save-dev --save-exact solc@${version} --quiet`, {
-            stdio: "inherit",
-        })
-    } catch (error) {
-        throw new ResolcPluginError(
-            `Compilation failed during solc@${version} installtion: ${(error as Error).message}`,
-        )
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const pkg = require(path.resolve("node_modules/solc/package.json"))
+        currentVersion = pkg.version
+    } catch {
+        // solc not installed or unreadable
+    }
+
+    if (!currentVersion || !semver.satisfies(currentVersion, version)) {
+        try {
+            execSync(`npm install --save-dev --save-exact solc@${version} --quiet`, {
+                stdio: "inherit",
+            })
+        } catch (error) {
+            throw new ResolcPluginError(
+                `Compilation failed during solc@${version} installation: ${(error as Error).message}`,
+            )
+        }
     }
 }
