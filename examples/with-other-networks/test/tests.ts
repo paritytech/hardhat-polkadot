@@ -2,6 +2,21 @@ import { expect } from 'chai';
 import hre from 'hardhat';
 
 describe('Greeter', function () {
+    const isPolkadot = hre.network.polkavm;
+
+    // This is an example on how to skip tests that, due to incompatibilities,
+    // are currently not working with Polkadot.
+    // There are many other variations on how to do this.
+    it('Should run only on Kitchensink', async function () {
+        if (!isPolkadot) {
+            console.log(`Skipping test: not running on Kitchensink`);
+            this.skip();
+        }
+        const network = await hre.ethers.provider.getNetwork();
+
+        expect(network.chainId.toString()).to.equal('420420421');
+    });
+
     it('Should set the greeting to the constructor argument', async function () {
         const greeting = 'Hello, world!';
 
