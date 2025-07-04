@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.6 (2025-07-04)
+### Bug Fixes
+
+- Cleanup compiler version warning. ([#212](https://github.com/paritytech/hardhat-polkadot/pull/212)) ([6b51352](https://github.com/paritytech/hardhat-polkadot/commit/6b513524014704d997d712ea73ff68008a6cc989))
+- Update types. ([#211](https://github.com/paritytech/hardhat-polkadot/pull/211)) ([bcc580b](https://github.com/paritytech/hardhat-polkadot/commit/bcc580bcd8886158b8c9b3ffa900bce8c7bfacb6))
+- Improve cache info and optimize default parameters. ([#205](https://github.com/paritytech/hardhat-polkadot/pull/205)) ([055660e](https://github.com/paritytech/hardhat-polkadot/commit/055660e7c7c415734c4df2ce7150605d51c665a0))
+- Enable usage of multiple solidity versions when compiling with the binary. ([#204](https://github.com/paritytech/hardhat-polkadot/pull/204)) ([6f173d6](https://github.com/paritytech/hardhat-polkadot/commit/6f173d626fe1b629e7d1dfe10055e3731125b932))
+
+
 ## 0.1.5 (2025-06-24)
 ### Bug Fixes
 
