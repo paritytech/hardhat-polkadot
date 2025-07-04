@@ -68,7 +68,7 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
     }
 
     const [major, minor] = getVersionComponents(compiler.version)
-    if (major === 0 && minor < 7 && resolc.compilerSource === "binary") {
+    if (major === 0 && minor < 7) {
         throw new ResolcPluginError(
             `Solidity versions below 0.8.0 are not supported. Trying to use ${compiler.version}`,
         )
