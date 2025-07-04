@@ -357,13 +357,6 @@ subtask(TASK_COMPILE_SOLIDITY_GET_COMPILER_INPUT, async (taskArgs, hre, runSuper
         return compilerInput
     }
 
-    if (
-        hre.config.resolc.settings?.suppressWarnings &&
-        hre.config.resolc.settings.suppressWarnings.length > 0
-    ) {
-        compilerInput.suppressedWarnings = hre.config.resolc.settings.suppressWarnings
-    }
-
     return compilerInput
 })
 

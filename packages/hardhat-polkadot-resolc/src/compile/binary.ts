@@ -1,7 +1,6 @@
 import { spawn } from "child_process"
 import type { CompilerInput } from "hardhat/types"
 import { type SolcOutput } from "@parity/resolc"
-import chalk from "chalk"
 import type { ResolcConfig } from "../types"
 import { extractCommands } from "../utils"
 import { ResolcPluginError } from "../errors"
@@ -11,12 +10,6 @@ export async function compileWithBinary(
     config: ResolcConfig,
 ): Promise<SolcOutput> {
     const { compilerPath, optimizer } = config.settings!
-
-    if (config.settings?.batchSize) {
-        console.log(
-            chalk.yellow("This property is deprecated and will be removed. Treating as no effect."),
-        )
-    }
 
     const commands = extractCommands(config)
 

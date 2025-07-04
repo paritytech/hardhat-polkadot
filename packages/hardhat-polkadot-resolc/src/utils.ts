@@ -63,7 +63,7 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
                 "*": ["abi"],
             },
         },
-        evmVersion: resolc.settings?.evmVersion || compiler.settings.evmVersion,
+        evmVersion: compiler.settings.evmVersion,
         resolc: resolc,
     }
 
@@ -123,14 +123,6 @@ function extractStandardJSONCommands(config: ResolcConfig, commandArgs: string[]
 
     if (settings.emitDourceDebugInfo) {
         commandArgs.push(`-g`)
-    }
-
-    if (settings.outputDir) {
-        commandArgs.push(`--output-dir=${settings.outputDir}`)
-    }
-
-    if (settings.disableSolcOptimizer) {
-        commandArgs.push(`--disable-solc-optimizer`)
     }
 
     return commandArgs

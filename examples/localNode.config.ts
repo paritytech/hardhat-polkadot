@@ -23,7 +23,6 @@ const config: HardhatUserConfig = {
             optimizer: {
                 enabled: true,
             },
-            evmVersion: "cancun",
             compilerPath: "path/to/resolc",
         },
     },

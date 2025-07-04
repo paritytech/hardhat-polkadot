@@ -1,28 +1,5 @@
 import type { CompilerInput, SolcConfig } from "hardhat/types"
 
-type EvmVersions =
-    | "homestead"
-    | "tangerineWhistle"
-    | "spuriousDragon"
-    | "byzantium"
-    | "constantinople"
-    | "petersburg"
-    | "istanbul"
-    | "berlin"
-    | "london"
-    | "paris"
-    | "shanghai"
-    | "cancun"
-
-type SuppresWarningsOpts =
-    | "ecrecover"
-    | "sendtransfer"
-    | "extcodesize"
-    | "txorigin"
-    | "blocktimestamp"
-    | "blocknumber"
-    | "blockhash"
-
 export interface ResolcConfig {
     version: string
     compilerSource?: "binary" | "npm"
@@ -34,8 +11,6 @@ export interface ResolcConfig {
         includePaths?: string[]
         // Allow a given path for imports. A list of paths can be supplied by separating them with a comma. Passed to `solc` without changes.
         allowPaths?: string
-        // Create one file per component and contract/file at the specified directory, if given.
-        outputDir?: string
         // Optimizer settings.
         optimizer?: {
             // Enable the optimizer.
@@ -49,10 +24,6 @@ export interface ResolcConfig {
         }
         // Specify the path to the `solc` executable.
         solcPath?: string
-        // The EVM target version to generate IR for. See https://github.com/paritytech/revive/blob/main/crates/common/src/evm_version.rs for reference.
-        evmVersion?: EvmVersions
-        // Suppress specified warnings.
-        suppressWarnings?: SuppresWarningsOpts[]
         // Dump all IRs to files in the specified directory. Only for testing and debugging.
         debugOutputDir?: string
         // If compilerSource == "npm", this option is ignored.
@@ -61,12 +32,6 @@ export interface ResolcConfig {
         contractsToCompile?: string[]
         // Generate source based debug information in the output code file. This only has an effect with the LLVM-IR code generator and is ignored otherwise.
         emitDourceDebugInfo?: boolean
-        // Disable the `solc` optimizer.
-        disableSolcOptimizer?: boolean
-        /**
-         * @deprecated This property should not be used
-         */
-        batchSize?: number
     }
 }
 
