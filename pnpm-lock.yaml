@@ -221,8 +221,8 @@ importers:
   packages/hardhat-polkadot-resolc:
     dependencies:
       '@parity/resolc':
-        specifier: 0.2.0
-        version: 0.2.0(debug@4.4.1)
+        specifier: 0.3.0
+        version: 0.3.0(debug@4.4.1)
       '@types/debug':
         specifier: ^4
         version: 4.1.12
@@ -616,8 +616,8 @@ packages:
       - '@parity/hardhat-polkadot-node'
       - '@parity/hardhat-polkadot-resolc'
 
-  '@parity/resolc@0.2.0':
-    resolution: {integrity: sha512-5IGnWNzLNj/5unM61aIFKUXbvveqMmhiz/tPX0W3w434flDDOwfU5ER8hls1F9o9I79l0N00D83ZTkcWjyJhUQ==}
+  '@parity/resolc@0.3.0':
+    resolution: {integrity: sha512-vWaKhqM89YH+Kn1y+0Kv92NG+0G7HktDhA3OdYvCoG320R4djpg/N/C9s90w/B0IWrRfaGR3Nk3R6O+VOBMjFA==}
     hasBin: true
 
   '@pkgjs/parseargs@0.11.0':
@@ -3389,7 +3389,7 @@ snapshots:
       hardhat: 2.24.1(ts-node@10.9.2(@types/node@22.15.24)(typescript@5.8.3))(typescript@5.8.3)
       picocolors: 1.1.1
 
-  '@parity/resolc@0.2.0(debug@4.4.1)':
+  '@parity/resolc@0.3.0(debug@4.4.1)':
     dependencies:
       '@types/node': 22.15.24
       commander: 13.1.0
