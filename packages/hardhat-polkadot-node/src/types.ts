@@ -1,4 +1,5 @@
 import { HardhatNetworkForkingUserConfig } from "hardhat/types"
+import { HardhatNetworkUserConfig } from "hardhat/types/config"
 
 export interface CliCommands {
     nodeBinaryPath?: string
@@ -12,28 +13,11 @@ export interface CliCommands {
     forkBlockNumber?: string
 }
 
-export interface NodeConfig {
-    nodeBinaryPath?: string
-    rpcPort?: number
-    dev?: boolean
-}
-
-export interface AdapterConfig {
-    adapterBinaryPath?: string
-    /**
-     * @deprecated This property should not be used
-     */
-    adapterEndpoint?: string
-    adapterPort?: number
-    dev?: boolean
-    buildBlockMode?: "Instant" | "Manual" | "Batch"
-}
-
 export interface CommandArguments {
     forking?: HardhatNetworkForkingUserConfig
     forkBlockNumber?: string | number
-    nodeCommands?: NodeConfig
-    adapterCommands?: AdapterConfig
+    nodeCommands?: HardhatNetworkUserConfig["nodeConfig"]
+    adapterCommands?: HardhatNetworkUserConfig["adapterConfig"]
 }
 
 export interface RpcServer {
