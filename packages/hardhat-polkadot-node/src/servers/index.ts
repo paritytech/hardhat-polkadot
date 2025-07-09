@@ -1,9 +1,12 @@
+import { HardhatNetworkUserConfig } from "hardhat/types/config"
+
 import { PolkadotNodePluginError } from "../errors"
 import { RpcServer } from "../types"
 import { PathToBinariesRpcServer } from "./path-to-binaries-server"
 import { DockerRpcServer } from "./docker-server"
 
 export function createRpcServer(opts: {
+    docker?: HardhatNetworkUserConfig["docker"]
     nodePath?: string
     adapterPath?: string
     isForking?: boolean
@@ -11,7 +14,8 @@ export function createRpcServer(opts: {
     if ((!!opts.nodePath && !!opts.adapterPath) || (opts.isForking && !!opts.adapterPath)) {
         return new PathToBinariesRpcServer(opts.nodePath, opts.adapterPath)
     } else if (!opts.nodePath && !opts.adapterPath && !opts.isForking) {
-        return new DockerRpcServer()
+        const dockerSocketPath = typeof opts.docker === "string" ? opts.docker : undefined
+        return new DockerRpcServer(dockerSocketPath)
     }
 
     throw new PolkadotNodePluginError(

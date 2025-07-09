@@ -3,7 +3,6 @@ import type { CompilerInput, SolcConfig } from "hardhat/types"
 export interface ResolcConfig {
     version: string
     compilerSource?: "binary" | "npm"
-
     settings?: {
         // Set the given path as the root of the source tree instead of the root of the filesystem. Passed to `solc` without changes.
         basePath?: string
