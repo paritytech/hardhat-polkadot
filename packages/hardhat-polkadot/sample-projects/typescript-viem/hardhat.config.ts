@@ -10,7 +10,7 @@ const config: HardhatUserConfig = {
         hardhat: {
             polkavm: true,
             forking: {
-                url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
+                url: "https://testnet-passet-hub.polkadot.io",
             },
             adapterConfig: {
                 adapterBinaryPath: "./bin/eth-rpc",
