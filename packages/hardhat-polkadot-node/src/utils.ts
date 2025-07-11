@@ -44,6 +44,11 @@ export function constructCommandArgs(
             nodeCommands.push(cliCommands.nodeBinaryPath)
         }
         if (cliCommands.rpcPort) {
+            if (cliCommands.fork) {
+                nodeCommands.push(`--port=${cliCommands.rpcPort}`)
+            } else {
+                nodeCommands.push(`--rpc-port=${cliCommands.rpcPort}`)
+            }
             nodeCommands.push(`--rpc-port=${cliCommands.rpcPort}`)
             adapterCommands.push(`--node-rpc-url=ws://localhost:${cliCommands.rpcPort}`)
         } else {
@@ -86,7 +91,11 @@ export function constructCommandArgs(
         }
 
         if (args.nodeCommands?.rpcPort && !cliCommands?.rpcPort) {
-            nodeCommands.push(`--rpc-port=${args.nodeCommands.rpcPort}`)
+            if (args.forking && !cliCommands?.fork) {
+                nodeCommands.push(`--port=${args.nodeCommands.rpcPort}`)
+            } else {
+                nodeCommands.push(`--rpc-port=${args.nodeCommands.rpcPort}`)
+            }
             adapterCommands.push(`--node-rpc-url=ws://localhost:${args.nodeCommands.rpcPort}`)
         } else if (!cliCommands?.rpcPort) {
             adapterCommands.push(`--node-rpc-url=ws://localhost:8000`)
