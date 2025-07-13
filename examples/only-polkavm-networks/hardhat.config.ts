@@ -26,9 +26,18 @@ const config: HardhatUserConfig = {
             polkavm: true,
             accounts: [process.env.POLKADOT_PRIVATE_KEY || '271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687'],
             // Token: PAS
-            // Chain ID: 420420422
             // Block explorer URL: https://blockscout-passet-hub.parity-testnet.parity.io/
             // Faucet: https://faucet.polkadot.io/?parachain=1111
+        },
+
+        // Westend Asset Hub
+        westend: {
+            url: "https://westend-asset-hub-eth-rpc.polkadot.io",
+            polkavm: true,
+            accounts: [process.env.POLKADOT_PRIVATE_KEY || '271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687'],
+            // Token: WND
+            // Block explorer URL: https://westend.subscan.io/
+            // Faucet: https://faucet.polkadot.io/westend
         },
     },
 }
