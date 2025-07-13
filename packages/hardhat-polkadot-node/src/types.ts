@@ -16,6 +16,7 @@ export interface NodeConfig {
     nodeBinaryPath?: string
     rpcPort?: number
     dev?: boolean
+    consensus?: Consensus
 }
 
 export interface AdapterConfig {
@@ -44,4 +45,9 @@ export interface RpcServer {
 export interface SplitCommands {
     nodeCommands: string[]
     adapterCommands?: string[]
+}
+
+export interface Consensus {
+    seal?: "Instant" | "Manual" | "None"
+    period?: string | number
 }
