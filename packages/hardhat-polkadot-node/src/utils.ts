@@ -125,6 +125,18 @@ export function constructCommandArgs(
             )
         }
 
+        if (args.nodeCommands?.nodeBinaryPath && args.nodeCommands?.consensus) {
+            if (args.nodeCommands.consensus.seal === "Manual") {
+                nodeCommands.push(
+                    `--consensus=manual-seal-${args.nodeCommands.consensus.period || 50}`,
+                )
+            } else {
+                nodeCommands.push(
+                    `--consensus=${(args.nodeCommands.consensus.seal || "None").toLowerCase()}`,
+                )
+            }
+        }
+
         if (
             args.nodeCommands?.nodeBinaryPath &&
             args.nodeCommands.dev &&
