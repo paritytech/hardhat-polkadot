@@ -1,6 +1,7 @@
 dist/
 node_modules/
 package.json
+package-lock.json
 README.md
 CHANGELOG.md
 CONTRIBUTING.md

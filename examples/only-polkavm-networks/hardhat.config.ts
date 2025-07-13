@@ -24,7 +24,10 @@ const config: HardhatUserConfig = {
         passet: {
             url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
             polkavm: true,
-            accounts: [process.env.POLKADOT_PRIVATE_KEY || '271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687'],
+            accounts: [
+                process.env.POLKADOT_PRIVATE_KEY ||
+                    "271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687",
+            ],
             // Token: PAS
             // Block explorer URL: https://blockscout-passet-hub.parity-testnet.parity.io/
             // Faucet: https://faucet.polkadot.io/?parachain=1111
@@ -34,7 +37,10 @@ const config: HardhatUserConfig = {
         westend: {
             url: "https://westend-asset-hub-eth-rpc.polkadot.io",
             polkavm: true,
-            accounts: [process.env.POLKADOT_PRIVATE_KEY || '271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687'],
+            accounts: [
+                process.env.POLKADOT_PRIVATE_KEY ||
+                    "271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687",
+            ],
             // Token: WND
             // Block explorer URL: https://westend.subscan.io/
             // Faucet: https://faucet.polkadot.io/westend
