@@ -10,6 +10,7 @@ const config: HardhatUserConfig = {
             allowUnlimitedContractSize: false,
         },
         local: {
+            url: 'ws://localhost:8000',
             polkavm: true,
             nodeConfig: {
                 nodeBinaryPath: 'PATH_TO_POLKADOT_BINARY',
@@ -23,9 +24,9 @@ const config: HardhatUserConfig = {
             accounts: [],
         },
         westend: {
-            url: 'wss://westend-rpc.polkadot.io',
+            url: 'https://westend-asset-hub-eth-rpc.polkadot.io',
             polkavm: true,
-            accounts: [process.env.POLKADOT_PRIVATE_KEY || ''],
+            accounts: [process.env.POLKADOT_PRIVATE_KEY || '271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687'],
         },
         sepolia: {
             url: 'https://sepolia.infura.io/v3/YOUR_INFURA_KEY',
