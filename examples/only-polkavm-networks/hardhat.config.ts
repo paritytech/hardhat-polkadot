@@ -40,7 +40,7 @@ const config: HardhatUserConfig = {
                 process.env.POLKADOT_PRIVATE_KEY ||
                     "271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687",
             ],
-            // Block explorer URL: https://westend.subscan.io/
+            // Block explorer URL: https://blockscout-asset-hub.parity-chains-scw.parity.io/
             // Faucet: https://faucet.polkadot.io/westend
         },
 
@@ -48,8 +48,7 @@ const config: HardhatUserConfig = {
             url: "https://kusama-asset-hub-eth-rpc.polkadot.io",
             polkavm: true,
             accounts: [
-                process.env.POLKADOT_PRIVATE_KEY ||
-                    "271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687",
+                process.env.POLKADOT_PRIVATE_KEY || "",
             ],
             // Block explorer URL: https://blockscout-kusama-asset-hub.parity-chains-scw.parity.io/
         },
