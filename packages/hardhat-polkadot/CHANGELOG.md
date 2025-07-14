@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.8-p0 (2025-07-14)
+### Bug fixes
+
+- Fix testnet url. ([#226](https://github.com/paritytech/hardhat-polkadot/pull/226)) ([c9da20c](https://github.com/paritytech/hardhat-polkadot/commit/c9da20cecc146dd2e5052b2877c1c965f82e0a83))
+
+### Internal
+
+- Bumped `@parity/hardhat-polkadot-node` to `0.1.3-p0`.
+
+
 ## 0.1.8 (2025-07-04)
 ### Internal
 
