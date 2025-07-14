@@ -53,7 +53,7 @@ const config: HardhatUserConfig = {
             ],
             // Block explorer URL: https://blockscout-kusama-asset-hub.parity-chains-scw.parity.io/
         },
-        
+
         // COMING SOON: PolkadotHub
     },
 }
