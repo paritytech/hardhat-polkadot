@@ -47,9 +47,7 @@ const config: HardhatUserConfig = {
         kusamaHub: {
             url: "https://kusama-asset-hub-eth-rpc.polkadot.io",
             polkavm: true,
-            accounts: [
-                process.env.POLKADOT_PRIVATE_KEY || "",
-            ],
+            accounts: [process.env.POLKADOT_PRIVATE_KEY || ""],
             // Block explorer URL: https://blockscout-kusama-asset-hub.parity-chains-scw.parity.io/
         },
 
