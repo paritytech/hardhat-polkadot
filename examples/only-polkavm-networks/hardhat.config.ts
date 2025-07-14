@@ -20,31 +20,41 @@ const config: HardhatUserConfig = {
                 dev: true,
             },
         },
-        // Official Polkadot Asset Hub Testnet
-        passet: {
+        // Polkadot Hub Testnet
+        paseoHub: {
             url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
             polkavm: true,
             accounts: [
                 process.env.POLKADOT_PRIVATE_KEY ||
                     "271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687",
             ],
-            // Token: PAS
             // Block explorer URL: https://blockscout-passet-hub.parity-testnet.parity.io/
             // Faucet: https://faucet.polkadot.io/?parachain=1111
         },
 
-        // Westend Asset Hub
-        westend: {
+        // Internal Parity Testnet"
+        westendHub: {
             url: "https://westend-asset-hub-eth-rpc.polkadot.io",
             polkavm: true,
             accounts: [
                 process.env.POLKADOT_PRIVATE_KEY ||
                     "271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687",
             ],
-            // Token: WND
             // Block explorer URL: https://westend.subscan.io/
             // Faucet: https://faucet.polkadot.io/westend
         },
+
+        kusamaHub: {
+            url: "https://kusama-asset-hub-eth-rpc.polkadot.io",
+            polkavm: true,
+            accounts: [
+                process.env.POLKADOT_PRIVATE_KEY ||
+                    "271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687",
+            ],
+            // Block explorer URL: https://blockscout-kusama-asset-hub.parity-chains-scw.parity.io/
+        },
+        
+        // COMING SOON: PolkadotHub
     },
 }
 
