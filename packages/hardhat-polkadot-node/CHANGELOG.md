@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.3-p0 (2025-07-14)
+### Bug fixes
+
+- Add consensus type to dev node options. ([#228](https://github.com/paritytech/hardhat-polkadot/pull/228)) ([d0846cd](https://github.com/paritytech/hardhat-polkadot/commit/d0846cd2feef66232f7e97d1adffaccb55d4ec58))
+- Fix rpc param when using chopsticks. ([#225](https://github.com/paritytech/hardhat-polkadot/pull/225)) ([512bc2e](https://github.com/paritytech/hardhat-polkadot/commit/512bc2e9d158ee77268f01d6cb90851724195d64))
+
+
 ## 0.1.3 (2025-06-24)
 ### Bug fixes
 
