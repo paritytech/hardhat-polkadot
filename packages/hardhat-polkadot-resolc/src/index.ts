@@ -11,6 +11,8 @@ import {
     TASK_COMPILE_SOLIDITY_EMIT_ARTIFACTS,
     TASK_COMPILE,
     TASK_COMPILE_SOLIDITY_GET_COMPILER_INPUT,
+    TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_START,
+    TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_END
 } from "hardhat/builtin-tasks/task-names"
 import debug from "debug"
 import {
@@ -18,8 +20,11 @@ import {
     extendConfig,
     subtask,
     task,
-} from "hardhat/internal/core/config/config-env"
+    types
+} from "hardhat/config"
+import { getCompilersDir } from "hardhat/internal/util/global-dir"
 import { Artifacts } from "hardhat/internal/artifacts"
+import { CompilerDownloader, CompilerPlatform } from "hardhat/internal/solidity/compiler/downloader"
 import type {
     ArtifactsEmittedPerFile,
     CompilationJob,
@@ -31,6 +36,7 @@ import type {
     SolcBuild,
     TaskArguments,
 } from "hardhat/types"
+import { assertHardhatInvariant } from "hardhat/internal/core/errors"
 import chalk from "chalk"
 import fs from "fs"
 import { getArtifactFromContractOutput, pluralize, updateDefaultCompilerConfig } from "./utils"
@@ -247,6 +253,95 @@ subtask(
         return { output, solcBuild }
     },
 )
+
+/**
+ * Receives a solc version and returns a path to a solc binary or to a
+ * downloaded solcjs module. It also returns a flag indicating if the returned
+ * path corresponds to solc or solcjs.
+ */
+subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD)
+  .addParam("quiet", undefined, undefined, types.boolean)
+  .addParam("solcVersion", undefined, undefined, types.string)
+  .setAction(
+    async (
+      {
+        quiet,
+        solcVersion,
+      }: {
+        quiet: boolean;
+        solcVersion: string;
+      },
+      { run }
+    ): Promise<SolcBuild> => {
+      const compilersCache = await getCompilersDir();
+
+      const compilerPlatform = CompilerDownloader.getCompilerPlatform();
+      const downloader = CompilerDownloader.getConcurrencySafeDownloader(
+        compilerPlatform,
+        compilersCache
+      );
+
+      await downloader.downloadCompiler(
+        solcVersion,
+        async (isCompilerDownloaded: boolean) => {
+          await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_START, {
+            solcVersion,
+            isCompilerDownloaded,
+            quiet,
+          });
+        },
+        async (isCompilerDownloaded: boolean) => {
+          await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_END, {
+            solcVersion,
+            isCompilerDownloaded,
+            quiet,
+          });
+        }
+      );
+
+      const compiler = await downloader.getCompiler(solcVersion);
+
+      if (compiler !== undefined) {
+        return compiler;
+      }
+
+      logDebug(
+        "Native solc binary doesn't work, using solcjs instead. Try running npx hardhat clean --global"
+      );
+
+      const wasmDownloader = CompilerDownloader.getConcurrencySafeDownloader(
+        CompilerPlatform.WASM,
+        compilersCache
+      );
+
+      await wasmDownloader.downloadCompiler(
+        solcVersion,
+        async (isCompilerDownloaded: boolean) => {
+          await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_START, {
+            solcVersion,
+            isCompilerDownloaded,
+            quiet,
+          });
+        },
+        async (isCompilerDownloaded: boolean) => {
+          await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_END, {
+            solcVersion,
+            isCompilerDownloaded,
+            quiet,
+          });
+        }
+      );
+
+      const wasmCompiler = await wasmDownloader.getCompiler(solcVersion);
+
+      assertHardhatInvariant(
+        wasmCompiler !== undefined,
+        `WASM build of solc ${solcVersion} isn't working`
+      );
+
+      return wasmCompiler;
+    }
+  );
 
 subtask(
     TASK_COMPILE_SOLIDITY_LOG_COMPILATION_RESULT,

@@ -36,14 +36,23 @@
     "eslint:fix": "eslint 'src/**/*.ts' --fix"
   },
   "dependencies": {
+    "@ethereumjs/util": "^10.0.0",
     "@parity/resolc": "0.2.0",
     "@types/debug": "^4",
+    "@types/fs-extra": "^11.0.4",
+    "@types/keccak": "^3.0.5",
     "@types/node": "^22.15.3",
+    "axios": "1.9.0",
     "chalk": "4",
     "debug": "^4.4.0",
+    "find-up": "5.0.0",
+    "fs-extra": "^11.3.0",
+    "fs-xattr": "^0.4.0",
+    "keccak": "^3.0.4",
     "semver": "^7.7.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "undici": "^7.11.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

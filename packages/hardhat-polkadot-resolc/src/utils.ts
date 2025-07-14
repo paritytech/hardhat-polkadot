@@ -3,6 +3,7 @@ import { ARTIFACT_FORMAT_VERSION } from "hardhat/internal/constants"
 import { updateSolc } from "./compile/npm"
 import type { ResolcConfig, SolcConfigData } from "./types"
 import { ResolcPluginError } from "./errors"
+import { createHash } from "crypto";
 
 export function getArtifactFromContractOutput(
     sourceName: string,
@@ -175,4 +176,8 @@ export function orderSources(mapped: Map<string, string[]>): string[] {
     })
 
     return ordered
+}
+
+export function sha256(data: Uint8Array): Uint8Array {
+  return createHash("sha256").update(Buffer.from(data)).digest();
 }
