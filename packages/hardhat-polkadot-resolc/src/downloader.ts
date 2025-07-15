@@ -8,7 +8,13 @@ import { assertHardhatInvariant } from "hardhat/internal/core/errors"
 import { MultiProcessMutex } from "hardhat/internal/util/multi-process-mutex"
 import { listAttributesSync, removeAttributeSync } from "fs-xattr"
 import { download } from "./download"
-import { Compiler, CompilerBuild, CompilerList, CompilerName, CompilerPlatform } from "./types"
+import {
+    CompilerName,
+    CompilerPlatform,
+    type Compiler,
+    type CompilerBuild,
+    type CompilerList,
+} from "./types"
 import { ResolcPluginError } from "./errors"
 
 const log = debug("hardhat:core:resolc:downloader")

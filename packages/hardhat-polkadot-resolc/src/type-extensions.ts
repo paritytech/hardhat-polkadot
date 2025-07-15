@@ -1,6 +1,6 @@
 import "hardhat/types/config"
 
-import { ResolcConfig } from "./types"
+import type { ResolcConfig } from "./types"
 
 declare module "hardhat/types/config" {
     interface HardhatUserConfig {

@@ -1,5 +1,5 @@
 import "hardhat/types/config"
-import { AdapterConfig, NodeConfig } from "./types"
+import type { AdapterConfig, NodeConfig } from "./types"
 
 declare module "hardhat/types/config" {
     interface HardhatNetworkUserConfig {

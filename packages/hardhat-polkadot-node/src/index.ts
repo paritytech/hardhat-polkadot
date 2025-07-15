@@ -31,7 +31,7 @@ import {
 import { PolkadotNodePluginError } from "./errors"
 import { interceptAndWrapTasksWithNode } from "./core/global-interceptor"
 import { runScriptWithHardhat } from "./core/script-runner"
-import { AdapterConfig, NodeConfig, RpcServer } from "./types"
+import type { AdapterConfig, NodeConfig, RpcServer } from "./types"
 import "./type-extensions"
 import { waitForNodeToBeReady, waitForEthRpcToBeReady } from "./servers/utils"
 
