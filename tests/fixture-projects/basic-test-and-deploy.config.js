@@ -13,7 +13,7 @@ module.exports = {
         },
         passetHub: {
             polkavm: true,
-            url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
+            url: "https://testnet-passet-hub.polkadot.io",
             accounts: ["271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687"],
         },
     },

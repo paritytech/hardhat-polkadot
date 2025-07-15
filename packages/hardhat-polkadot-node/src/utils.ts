@@ -44,6 +44,11 @@ export function constructCommandArgs(
             nodeCommands.push(cliCommands.nodeBinaryPath)
         }
         if (cliCommands.rpcPort) {
+            if (cliCommands.fork) {
+                nodeCommands.push(`--port=${cliCommands.rpcPort}`)
+            } else {
+                nodeCommands.push(`--rpc-port=${cliCommands.rpcPort}`)
+            }
             nodeCommands.push(`--rpc-port=${cliCommands.rpcPort}`)
             adapterCommands.push(`--node-rpc-url=ws://localhost:${cliCommands.rpcPort}`)
         } else {
@@ -86,7 +91,11 @@ export function constructCommandArgs(
         }
 
         if (args.nodeCommands?.rpcPort && !cliCommands?.rpcPort) {
-            nodeCommands.push(`--rpc-port=${args.nodeCommands.rpcPort}`)
+            if (args.forking && !cliCommands?.fork) {
+                nodeCommands.push(`--port=${args.nodeCommands.rpcPort}`)
+            } else {
+                nodeCommands.push(`--rpc-port=${args.nodeCommands.rpcPort}`)
+            }
             adapterCommands.push(`--node-rpc-url=ws://localhost:${args.nodeCommands.rpcPort}`)
         } else if (!cliCommands?.rpcPort) {
             adapterCommands.push(`--node-rpc-url=ws://localhost:8000`)
@@ -114,6 +123,18 @@ export function constructCommandArgs(
             nodeCommands.push(
                 `--build-block-mode=${args.adapterCommands?.buildBlockMode || "Instant"}`,
             )
+        }
+
+        if (args.nodeCommands?.nodeBinaryPath && args.nodeCommands?.consensus) {
+            if (args.nodeCommands.consensus.seal === "Manual") {
+                nodeCommands.push(
+                    `--consensus=manual-seal-${args.nodeCommands.consensus.period || 50}`,
+                )
+            } else {
+                nodeCommands.push(
+                    `--consensus=${(args.nodeCommands.consensus.seal || "None").toLowerCase()}`,
+                )
+            }
         }
 
         if (

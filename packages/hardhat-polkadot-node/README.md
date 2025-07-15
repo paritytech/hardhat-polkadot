@@ -57,7 +57,7 @@ $ npx hardhat node
 Run a fork of a live Polkadot chain and initializes a JSON-RPC.
 
 ```bash
-$ npx hardhat node --fork https://testnet-passet-hub-eth-rpc.polkadot.io
+$ npx hardhat node --fork https://testnet-passet-hub.polkadot.io
 \ --adapter-binary-path /path/to/adapter
 ```
 

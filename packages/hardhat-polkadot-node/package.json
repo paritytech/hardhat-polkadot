@@ -2,7 +2,7 @@
   "name": "@parity/hardhat-polkadot-node",
   "author": "Parity Technologies <admin@parity.io>",
   "license": "AGPL-3.0",
-  "version": "0.1.3",
+  "version": "0.1.3-p0",
   "bugs": "https://github.com/paritytech/hardhat-polkadot/issues",
   "homepage": "https://github.com/paritytech/hardhat-polkadot/tree/master/packages/hardhat-polkadot-node#readme",
   "repository": {
