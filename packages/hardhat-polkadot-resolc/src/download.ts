@@ -3,7 +3,7 @@ import path from "path"
 
 import axios from "axios"
 import { exec } from "child_process"
-import { CompilerBuild, CompilerList, CompilerName, CompilerPlatform } from "./downloader"
+import { CompilerBuild, CompilerList, CompilerName, CompilerPlatform } from "./types"
 
 const TEMP_FILE_PREFIX = "tmp-"
 

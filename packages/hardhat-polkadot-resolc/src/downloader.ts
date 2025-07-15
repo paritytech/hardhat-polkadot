@@ -15,7 +15,6 @@ const log = debug("hardhat:core:resolc:downloader")
 
 const COMPILER_REPOSITORY_URL = "https://github.com/paritytech/revive/releases/download/"
 
-
 /**
  * A compiler downloader which must be specialized per-platform. It can't and
  * shouldn't support multiple platforms at the same time.
@@ -121,6 +120,7 @@ export class ResolcCompilerDownloader implements ICompilerDownloader {
 
     public async isCompilerDownloaded(version: string): Promise<boolean> {
         const build = await this._getCompilerBuild(version)
+        console.log(build)
 
         if (build === undefined) {
             return false
@@ -246,6 +246,11 @@ export class ResolcCompilerDownloader implements ICompilerDownloader {
         }
 
         const list = await this._readCompilerList(listPath)
+        if (version === "latest") {
+            const latestVersion = list.latestRelease.slice(1)
+            return list.builds.find((b) => b.version === latestVersion)
+        }
+
         return list.builds.find((b) => b.version === version)
     }
 
