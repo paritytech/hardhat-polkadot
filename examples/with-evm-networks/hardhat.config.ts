@@ -28,12 +28,12 @@ const config: HardhatUserConfig = {
                 : ['271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687'],
             chainId: 420420422,
         },
-        // Privacy-focused Polkadot Hub Live network
+        // Privacy-focused Live Network
         kusamaHub: {
             polkavm: true,
             url: 'https://kusama-asset-hub-eth-rpc.polkadot.io/',
             // token: https://coinmarketcap.com/currencies/kusama/#Markets
-            accounts: !!PRIVATE_KEY ? [PRIVATE_KEY] : [''],
+            accounts: !!PRIVATE_KEY ? [PRIVATE_KEY] : [],
             chainId: 420420418,
         },
         sepolia: {

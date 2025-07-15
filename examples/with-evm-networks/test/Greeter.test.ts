@@ -1,7 +1,6 @@
 import '@nomicfoundation/hardhat-ethers';
 import { expect } from 'chai';
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
-import { ethers } from 'hardhat';
 import hre from 'hardhat';
 
 describe('Greeter', function () {
@@ -26,9 +25,9 @@ describe('Greeter', function () {
     //
     // ⚠️ Note: `loadFixture` does not currently work with PolkaVM-compatible networks.
     async function deployGreeterFixture() {
-        const [deployer] = await ethers.getSigners();
+        const [deployer] = await hre.ethers.getSigners();
 
-        const greeterFactory = await ethers.getContractFactory('Greeter');
+        const greeterFactory = await hre.ethers.getContractFactory('Greeter');
         const greeter = await greeterFactory.connect(deployer).deploy('Hello, world!');
 
         return { greeter };
