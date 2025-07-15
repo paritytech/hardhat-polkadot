@@ -2,7 +2,6 @@ import axios from "axios"
 import net from "net"
 import { createProvider } from "hardhat/internal/core/providers/construction"
 import type { HardhatConfig } from "hardhat/types"
-import chalk from "chalk"
 
 import {
     BASE_URL,
