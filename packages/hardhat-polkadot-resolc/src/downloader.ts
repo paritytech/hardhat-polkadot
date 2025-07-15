@@ -4,67 +4,31 @@ import fsExtra from "fs-extra"
 import debug from "debug"
 import os from "os"
 import { execFile } from "child_process"
-import { assertHardhatInvariant, HardhatError } from "hardhat/internal/core/errors"
-import { ERRORS } from "hardhat/internal/core/errors-list"
+import { assertHardhatInvariant } from "hardhat/internal/core/errors"
 import { MultiProcessMutex } from "hardhat/internal/util/multi-process-mutex"
 import { listAttributesSync, removeAttributeSync } from "fs-xattr"
 import { download } from "./download"
 import { Compiler, CompilerBuild, CompilerList, CompilerName, CompilerPlatform } from "./types"
+import { ResolcPluginError } from "./errors"
 
 const log = debug("hardhat:core:resolc:downloader")
 
 const COMPILER_REPOSITORY_URL = "https://github.com/paritytech/revive/releases/download/"
 
-/**
- * A compiler downloader which must be specialized per-platform. It can't and
- * shouldn't support multiple platforms at the same time.
- */
 export interface ICompilerDownloader {
-    /**
-     * Returns true if the compiler has been downloaded.
-     *
-     * This function access the filesystem, but doesn't modify it.
-     */
     isCompilerDownloaded(version: string): Promise<boolean>
 
-    /**
-     * Downloads the compiler for a given version, which can later be obtained
-     * with getCompiler.
-     */
     downloadCompiler(
         version: string,
         downloadStartedCb: (isCompilerDownloaded: boolean) => Promise<any>,
         downloadEndedCb: (isCompilerDownloaded: boolean) => Promise<any>,
     ): Promise<void>
 
-    /**
-     * Returns the compiler, which MUST be downloaded before calling this function.
-     *
-     * Returns undefined if the compiler has been downloaded but can't be run.
-     *
-     * This function access the filesystem, but doesn't modify it.
-     */
     getCompiler(version: string): Promise<Compiler | undefined>
 }
 
-/**
- * Default implementation of ICompilerDownloader.
- *
- * Important things to note:
- *   1. If a compiler version is not found, this downloader may fail.
- *    1.1. It only re-downloads the list of compilers once every X time.
- *      1.1.1 If a user tries to download a new compiler before X amount of time
- *      has passed since its release, they may need to clean the cache, as
- *      indicated in the error messages.
- */
 export class ResolcCompilerDownloader implements ICompilerDownloader {
     public static getCompilerPlatform(): CompilerPlatform {
-        // TODO: This check is seriously wrong. It doesn't take into account
-        //  the architecture nor the toolchain. This should check the triplet of
-        //  system instead (see: https://wiki.osdev.org/Target_Triplet).
-        //
-        //  The only reason this downloader works is that it validates if the
-        //  binaries actually run.
         switch (os.platform()) {
             case "win32":
                 return CompilerPlatform.WINDOWS
@@ -108,9 +72,6 @@ export class ResolcCompilerDownloader implements ICompilerDownloader {
     public static defaultCompilerListCachePeriod = 3_600_00
     private readonly _mutex = new MultiProcessMutex("compiler-download")
 
-    /**
-     * Use CompilerDownloader.getConcurrencySafeDownloader instead
-     */
     constructor(
         private readonly _platform: CompilerPlatform,
         private readonly _compilersDir: string,
@@ -150,35 +111,35 @@ export class ResolcCompilerDownloader implements ICompilerDownloader {
             if (build === undefined && (await this._shouldDownloadCompilerList())) {
                 try {
                     await this._downloadCompilerList()
-                } catch (e: any) {
-                    throw new HardhatError(ERRORS.SOLC.VERSION_LIST_DOWNLOAD_FAILED, {}, e)
+                } catch (_e: any) {
+                    throw new ResolcPluginError(
+                        `Resolc version ${version} is invalid or hasn't been released yet`,
+                    )
                 }
 
                 build = await this._getCompilerBuild(version)
             }
 
             if (build === undefined) {
-                throw new HardhatError(ERRORS.SOLC.INVALID_VERSION, { version })
+                throw new ResolcPluginError(
+                    `Resolc version ${version} is invalid or hasn't been released yet`,
+                )
             }
 
             let downloadPath: string
             try {
                 downloadPath = await this._downloadCompiler(build)
-            } catch (e: any) {
-                throw new HardhatError(
-                    ERRORS.SOLC.DOWNLOAD_FAILED,
-                    {
-                        remoteVersion: build.longVersion,
-                    },
-                    e,
+            } catch (_e: any) {
+                throw new ResolcPluginError(
+                    `Couldn't download compiler version ${build.longVersion}. Please check your internet connection and try again.`,
                 )
             }
 
             const verified = await this._verifyCompilerDownload(build, downloadPath)
             if (!verified) {
-                throw new HardhatError(ERRORS.SOLC.INVALID_DOWNLOAD, {
-                    remoteVersion: build.longVersion,
-                })
+                throw new ResolcPluginError(
+                    `Couldn't download compiler version ${build.longVersion}: Checksum verification failed.`,
+                )
             }
 
             await this._postProcessCompilerDownload(build, downloadPath)
