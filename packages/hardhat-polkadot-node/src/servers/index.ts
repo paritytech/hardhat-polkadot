@@ -19,6 +19,6 @@ export function createRpcServer(opts: {
     }
 
     throw new PolkadotNodePluginError(
-        "Wrong network configuration. Please check https://github.com/paritytech/hardhat-polkadot/tree/main/examples",
+        "Wrong hardhat network configuration. Please see https://github.com/paritytech/hardhat-polkadot/tree/main/examples",
     )
 }
