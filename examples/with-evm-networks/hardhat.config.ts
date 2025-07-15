@@ -5,40 +5,36 @@ import { HardhatUserConfig } from 'hardhat/types';
 
 const config: HardhatUserConfig = {
     solidity: '0.8.28',
+    resolc: {
+        compilerSource: 'npm',
+    },
     networks: {
         hardhat: {
             allowUnlimitedContractSize: false,
+            chainId: 31337,
         },
-        local: {
+        polkadotHubTestnet: {
             polkavm: true,
-            nodeConfig: {
-                nodeBinaryPath: 'PATH_TO_POLKADOT_BINARY',
-                rpcPort: 8000,
-                dev: true,
-            },
-            adapterConfig: {
-                adapterBinaryPath: 'PATH_TO_ADAPTER_BINARY',
-                dev: true,
-            },
-            accounts: [],
+            url: 'https://testnet-passet-hub-eth-rpc.polkadot.io',
+            chainId: 420420422,
         },
-        westend: {
-            url: 'wss://westend-rpc.polkadot.io',
+        kusamaHub: {
             polkavm: true,
-            accounts: [process.env.POLKADOT_PRIVATE_KEY || ''],
+            url: 'https://kusama-asset-hub-eth-rpc.polkadot.io/',
+            chainId: 420420418,
         },
         sepolia: {
             url: 'https://sepolia.infura.io/v3/YOUR_INFURA_KEY',
+            chainId: 11155111,
         },
         polygon: {
             url: 'wss://polygon-bor-rpc.publicnode.com',
+            chainId: 137,
         },
         base: {
             url: 'https://mainnet.base.org',
+            chainId: 8453,
         },
-    },
-    resolc: {
-        compilerSource: 'npm',
     },
 };
 
