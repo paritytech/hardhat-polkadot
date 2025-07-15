@@ -5,6 +5,9 @@ import { HardhatUserConfig } from 'hardhat/types';
 
 const config: HardhatUserConfig = {
     solidity: '0.8.28',
+    resolc: {
+        compilerSource: 'npm',
+    },
     networks: {
         hardhat: {
             allowUnlimitedContractSize: false,
@@ -32,9 +35,6 @@ const config: HardhatUserConfig = {
             url: 'https://mainnet.base.org',
             chainId: 8453,
         },
-    },
-    resolc: {
-        compilerSource: 'npm',
     },
 };
 
