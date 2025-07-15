@@ -1,4 +1,6 @@
+# Dependencies
 node_modules
+.yarn
 .env
 
 # Hardhat files
