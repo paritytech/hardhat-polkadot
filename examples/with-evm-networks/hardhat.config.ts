@@ -9,23 +9,24 @@ const config: HardhatUserConfig = {
         hardhat: {
             allowUnlimitedContractSize: false,
         },
+        // To run local node: npx hardhat node-polkadot
         local: {
+            url: 'ws://localhost:8000',
             polkavm: true,
-            nodeConfig: {
-                nodeBinaryPath: 'PATH_TO_POLKADOT_BINARY',
-                rpcPort: 8000,
-                dev: true,
-            },
-            adapterConfig: {
-                adapterBinaryPath: 'PATH_TO_ADAPTER_BINARY',
-                dev: true,
-            },
-            accounts: [],
         },
-        westend: {
-            url: 'wss://westend-rpc.polkadot.io',
+        westendHub: {
+            url: 'https://westend-asset-hub-eth-rpc.polkadot.io',
             polkavm: true,
-            accounts: [process.env.POLKADOT_PRIVATE_KEY || ''],
+            accounts: [
+                process.env.POLKADOT_PRIVATE_KEY || '271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687',
+            ],
+        },
+        passeoHub: {
+            url: 'https://testnet-passet-hub-eth-rpc.polkadot.io',
+            polkavm: true,
+            accounts: [
+                process.env.POLKADOT_PRIVATE_KEY || '271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687',
+            ],
         },
         sepolia: {
             url: 'https://sepolia.infura.io/v3/YOUR_INFURA_KEY',
