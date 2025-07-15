@@ -8,3 +8,4 @@ img
 .env
 .*
 tsconfig.json
+**/package-lock.json
