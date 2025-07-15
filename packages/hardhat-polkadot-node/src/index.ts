@@ -113,15 +113,6 @@ task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node")
         undefined,
         types.string,
     )
-    /**
-     * @deprecated This property should not be used
-     */
-    .addOptionalParam(
-        "adapterEndpoint",
-        "Endpoint to which the adapter will connect to - default: ws://localhost:8000",
-        undefined,
-        types.string,
-    )
     .addOptionalParam(
         "adapterPort",
         "Port where the adapter will listen on - default: 8545 ",
@@ -158,7 +149,6 @@ task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node")
                 nodeBinaryPath,
                 rpcPort,
                 adapterBinaryPath,
-                adapterEndpoint,
                 adapterPort,
                 dev,
                 buildBlockMode,
@@ -168,7 +158,6 @@ task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node")
                 nodeBinaryPath: string
                 rpcPort: number
                 adapterBinaryPath: string
-                adapterEndpoint: string
                 adapterPort: number
                 dev: boolean
                 buildBlockMode: "Instant" | "Manual" | "Batch"
@@ -188,7 +177,6 @@ task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node")
                     nodeBinaryPath,
                     rpcPort,
                     adapterBinaryPath,
-                    adapterEndpoint,
                     adapterPort,
                     dev,
                     buildBlockMode,

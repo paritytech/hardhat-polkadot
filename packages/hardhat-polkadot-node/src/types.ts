@@ -5,7 +5,6 @@ export interface CliCommands {
     nodeBinaryPath?: string
     rpcPort?: number
     adapterBinaryPath?: string
-    adapterEndpoint?: string
     adapterPort?: number
     dev?: boolean
     buildBlockMode?: "Instant" | "Manual" | "Batch"
