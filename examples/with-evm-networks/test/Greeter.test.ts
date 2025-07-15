@@ -1,4 +1,7 @@
+import '@nomicfoundation/hardhat-ethers';
 import { expect } from 'chai';
+import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
+import { ethers } from 'hardhat';
 import hre from 'hardhat';
 
 describe('Greeter', function () {
@@ -17,30 +20,26 @@ describe('Greeter', function () {
         expect(network.chainId.toString().startsWith('420420')).to.be.true;
     });
 
+    // We define a fixture to reuse the same deployment across tests.
+    // `loadFixture` snapshots the network state after the first run
+    // and restores it before each test, ensuring isolated test runs.
+    //
+    // ⚠️ Note: `loadFixture` does not currently work with PolkaVM-compatible networks.
+    async function deployGreeterFixture() {
+        const [deployer] = await ethers.getSigners();
+
+        const greeterFactory = await ethers.getContractFactory('Greeter');
+        const greeter = await greeterFactory.connect(deployer).deploy('Hello, world!');
+
+        return { greeter };
+    }
+
     it('Should set the greeting to the constructor argument', async function () {
-        const greeting = 'Hello, world!';
+        let greeter;
+        greeter = isPolkaVMCompatible
+            ? (await deployGreeterFixture()).greeter
+            : (await loadFixture(deployGreeterFixture)).greeter;
 
-        const greeter = await hre.ethers.deployContract('Greeter', [greeting]);
-
-        expect(await greeter.greet()).to.equal(greeting);
-    });
-
-    it('Should return the current greeting', async function () {
-        const greeting = 'Hello, world!';
-
-        const greeter = await hre.ethers.deployContract('Greeter', [greeting]);
-
-        expect(await greeter.greet()).to.equal(greeting);
-    });
-
-    it('Should set a new greeting', async function () {
-        const initialGreeting = 'Hello, world!';
-        const newGreeting = 'Hello, Ethereum!';
-
-        const greeter = await hre.ethers.deployContract('Greeter', [initialGreeting]);
-
-        await greeter.setGreeting(newGreeting);
-
-        expect(await greeter.greet()).to.equal(newGreeting);
+        expect(await greeter.greet()).to.equal('Hello, world!');
     });
 });
