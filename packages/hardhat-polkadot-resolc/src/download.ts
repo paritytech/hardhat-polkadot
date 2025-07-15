@@ -66,6 +66,10 @@ export async function download(
                         if (err) return console.error("grep failed:", err)
                         sha256 = stdout.trim().split(" ")[0]
                     })
+
+                    fsExtra.remove(tempFile, (removeErr) => {
+                        if (removeErr) console.error("Failed to delete temp file:", removeErr)
+                    })
                 } else {
                     sha256 = asset.digest.slice(7)
                 }
