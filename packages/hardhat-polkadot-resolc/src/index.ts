@@ -42,6 +42,7 @@ import {
     TASK_COMPILE_SOLIDITY_GET_RESOLC_BUILD,
     TASK_COMPILE_SOLIDITY_COMPILE_RESOLC,
     TASK_COMPILE_SOLIDITY_RUN_RESOLC,
+    TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_RESOLC_COMPILER_START,
 } from "./constants"
 import "./type-extensions"
 import type { ResolcBuild, ReviveCompilerInput } from "./types"
@@ -285,6 +286,31 @@ subtask(
     },
 )
 
+subtask(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_RESOLC_COMPILER_START)
+    .addParam("isCompilerDownloaded", undefined, undefined, types.boolean)
+    .addParam("quiet", undefined, undefined, types.boolean)
+    .addParam("resolcVersion", undefined, undefined, types.string)
+    .setAction(
+        async ({
+            isCompilerDownloaded,
+            resolcVersion,
+        }: {
+            isCompilerDownloaded: boolean
+            quiet: boolean
+            resolcVersion: string
+        }) => {
+            if (isCompilerDownloaded) {
+                return
+            }
+
+            if (resolcVersion === "latest") {
+                console.log(`Downloading ${resolcVersion} version of the resolc compiler`)
+            } else {
+                console.log(`Downloading resolc compiler ${resolcVersion}`)
+            }
+        },
+    )
+
 subtask(TASK_COMPILE_SOLIDITY_GET_RESOLC_BUILD)
     .addParam("quiet", undefined, undefined, types.boolean)
     .addParam("resolcVersion", undefined, undefined, types.string)
@@ -310,8 +336,8 @@ subtask(TASK_COMPILE_SOLIDITY_GET_RESOLC_BUILD)
             await downloader.downloadCompiler(
                 resolcVersion,
                 async (isCompilerDownloaded: boolean) => {
-                    await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_START, {
-                        solcVersion: resolcVersion,
+                    await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_RESOLC_COMPILER_START, {
+                        resolcVersion: resolcVersion,
                         isCompilerDownloaded,
                         quiet,
                     })

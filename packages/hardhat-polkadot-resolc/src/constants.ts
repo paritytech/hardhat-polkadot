@@ -6,6 +6,8 @@ export const DEFAULT_TIMEOUT_MILISECONDS = 30000
 export const TASK_COMPILE_SOLIDITY_GET_RESOLC_BUILD = "compile:solidity:resolc:get-build"
 export const TASK_COMPILE_SOLIDITY_COMPILE_RESOLC = "compile:solidity:resolc:compile"
 export const TASK_COMPILE_SOLIDITY_RUN_RESOLC = "compile:solidity:resolc:run"
+export const TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_RESOLC_COMPILER_START =
+    "compile:solidity:log:download-resolc-compiler-start"
 
 export const defaultNpmResolcConfig: ResolcConfig = {
     version: "latest",

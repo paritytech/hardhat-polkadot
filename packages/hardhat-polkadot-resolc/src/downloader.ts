@@ -81,7 +81,6 @@ export class ResolcCompilerDownloader implements ICompilerDownloader {
 
     public async isCompilerDownloaded(version: string): Promise<boolean> {
         const build = await this._getCompilerBuild(version)
-        console.log(build)
 
         if (build === undefined) {
             return false
