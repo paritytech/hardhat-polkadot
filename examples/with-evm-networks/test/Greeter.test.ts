@@ -34,8 +34,7 @@ describe('Greeter', function () {
     }
 
     it('Should set the greeting to the constructor argument', async function () {
-        let greeter;
-        greeter = isPolkaVMCompatible
+        const greeter = isPolkaVMCompatible
             ? (await deployGreeterFixture()).greeter
             : (await loadFixture(deployGreeterFixture)).greeter;
 
