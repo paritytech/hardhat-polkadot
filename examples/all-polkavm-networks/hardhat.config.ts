@@ -28,35 +28,43 @@ const config: HardhatUserConfig = {
             url: "http://localhost:8545",
             chainId: 420420420,
         },
-        // Polkadot Hub Testnet
+        /** Polkadot Hub Testnet
+         * faucet: https://faucet.polkadot.io/?parachain=1111
+         * blockscout explorer: https://blockscout-passet-hub.parity-testnet.parity.io/
+         * subscan explorer: https://assethub-paseo.subscan.io/
+         */
         polkadotHubTestnet: {
             polkavm: true,
             url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
-            // faucet: https://faucet.polkadot.io/?parachain=1111
             accounts: !!PRIVATE_KEY
                 ? [PRIVATE_KEY]
                 : ["271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687"],
-            // block explorer: https://blockscout-passet-hub.parity-testnet.parity.io/
         },
-        // Privacy-focused Live Network
+        /** Kusama - Privacy-focused Live Network
+         * token: https://coinmarketcap.com/currencies/kusama/#Markets
+         * blockscout explorer: https://blockscout-kusama-asset-hub.parity-chains-scw.parity.io/
+         * subscan explorer: https://assethub-kusama.subscan.io/
+         */
         kusamaHub: {
             polkavm: true,
             url: "https://kusama-asset-hub-eth-rpc.polkadot.io",
-            // token: https://coinmarketcap.com/currencies/kusama/#Markets
-            accounts: [PRIVATE_KEY || ""],
-            // block explorer: https://blockscout-kusama-asset-hub.parity-chains-scw.parity.io/
+            accounts: !!PRIVATE_KEY ? [PRIVATE_KEY] : [],
         },
-        // Internal Parity Testnet
+        /** Internal Parity Testnet
+         * faucet: https://faucet.polkadot.io/westend
+         * blockscout explorer: https://blockscout-asset-hub.parity-chains-scw.parity.io/
+         * subscan explorer: https://assethub-westend.subscan.io/
+         */
         westendHub: {
             polkavm: true,
             url: "https://westend-asset-hub-eth-rpc.polkadot.io",
-            // faucet: https://faucet.polkadot.io/westend
             accounts: !!PRIVATE_KEY
                 ? [PRIVATE_KEY]
                 : ["271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687"],
-            // block explorer: https://blockscout-asset-hub.parity-chains-scw.parity.io/
         },
-        // (Coming Soon)
+        /** Polkadot Hub (Coming Soon)
+         * token: https://coinmarketcap.com/currencies/polkadot/#Markets
+         */
         // polkadotHub: {
         //     polkavm: true,
         // },
