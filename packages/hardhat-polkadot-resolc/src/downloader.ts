@@ -83,7 +83,7 @@ export class ResolcCompilerDownloader implements ICompilerDownloader {
         private readonly _compilersDir: string,
         private readonly _compilerListCachePeriodMs = ResolcCompilerDownloader.defaultCompilerListCachePeriod,
         private readonly _downloadFunction: typeof download = download,
-    ) { }
+    ) {}
 
     public async isCompilerDownloaded(version: string): Promise<boolean> {
         const build = await this._getCompilerBuild(version)
