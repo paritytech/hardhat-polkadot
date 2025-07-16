@@ -10,8 +10,8 @@ export async function getRemark(remark: string): Promise<string> {
     const codecs = await getTypedCodecs(passetHub)
 
     const remarkWithEventEncoded = codecs.tx.System.remark_with_event.enc({
-        remark: Binary.fromText(remark)
-    });
+        remark: Binary.fromText(remark),
+    })
 
     const xcm = XcmVersionedXcm.V5([
         XcmV5Instruction.Transact({
