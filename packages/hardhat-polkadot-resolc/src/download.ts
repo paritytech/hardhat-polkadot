@@ -2,7 +2,7 @@ import fsExtra from "fs-extra"
 import path from "path"
 
 import axios from "axios"
-import { exec, execSync } from "child_process"
+import { execSync } from "child_process"
 import { CompilerName, CompilerPlatform, type CompilerBuild, type CompilerList } from "./types"
 
 const TEMP_FILE_PREFIX = "tmp-"
@@ -63,17 +63,15 @@ export async function download(
                     const tempFile = `./${TEMP_FILE_PREFIX}checksums.txt`
                     fsExtra.writeFileSync(tempFile, checksum.data)
                     try {
-                    const checksum = execSync(`grep ${name} ${tempFile}`).toString();
-                    sha256 = checksum.trim().split(" ")[0]
+                        const checksum = execSync(`grep ${name} ${tempFile}`).toString()
+                        sha256 = checksum.trim().split(" ")[0]
 
-                    fsExtra.remove(tempFile, (removeErr) => {
-                        if (removeErr) console.error("Failed to delete temp file:", removeErr)
-                    })
-
+                        fsExtra.remove(tempFile, (removeErr) => {
+                            if (removeErr) console.error("Failed to delete temp file:", removeErr)
+                        })
                     } catch (e) {
                         return console.error("grep failed:", e)
                     }
-                    
                 } else {
                     sha256 = asset.digest.slice(7)
                 }
