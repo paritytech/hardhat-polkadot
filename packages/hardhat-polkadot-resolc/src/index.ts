@@ -15,7 +15,7 @@ import {
     TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_END,
 } from "hardhat/builtin-tasks/task-names"
 import debug from "debug"
-import { extendEnvironment, extendConfig, subtask, task, types } from "hardhat/config"
+import { extendEnvironment, extendConfig, subtask, task } from "hardhat/config"
 import { getCompilersDir } from "hardhat/internal/util/global-dir"
 import { Artifacts } from "hardhat/internal/artifacts"
 import { CompilerPlatform } from "hardhat/internal/solidity/compiler/downloader"
@@ -202,12 +202,13 @@ subtask(
 
 subtask(
     TASK_COMPILE_SOLIDITY_RUN_RESOLC,
-    async (args: { input: CompilerInput; resolcPath: string }, hre) => {
+    async (args: { input: CompilerInput; resolcPath: string; solcPath: string }, hre) => {
         const config = {
             ...hre.config.resolc,
             settings: {
                 ...hre.config.resolc.settings,
                 resolcPath: args.resolcPath,
+                solcPath: args.solcPath,
             },
         }
 
@@ -250,6 +251,7 @@ subtask(
         const output = await hre.run(TASK_COMPILE_SOLIDITY_RUN_RESOLC, {
             input: args.input,
             resolcPath: resolcBuild.resolcPath,
+            solcPath: solcBuild.compilerPath,
         })
 
         await hre.run(TASK_COMPILE_SOLIDITY_LOG_RUN_COMPILER_END, {
@@ -286,114 +288,107 @@ subtask(
     },
 )
 
-subtask(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_RESOLC_COMPILER_START)
-    .addParam("isCompilerDownloaded", undefined, undefined, types.boolean)
-    .addParam("quiet", undefined, undefined, types.boolean)
-    .addParam("resolcVersion", undefined, undefined, types.string)
-    .setAction(
-        async ({
-            isCompilerDownloaded,
+subtask(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_RESOLC_COMPILER_START).setAction(
+    async ({
+        isCompilerDownloaded,
+        resolcVersion,
+    }: {
+        isCompilerDownloaded: boolean
+        quiet: boolean
+        resolcVersion: string
+    }) => {
+        if (isCompilerDownloaded) {
+            return
+        }
+
+        if (resolcVersion === "latest") {
+            console.log(`Downloading ${resolcVersion} version of the resolc compiler`)
+        } else {
+            console.log(`Downloading resolc compiler ${resolcVersion}`)
+        }
+    },
+)
+
+subtask(TASK_COMPILE_SOLIDITY_GET_RESOLC_BUILD).setAction(
+    async (
+        {
+            quiet,
             resolcVersion,
         }: {
-            isCompilerDownloaded: boolean
             quiet: boolean
             resolcVersion: string
-        }) => {
-            if (isCompilerDownloaded) {
-                return
-            }
-
-            if (resolcVersion === "latest") {
-                console.log(`Downloading ${resolcVersion} version of the resolc compiler`)
-            } else {
-                console.log(`Downloading resolc compiler ${resolcVersion}`)
-            }
         },
-    )
+        { run },
+    ): Promise<ResolcBuild> => {
+        const compilersCache = await getCompilersDir()
 
-subtask(TASK_COMPILE_SOLIDITY_GET_RESOLC_BUILD)
-    .addParam("quiet", undefined, undefined, types.boolean)
-    .addParam("resolcVersion", undefined, undefined, types.string)
-    .setAction(
-        async (
-            {
-                quiet,
-                resolcVersion,
-            }: {
-                quiet: boolean
-                resolcVersion: string
+        const compilerPlatform = ResolcCompilerDownloader.getCompilerPlatform()
+        const downloader = ResolcCompilerDownloader.getConcurrencySafeDownloader(
+            compilerPlatform,
+            compilersCache,
+        )
+
+        await downloader.downloadCompiler(
+            resolcVersion,
+            async (isCompilerDownloaded: boolean) => {
+                await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_RESOLC_COMPILER_START, {
+                    resolcVersion: resolcVersion,
+                    isCompilerDownloaded,
+                    quiet,
+                })
             },
-            { run },
-        ): Promise<ResolcBuild> => {
-            const compilersCache = await getCompilersDir()
+            async (isCompilerDownloaded: boolean) => {
+                await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_END, {
+                    solcVersion: resolcVersion,
+                    isCompilerDownloaded,
+                    quiet,
+                })
+            },
+        )
 
-            const compilerPlatform = ResolcCompilerDownloader.getCompilerPlatform()
-            const downloader = ResolcCompilerDownloader.getConcurrencySafeDownloader(
-                compilerPlatform,
-                compilersCache,
-            )
+        const compiler = await downloader.getCompiler(resolcVersion)
 
-            await downloader.downloadCompiler(
-                resolcVersion,
-                async (isCompilerDownloaded: boolean) => {
-                    await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_RESOLC_COMPILER_START, {
-                        resolcVersion: resolcVersion,
-                        isCompilerDownloaded,
-                        quiet,
-                    })
-                },
-                async (isCompilerDownloaded: boolean) => {
-                    await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_END, {
-                        solcVersion: resolcVersion,
-                        isCompilerDownloaded,
-                        quiet,
-                    })
-                },
-            )
+        if (compiler !== undefined) {
+            return compiler
+        }
 
-            const compiler = await downloader.getCompiler(resolcVersion)
+        logDebug(
+            "Native resolc binary doesn't work, using wasm instead. Try running npx hardhat clean --global",
+        )
 
-            if (compiler !== undefined) {
-                return compiler
-            }
+        const wasmDownloader = ResolcCompilerDownloader.getConcurrencySafeDownloader(
+            CompilerPlatform.WASM,
+            compilersCache,
+        )
 
-            logDebug(
-                "Native resolc binary doesn't work, using wasm instead. Try running npx hardhat clean --global",
-            )
+        await wasmDownloader.downloadCompiler(
+            resolcVersion,
+            async (isCompilerDownloaded: boolean) => {
+                await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_START, {
+                    solcVersion: resolcVersion,
+                    isCompilerDownloaded,
+                    quiet,
+                })
+            },
+            async (isCompilerDownloaded: boolean) => {
+                await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_END, {
+                    solcVersion: resolcVersion,
+                    isCompilerDownloaded,
+                    quiet,
+                })
+            },
+        )
 
-            const wasmDownloader = ResolcCompilerDownloader.getConcurrencySafeDownloader(
-                CompilerPlatform.WASM,
-                compilersCache,
-            )
+        const wasmCompiler = await wasmDownloader.getCompiler(resolcVersion)
 
-            await wasmDownloader.downloadCompiler(
-                resolcVersion,
-                async (isCompilerDownloaded: boolean) => {
-                    await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_START, {
-                        solcVersion: resolcVersion,
-                        isCompilerDownloaded,
-                        quiet,
-                    })
-                },
-                async (isCompilerDownloaded: boolean) => {
-                    await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_END, {
-                        solcVersion: resolcVersion,
-                        isCompilerDownloaded,
-                        quiet,
-                    })
-                },
-            )
+        assertHardhatInvariant(
+            wasmCompiler !== undefined,
+            `WASM build of resolc ${resolcVersion} isn't working`,
+        )
 
-            const wasmCompiler = await wasmDownloader.getCompiler(resolcVersion)
-
-            assertHardhatInvariant(
-                wasmCompiler !== undefined,
-                `WASM build of resolc ${resolcVersion} isn't working`,
-            )
-
-            return wasmCompiler
-        },
-    )
+        return wasmCompiler
+    },
+)
 
 subtask(
     TASK_COMPILE_SOLIDITY_LOG_COMPILATION_RESULT,
