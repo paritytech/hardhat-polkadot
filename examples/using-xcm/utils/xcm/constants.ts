@@ -1,0 +1,4 @@
+export const PAS_UNITS = 10_000_000_000n
+export const PAS_CENTS = 100_000_000n
+export const SOME_POLKADOT_ACCOUNT = "FLifce5pzYPt9A8RHfjP48ELzSQ6H95M8GskG3v52aKYTUC"
+export const PASEO_HUB_CHAIN_ID = 1000
