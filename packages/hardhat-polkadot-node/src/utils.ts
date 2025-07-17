@@ -19,6 +19,7 @@ import { PolkadotNodePluginError } from "./errors"
 import type { CliCommands, CommandArguments, SplitCommands } from "./types"
 import { createRpcServer } from "./servers"
 
+export const PARITYPR_DOCKER_REGISTRY = "https://registry.hub.docker.com/v2/repositories/paritypr/"
 export function constructCommandArgs(
     args?: CommandArguments,
     cliCommands?: CliCommands,
@@ -259,5 +260,33 @@ export async function startServer(
             isForking: commands.forking?.enabled,
         }),
         port: currentAdapterPort,
+    }
+}
+
+/**
+ * This function retrieves a list of the latest images available in the Docker registry
+ * sortes them from newest to oldest, and returns the newest one, in order to be used by the DockerServer.
+ */
+export async function getLatestImageName(containerName: string): Promise<string | undefined> {
+    const url = `${PARITYPR_DOCKER_REGISTRY}${containerName}/tags?page_size=10`
+
+    const imageResponse = await axios.get(url, {
+        timeout: 5000,
+        responseType: "json",
+    })
+
+    if (imageResponse.status == 200) {
+        const imageList = imageResponse.data
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        imageList.results
+            .sort(
+                (a: any, b: any) =>
+                    new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime(),
+            )
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .map((tag: any) => tag.name)
+        return imageList.results[0].name
+    } else {
+        throw new Error(`Failed to fetch tags: ${imageResponse.statusText}`)
     }
 }
