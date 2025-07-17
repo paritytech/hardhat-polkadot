@@ -258,8 +258,8 @@ importers:
         specifier: ^10.0.0
         version: 10.0.0
       '@parity/resolc':
-        specifier: 0.2.0
-        version: 0.2.0(debug@4.4.1)
+        specifier: 0.3.0
+        version: 0.3.0(debug@4.4.1)
       '@types/debug':
         specifier: ^4
         version: 4.1.12
@@ -945,8 +945,8 @@ packages:
       - '@parity/hardhat-polkadot-node'
       - '@parity/hardhat-polkadot-resolc'
 
-  '@parity/resolc@0.2.0':
-    resolution: {integrity: sha512-5IGnWNzLNj/5unM61aIFKUXbvveqMmhiz/tPX0W3w434flDDOwfU5ER8hls1F9o9I79l0N00D83ZTkcWjyJhUQ==}
+  '@parity/resolc@0.3.0':
+    resolution: {integrity: sha512-vWaKhqM89YH+Kn1y+0Kv92NG+0G7HktDhA3OdYvCoG320R4djpg/N/C9s90w/B0IWrRfaGR3Nk3R6O+VOBMjFA==}
     hasBin: true
 
   '@pkgjs/parseargs@0.11.0':
@@ -3051,8 +3051,8 @@ packages:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
 
-  ky@1.8.1:
-    resolution: {integrity: sha512-7Bp3TpsE+L+TARSnnDpk3xg8Idi8RwSLdj6CMbNWoOARIrGrbuLGusV0dYwbZOm4bB3jHNxSw8Wk/ByDqJEnDw==}
+  ky@1.8.2:
+    resolution: {integrity: sha512-XybQJ3d4Ea1kI27DoelE5ZCT3bSJlibYTtQuMsyzKox3TMyayw1asgQdl54WroAm+fIA3ZCr8zXW2RpR7qWVpA==}
     engines: {node: '>=18'}
 
   levn@0.3.0:
@@ -5232,9 +5232,9 @@ snapshots:
       hardhat: 2.26.0(ts-node@10.9.2(@types/node@22.16.4)(typescript@5.8.3))(typescript@5.8.3)
       picocolors: 1.1.1
 
-  '@parity/resolc@0.2.0(debug@4.4.1)':
+  '@parity/resolc@0.3.0(debug@4.4.1)':
     dependencies:
-      '@types/node': 22.15.24
+      '@types/node': 22.16.4
       commander: 13.1.0
       package-json: 10.0.1
       resolve-pkg: 2.0.0
@@ -7893,7 +7893,7 @@ snapshots:
 
   kleur@3.0.3: {}
 
-  ky@1.8.1: {}
+  ky@1.8.2: {}
 
   levn@0.3.0:
     dependencies:
@@ -8247,7 +8247,7 @@ snapshots:
 
   package-json@10.0.1:
     dependencies:
-      ky: 1.8.1
+      ky: 1.8.2
       registry-auth-token: 5.1.0
       registry-url: 6.0.1
       semver: 7.7.2
