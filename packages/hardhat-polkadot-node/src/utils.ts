@@ -2,7 +2,6 @@ import axios from "axios"
 import net from "net"
 import { createProvider } from "hardhat/internal/core/providers/construction"
 import type { HardhatConfig } from "hardhat/types"
-import chalk from "chalk"
 
 import {
     BASE_URL,
@@ -28,13 +27,6 @@ export function constructCommandArgs(
     const adapterCommands: string[] | undefined = []
 
     if (cliCommands && Object.values(cliCommands).find((v) => v !== undefined)) {
-        if (cliCommands.adapterEndpoint) {
-            console.log(
-                chalk.yellow(
-                    "The parameter adapterEndpoint is deprecated and will be ignored.\nThe endpoint the adapter connects to is defined by the node rpc port or the forking url.",
-                ),
-            )
-        }
         if (cliCommands.fork) {
             nodeCommands.push(`npx`)
             nodeCommands.push(`@acala-network/chopsticks@latest`)
@@ -74,13 +66,6 @@ export function constructCommandArgs(
     }
 
     if (args && Object.values(args).find((v) => v !== undefined)) {
-        if (args.adapterCommands?.adapterEndpoint) {
-            console.log(
-                chalk.yellow(
-                    "The parameter adapterEndpoint is deprecated and will be ignored.\nThe endpoint the adapter connects to is defined by the node rpc port or the forking url.",
-                ),
-            )
-        }
         if (args.forking && !cliCommands?.fork) {
             nodeCommands.push(`npx`)
             nodeCommands.push(`@acala-network/chopsticks@latest`)
