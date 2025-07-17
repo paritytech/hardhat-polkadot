@@ -4,7 +4,7 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules"
 import { parseEther } from "viem"
 
-const INITIAL_SUPPLY: bigint = parseEther("1_000_000_000_000")
+const INITIAL_SUPPLY: bigint = parseEther("1000000000000")
 const MyTokenModule = buildModule("MyTokenModule", (m) => {
     const initialSupply = m.getParameter("initialSupply", INITIAL_SUPPLY)
 

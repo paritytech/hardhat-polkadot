@@ -60,7 +60,7 @@
         "picocolors": "^1.1.1"
     },
     "peerDependencies": {
-        "hardhat": "^2.24.0"
+        "hardhat": "^2.26.0"
     },
     "bundledDependencies": [
         "@parity/hardhat-polkadot-node",
