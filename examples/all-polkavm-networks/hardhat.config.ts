@@ -26,7 +26,6 @@ const config: HardhatUserConfig = {
         local: {
             polkavm: true,
             url: "http://localhost:8545",
-            chainId: 420420420,
         },
         /** Polkadot Hub Testnet
          * faucet: https://faucet.polkadot.io/?parachain=1111
@@ -39,6 +38,7 @@ const config: HardhatUserConfig = {
             accounts: !!PRIVATE_KEY
                 ? [PRIVATE_KEY]
                 : ["271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687"],
+            chainId: 420420422,
         },
         /** Kusama - Privacy-focused Live Network
          * token: https://coinmarketcap.com/currencies/kusama/#Markets
@@ -49,6 +49,7 @@ const config: HardhatUserConfig = {
             polkavm: true,
             url: "https://kusama-asset-hub-eth-rpc.polkadot.io",
             accounts: !!PRIVATE_KEY ? [PRIVATE_KEY] : [],
+            chainId: 420420418,
         },
         /** Internal Parity Testnet
          * faucet: https://faucet.polkadot.io/westend
@@ -61,6 +62,7 @@ const config: HardhatUserConfig = {
             accounts: !!PRIVATE_KEY
                 ? [PRIVATE_KEY]
                 : ["271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687"],
+            chainId: 420420421,
         },
         /** Polkadot Hub (Coming Soon)
          * token: https://coinmarketcap.com/currencies/polkadot/#Markets
