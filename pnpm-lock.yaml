@@ -121,8 +121,8 @@ importers:
   packages/hardhat-polkadot:
     dependencies:
       '@openzeppelin/contracts':
-        specifier: ^5.3.0
-        version: 5.3.0
+        specifier: ^5.4.0
+        version: 5.4.0
       '@parity/hardhat-polkadot-node':
         specifier: workspace:^
         version: link:../hardhat-polkadot-node
@@ -935,6 +935,9 @@ packages:
 
   '@openzeppelin/contracts@5.3.0':
     resolution: {integrity: sha512-zj/KGoW7zxWUE8qOI++rUM18v+VeLTTzKs/DJFkSzHpQFPD/jKKF0TrMxBfGLl3kpdELCNccvB3zmofSzm4nlA==}
+
+  '@openzeppelin/contracts@5.4.0':
+    resolution: {integrity: sha512-eCYgWnLg6WO+X52I16TZt8uEjbtdkgLC0SUX/xnAksjjrQI4Xfn4iBRoI5j55dmlOhDv1Y7BoR3cU7e3WWhC6A==}
 
   '@parity/hardhat-polkadot@0.1.8':
     resolution: {integrity: sha512-BQkBxBkUtydhAb+X/L3a+upWBXBrrKfcrmQGJh5KkAs+eNX2F39EPr9tMW8cH2GIJxpOB8au+rTMxmnbqYwbQA==}
@@ -5222,6 +5225,8 @@ snapshots:
       '@nomicfoundation/solidity-analyzer-win32-x64-msvc': 0.1.2
 
   '@openzeppelin/contracts@5.3.0': {}
+
+  '@openzeppelin/contracts@5.4.0': {}
 
   '@parity/hardhat-polkadot@0.1.8(hardhat@2.26.0(ts-node@10.9.2(@types/node@22.16.4)(typescript@5.8.3))(typescript@5.8.3))':
     dependencies:
