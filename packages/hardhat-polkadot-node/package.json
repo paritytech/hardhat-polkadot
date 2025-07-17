@@ -14,7 +14,11 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -33,7 +37,6 @@
   },
   "dependencies": {
     "@types/debug": "^4",
-    "@types/fs-extra": "^11.0.4",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.15.3",
     "axios": "1.9.0",
@@ -52,6 +55,7 @@
     "eslint-plugin-import": "^2.31.0",
     "globals": "^16.0.0",
     "prettier": "^3.5.3",
+    "@types/fs-extra": "^11.0.4",
     "rimraf": "^3.0.2",
     "typescript-eslint": "^8.31.0"
   },

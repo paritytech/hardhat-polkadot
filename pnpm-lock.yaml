@@ -34,6 +34,10 @@ importers:
         version: 0.8.28(debug@4.4.1)
 
   examples/using-xcm:
+    dependencies:
+      '@polkadot-api/descriptors':
+        specifier: file:.papi/descriptors
+        version: file:examples/using-xcm/.papi/descriptors(polkadot-api@1.14.1(rxjs@7.8.2))
     devDependencies:
       '@nomicfoundation/hardhat-toolbox':
         specifier: ^5.0.0
@@ -186,9 +190,6 @@ importers:
       '@types/debug':
         specifier: ^4
         version: 4.1.12
-      '@types/fs-extra':
-        specifier: ^11.0.4
-        version: 11.0.4
       '@types/mocha':
         specifier: ^10.0.10
         version: 10.0.10
@@ -229,6 +230,9 @@ importers:
       '@types/dockerode':
         specifier: ^3.3.38
         version: 3.3.39
+      '@types/fs-extra':
+        specifier: ^11.0.4
+        version: 11.0.4
       eslint:
         specifier: ^9.25.1
         version: 9.27.0
@@ -250,6 +254,9 @@ importers:
 
   packages/hardhat-polkadot-resolc:
     dependencies:
+      '@ethereumjs/util':
+        specifier: ^10.0.0
+        version: 10.0.0
       '@parity/resolc':
         specifier: 0.2.0
         version: 0.2.0(debug@4.4.1)
@@ -259,12 +266,24 @@ importers:
       '@types/node':
         specifier: ^22.15.3
         version: 22.15.24
+      axios:
+        specifier: 1.9.0
+        version: 1.9.0(debug@4.4.1)
       chalk:
         specifier: '4'
         version: 4.1.2
       debug:
         specifier: ^4.4.0
         version: 4.4.1(supports-color@8.1.1)
+      find-up:
+        specifier: 5.0.0
+        version: 5.0.0
+      fs-extra:
+        specifier: ^11.3.0
+        version: 11.3.0
+      fs-xattr:
+        specifier: ^0.4.0
+        version: 0.4.0
       hardhat:
         specifier: ^2.26.0
         version: 2.26.0(ts-node@10.9.2(@types/node@22.15.24)(typescript@5.8.3))(typescript@5.8.3)
@@ -281,6 +300,9 @@ importers:
       '@eslint/js':
         specifier: ^9.30.1
         version: 9.30.1
+      '@types/fs-extra':
+        specifier: ^11.0.4
+        version: 11.0.4
       '@types/semver':
         specifier: ^7.7.0
         version: 7.7.0
@@ -531,6 +553,11 @@ packages:
     resolution: {integrity: sha512-0J+zgWxHN+xXONWIyPWKFMgVuJoZuGiIFu8yxk7RJjxkzpGmyja5wRFqZIVtjDVOQpV+Rw0iOAjYPE2eQyjr0w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@ethereumjs/rlp@10.0.0':
+    resolution: {integrity: sha512-h2SK6RxFBfN5ZGykbw8LTNNLckSXZeuUZ6xqnmtF22CzZbHflFMcIOyfVGdvyCVQqIoSbGMHtvyxMCWnOyB9RA==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   '@ethereumjs/rlp@4.0.1':
     resolution: {integrity: sha512-tqsQiBQDQdmPWE1xkkBq4rlSW5QZpLOUJ5RJh2/9fug+q9tnUhuZoVLk7s0scUIKTOzEtR72DFBXI4WiZcMpvw==}
     engines: {node: '>=14'}
@@ -540,6 +567,10 @@ packages:
     resolution: {integrity: sha512-DziebCdg4JpGlEqEdGgXmjqcFoJi+JGulUXwEjsZGAscAQ7MyD/7LE/GVCP29vEQxKc7AAwjT3A2ywHp2xfoCA==}
     engines: {node: '>=18'}
     hasBin: true
+
+  '@ethereumjs/util@10.0.0':
+    resolution: {integrity: sha512-lO23alM4uQsv8dp6/yEm4Xw4328+wIRjSeuBO1mRTToUWRcByEMTk87yzBpXgpixpgHrl+9LTn9KB2vvKKtOQQ==}
+    engines: {node: '>=18'}
 
   '@ethereumjs/util@8.1.0':
     resolution: {integrity: sha512-zQ0IqbdX8FZ9aw11vP+dZkKDkS+kgIvQPHnSAXzP9pLu+Rfu3D3XEeLbicvoXJTYnhZiPmsZUxgdzXwNKxRPbA==}
@@ -724,6 +755,10 @@ packages:
 
   '@noble/curves@1.4.2':
     resolution: {integrity: sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw==}
+
+  '@noble/curves@1.9.0':
+    resolution: {integrity: sha512-7YDlXiNMdO1YZeH6t/kvopHHbIZzlxrCV9WLqCY6QhcXOoXiNCMDqJIglZ9Yjx5+w7Dz30TITFrlTjnRg7sKEg==}
+    engines: {node: ^14.21.3 || >=16}
 
   '@noble/curves@1.9.1':
     resolution: {integrity: sha512-k11yZxZg+t+gWvBbIswW0yoJlu8cHOC7dhunwOzoWH/mXGBiYyR4YY6hAEK/3EUs4UpB8la1RfdRpeGsFHkWsA==}
@@ -940,6 +975,11 @@ packages:
 
   '@polkadot-api/codegen@0.16.4':
     resolution: {integrity: sha512-lHNTJ3rG0tBRoKzjAhQRs7qYRdrBtvpKIWDo7fgun2A1DEsWxZAvugDs+Qp1m4UcXP5YgjI8bv//a9Qu8SD1XA==}
+
+  '@polkadot-api/descriptors@file:examples/using-xcm/.papi/descriptors':
+    resolution: {directory: examples/using-xcm/.papi/descriptors, type: directory}
+    peerDependencies:
+      polkadot-api: '>=1.11.2'
 
   '@polkadot-api/ink-contracts@0.3.5':
     resolution: {integrity: sha512-91TO9TV0prCz+nDHVaxt/iXldxVY1xZykyook0Tqt+L2NpjM0Rgj7fQe9hysZfw5GUYlf5K2HI7BxRWEQGaorA==}
@@ -2320,6 +2360,10 @@ packages:
   ethereum-cryptography@2.2.1:
     resolution: {integrity: sha512-r/W8lkHSiTLxUxW8Rf3u4HGB0xQweG2RyETjywylKZSzLWoWAijRz8WCuOtJ6wah+avllXBqZuk29HCCvhEIRg==}
 
+  ethereum-cryptography@3.2.0:
+    resolution: {integrity: sha512-Urr5YVsalH+Jo0sYkTkv1MyI9bLYZwW8BENZCeE1QYaTHETEYx0Nv/SVsWkSqpYrzweg6d8KMY1wTjH/1m/BIg==}
+    engines: {node: ^14.21.3 || >=16, npm: '>=9'}
+
   ethereumjs-util@7.1.5:
     resolution: {integrity: sha512-SDl5kKrQAudFBUe5OJM9Ac6WmMyYmXX/6sTmLZ3ffG2eY6ZIGBes3pEDxNN6V72WyOw4CPD5RomKdsa8DAAwLg==}
     engines: {node: '>=10.0.0'}
@@ -2474,6 +2518,11 @@ packages:
 
   fs-readdir-recursive@1.1.0:
     resolution: {integrity: sha512-GNanXlVr2pf02+sPN40XN8HG+ePaNcvM0q5mZBd668Obwb0yD5GiUbZOFgwn8kGMY6I3mdyDJzieUy3PTYyTRA==}
+
+  fs-xattr@0.4.0:
+    resolution: {integrity: sha512-Lw90zx483YTGiHfR67IPtrbrZ+yBr1/W98v/iyTeSkUbixg/wrHfX5x9oMUOnirC5P7SZ5HlrpnIRMMqt8Ej0A==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    os: ['!win32']
 
   fs.promises.exists@1.1.4:
     resolution: {integrity: sha512-lJzUGWbZn8vhGWBedA+RYjB/BeJ+3458ljUfmplqhIeb6ewzTFWNPCR1HCiYCkXV9zxcHz9zXkJzMsEgDLzh3Q==}
@@ -4568,9 +4617,16 @@ snapshots:
       '@eslint/core': 0.14.0
       levn: 0.4.1
 
+  '@ethereumjs/rlp@10.0.0': {}
+
   '@ethereumjs/rlp@4.0.1': {}
 
   '@ethereumjs/rlp@5.0.2': {}
+
+  '@ethereumjs/util@10.0.0':
+    dependencies:
+      '@ethereumjs/rlp': 10.0.0
+      ethereum-cryptography: 3.2.0
 
   '@ethereumjs/util@8.1.0':
     dependencies:
@@ -4929,6 +4985,10 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.4.0
 
+  '@noble/curves@1.9.0':
+    dependencies:
+      '@noble/hashes': 1.8.0
+
   '@noble/curves@1.9.1':
     dependencies:
       '@noble/hashes': 1.8.0
@@ -5245,6 +5305,10 @@ snapshots:
       '@polkadot-api/metadata-compatibility': 0.3.0
       '@polkadot-api/substrate-bindings': 0.14.0
       '@polkadot-api/utils': 0.2.0
+
+  '@polkadot-api/descriptors@file:examples/using-xcm/.papi/descriptors(polkadot-api@1.14.1(rxjs@7.8.2))':
+    dependencies:
+      polkadot-api: 1.14.1(rxjs@7.8.2)
 
   '@polkadot-api/ink-contracts@0.3.5':
     dependencies:
@@ -6971,6 +7035,14 @@ snapshots:
       '@scure/bip32': 1.4.0
       '@scure/bip39': 1.3.0
 
+  ethereum-cryptography@3.2.0:
+    dependencies:
+      '@noble/ciphers': 1.3.0
+      '@noble/curves': 1.9.0
+      '@noble/hashes': 1.8.0
+      '@scure/bip32': 1.7.0
+      '@scure/bip39': 1.6.0
+
   ethereumjs-util@7.1.5:
     dependencies:
       '@types/bn.js': 5.2.0
@@ -7203,6 +7275,8 @@ snapshots:
       universalify: 2.0.1
 
   fs-readdir-recursive@1.1.0: {}
+
+  fs-xattr@0.4.0: {}
 
   fs.promises.exists@1.1.4: {}
 

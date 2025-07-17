@@ -23,7 +23,6 @@ const config: HardhatUserConfig = {
             optimizer: {
                 enabled: true,
             },
-            compilerPath: "path/to/resolc",
         },
     },
 }

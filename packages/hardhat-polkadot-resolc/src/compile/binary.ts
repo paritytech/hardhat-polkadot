@@ -9,7 +9,7 @@ export async function compileWithBinary(
     input: CompilerInput,
     config: ResolcConfig,
 ): Promise<SolcOutput> {
-    const { compilerPath, optimizer } = config.settings!
+    const { resolcPath, optimizer } = config.settings!
 
     const commands = extractCommands(config)
 
@@ -42,7 +42,7 @@ export async function compileWithBinary(
     })
 
     return new Promise((resolve, reject) => {
-        const process = spawn(compilerPath!, commands)
+        const process = spawn(resolcPath!, commands)
 
         let output = ""
         let error = ""

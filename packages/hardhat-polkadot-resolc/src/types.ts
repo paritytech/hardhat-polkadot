@@ -1,4 +1,6 @@
+import { SolcOutput } from "@parity/resolc"
 import type { CompilerInput, SolcConfig } from "hardhat/types"
+import { CompilerPlatform } from "hardhat/internal/solidity/compiler/downloader"
 
 export interface ResolcConfig {
     version: string
@@ -26,7 +28,7 @@ export interface ResolcConfig {
         // Dump all IRs to files in the specified directory. Only for testing and debugging.
         debugOutputDir?: string
         // If compilerSource == "npm", this option is ignored.
-        compilerPath?: string
+        resolcPath?: string
         // Specific contracts present in source to be compiled
         contractsToCompile?: string[]
         // Generate source based debug information in the output code file. This only has an effect with the LLVM-IR code generator and is ignored otherwise.
@@ -61,4 +63,44 @@ export interface Sources {
         id: number
         ast: object
     }
+}
+
+export interface ResolcBuild {
+    version: string
+    longVersion: string
+    resolcPath: string
+    isJs: boolean
+}
+
+export interface ICompiler {
+    compile(input: CompilerInput, config: ResolcConfig): Promise<SolcOutput>
+}
+
+export enum CompilerName {
+    LINUX = "resolc-x86_64-unknown-linux-musl",
+    WINDOWS = "resolc-x86_64-pc-windows-msvc.exe",
+    MACOS = "resolc-universal-apple-darwin",
+    WASM = "resolc.wasm",
+}
+export interface ResolcCompiler {
+    version: string
+    longVersion: string
+    resolcPath: string
+    isJs: boolean
+}
+
+export interface CompilerBuild {
+    name: CompilerName
+    path: string
+    version: string
+    build: string
+    longVersion: string
+    sha256: string
+    platform: CompilerPlatform
+}
+
+export interface CompilerList {
+    builds: CompilerBuild[]
+    releases: { [version: string]: string }
+    latestRelease: string
 }

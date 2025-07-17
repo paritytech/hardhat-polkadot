@@ -1,13 +1,8 @@
 import type { CompilerInput } from "hardhat/types"
-import type { SolcOutput } from "@parity/resolc"
-import type { ResolcConfig } from "../types"
+import type { ICompiler, ResolcConfig } from "../types"
 import { ResolcPluginError } from "../errors"
 import { compileWithBinary } from "./binary"
 import { compileWithNpm } from "./npm"
-
-export interface ICompiler {
-    compile(input: CompilerInput, config: ResolcConfig): Promise<SolcOutput>
-}
 
 export async function compile(resolcConfig: ResolcConfig, input: CompilerInput) {
     let compiler: ICompiler

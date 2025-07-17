@@ -223,7 +223,6 @@ export async function configureNetwork(
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (_e: any) {
-        console.log("configureNetwork", _e)
         // If it fails, it will just try again
     }
 
