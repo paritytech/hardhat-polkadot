@@ -8,10 +8,11 @@ import { HardhatNetworkUserConfig } from "hardhat/types/config"
 
 import { NODE_START_PORT, ETH_RPC_ADAPTER_START_PORT } from "../constants"
 import { RpcServer } from "../types"
+import { getLatestImageName } from "../utils"
 
-const ADAPTER_CONTAINER_NAME = "eth-rpc-adapter"
-const NODE_CONTAINER_NAME = "substrate-node"
-const NODE_RPC_URL_BASE_URL = process.env.CI ? "127.0.0.1" : "host.docker.internal"
+const ADAPTER_CONTAINER_NAME = "eth-rpc"
+const NODE_CONTAINER_NAME = "substrate"
+const NODE_RPC_URL_BASE_URL = process.env.CI ? "0.0.0.0" : "host.docker.internal"
 const DOCKER_SOCKET_DEFAULT_PATH = "/var/run/docker.sock"
 
 export class DockerRpcServer implements RpcServer {
@@ -43,6 +44,10 @@ export class DockerRpcServer implements RpcServer {
         adapterArgs: string[] = [],
         blockProcess: boolean = true,
     ): Promise<void> {
+        // Here we avoid hardcoding the images in order to always use the latest available one.
+        const nodeImageTag = await getLatestImageName(NODE_CONTAINER_NAME)
+        const adapterImageTag = await getLatestImageName(ADAPTER_CONTAINER_NAME)
+
         const adapterPortArg = adapterArgs.find((arg) => arg.startsWith("--rpc-port="))
         const adapterPort = adapterPortArg
             ? parseInt(adapterPortArg.split("=")[1], 10)
@@ -57,7 +62,7 @@ export class DockerRpcServer implements RpcServer {
         // start both containers
         this.nodeContainer = await runSimple({
             name: NODE_CONTAINER_NAME,
-            image: "paritypr/substrate:8492-286a9fd2",
+            image: `paritypr/substrate:${nodeImageTag}`,
             autoRemove: true,
             ports: {
                 [`${nodePort}/tcp`]: `${nodePort}`,
@@ -66,7 +71,7 @@ export class DockerRpcServer implements RpcServer {
             verbose: true,
         })
         this.adapterContainer = await run({
-            Image: "paritypr/eth-rpc:master-f331a447",
+            Image: `paritypr/eth-rpc:${adapterImageTag}`,
             name: ADAPTER_CONTAINER_NAME,
             HostConfig: {
                 NetworkMode: process.env.CI ? "host" : undefined,
