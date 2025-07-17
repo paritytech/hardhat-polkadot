@@ -38,6 +38,14 @@ import "@parity/hardhat-polkadot-node";
 
 ## Usage
 
+### From `hardhat.config`
+
+Configure a PolkaVM-compatible node and eth-rpc in `hardhat.config.js` according to [available options](https://github.com/paritytech/hardhat-polkadot/blob/ebb5b48bd8bc6f9d8906d8223736f8a8f7e2724f/packages/hardhat-polkadot-node/src/type-extensions.ts#L5). 
+
+See [Examples](https://github.com/paritytech/hardhat-polkadot/tree/main/examples).
+
+### From the CLI
+
 Run a local Polkadot from a binary and initializes a JSON-RPC server.
 
 ```bash
@@ -63,5 +71,6 @@ $ npx hardhat node --fork https://testnet-passet-hub.polkadot.io
 | --build-block-mode | Build block mode for chopsticks. |
 | --fork | Endpoint of the chain to fork. |
 | --fork-block-number | Block hash or block number from where to fork. |
+
 
 ## Happy building! 👷‍♀️👷‍♂️

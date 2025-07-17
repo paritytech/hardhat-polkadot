@@ -1,6 +1,10 @@
+import fs from "fs"
+import os from "os"
+import path from "path"
 import chalk from "chalk"
 import { runSimple, run } from "run-container"
 import Docker from "dockerode"
+import { HardhatNetworkUserConfig } from "hardhat/types/config"
 
 import { NODE_START_PORT, ETH_RPC_ADAPTER_START_PORT } from "../constants"
 import { RpcServer } from "../types"
@@ -8,14 +12,21 @@ import { RpcServer } from "../types"
 const ADAPTER_CONTAINER_NAME = "eth-rpc-adapter"
 const NODE_CONTAINER_NAME = "substrate-node"
 const NODE_RPC_URL_BASE_URL = process.env.CI ? "127.0.0.1" : "host.docker.internal"
+const DOCKER_SOCKET_DEFAULT_PATH = "/var/run/docker.sock"
 
 export class DockerRpcServer implements RpcServer {
     private adapterContainer: Docker.Container | null = null
     private nodeContainer: Docker.Container | null = null
     private docker: Docker
 
-    constructor() {
-        this.docker = new Docker({ socketPath: "/var/run/docker.sock" })
+    constructor(dockerSocketPath?: Extract<HardhatNetworkUserConfig["docker"], string>) {
+        const socketPath =
+            dockerSocketPath ||
+            (fs.existsSync(path.join(os.homedir(), ".docker", "run", "docker.sock"))
+                ? path.join(os.homedir(), ".docker", "run", "docker.sock")
+                : DOCKER_SOCKET_DEFAULT_PATH)
+
+        this.docker = new Docker({ socketPath })
     }
 
     private async pruneContainerByName(containerName: string) {

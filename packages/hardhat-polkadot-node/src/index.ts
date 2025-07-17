@@ -12,6 +12,7 @@ import {
 
 import { HARDHAT_NETWORK_NAME } from "hardhat/plugins"
 import { TaskArguments } from "hardhat/types"
+import { HardhatNetworkUserConfig } from "hardhat/types/config"
 import path from "path"
 import {
     NODE_START_PORT,
@@ -31,7 +32,7 @@ import {
 import { PolkadotNodePluginError } from "./errors"
 import { interceptAndWrapTasksWithNode } from "./core/global-interceptor"
 import { runScriptWithHardhat } from "./core/script-runner"
-import type { AdapterConfig, NodeConfig, RpcServer } from "./types"
+import { RpcServer } from "./types"
 import "./type-extensions"
 import { waitForNodeToBeReady, waitForEthRpcToBeReady } from "./servers/utils"
 
@@ -63,10 +64,19 @@ subtask(TASK_NODE_POLKADOT_CREATE_SERVER, "Creates a JSON-RPC server for Polkado
     )
     .setAction(
         async (
-            { nodePath, adapterPath }: { nodePath: string; adapterPath: string },
+            {
+                nodePath,
+                adapterPath,
+                docker,
+            }: {
+                nodePath: string
+                adapterPath: string
+                docker: HardhatNetworkUserConfig["docker"]
+            },
             { config },
         ) => {
             const server: RpcServer = createRpcServer({
+                docker,
                 nodePath,
                 adapterPath,
                 isForking: config.networks.hardhat.forking?.enabled,
@@ -100,15 +110,6 @@ task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node")
     .addOptionalParam(
         "adapterBinaryPath",
         "Path to the eth-rpc-adapter binary",
-        undefined,
-        types.string,
-    )
-    /**
-     * @deprecated This property should not be used
-     */
-    .addOptionalParam(
-        "adapterEndpoint",
-        "Endpoint to which the adapter will connect to - default: ws://localhost:8000",
         undefined,
         types.string,
     )
@@ -148,7 +149,6 @@ task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node")
                 nodeBinaryPath,
                 rpcPort,
                 adapterBinaryPath,
-                adapterEndpoint,
                 adapterPort,
                 dev,
                 buildBlockMode,
@@ -158,7 +158,6 @@ task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node")
                 nodeBinaryPath: string
                 rpcPort: number
                 adapterBinaryPath: string
-                adapterEndpoint: string
                 adapterPort: number
                 dev: boolean
                 buildBlockMode: "Instant" | "Manual" | "Batch"
@@ -178,7 +177,6 @@ task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node")
                     nodeBinaryPath,
                     rpcPort,
                     adapterBinaryPath,
-                    adapterEndpoint,
                     adapterPort,
                     dev,
                     buildBlockMode,
@@ -195,6 +193,7 @@ task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node")
                 : userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath
 
             const server: RpcServer = await run(TASK_NODE_POLKADOT_CREATE_SERVER, {
+                docker: userConfig.networks?.hardhat?.docker,
                 nodePath,
                 adapterPath,
             })
@@ -264,14 +263,14 @@ task(
         nodePort = await getAvailablePort(nodePort, MAX_PORT_ATTEMPTS)
         adapterPort = await getAvailablePort(adapterPort, MAX_PORT_ATTEMPTS)
 
-        const nodeCommands: NodeConfig = Object.assign(
+        const nodeCommands: HardhatNetworkUserConfig["nodeConfig"] = Object.assign(
             {},
             userConfig.networks?.hardhat?.nodeConfig,
             {
                 rpcPort: nodePort,
             },
         )
-        const adapterCommands: AdapterConfig = Object.assign(
+        const adapterCommands: HardhatNetworkUserConfig["adapterConfig"] = Object.assign(
             {},
             userConfig.networks?.hardhat?.adapterConfig,
             {
