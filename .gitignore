@@ -18,3 +18,4 @@ logs
 .vscode/
 .DS_Store
 *.code-workspace
+examples/using-xcm/.papi
