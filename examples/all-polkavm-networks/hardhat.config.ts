@@ -23,14 +23,18 @@ const config: HardhatUserConfig = {
                 dev: true,
             },
         },
+        /** Local Network
+         * PAPI explorer: https://dev.papi.how/explorer#networkId=localhost&endpoint=http%3A%2F%2Flocalhost%3A8545
+         */
         local: {
             polkavm: true,
             url: "http://localhost:8545",
         },
         /** Polkadot Hub Testnet
          * faucet: https://faucet.polkadot.io/?parachain=1111
-         * blockscout explorer: https://blockscout-passet-hub.parity-testnet.parity.io/
-         * subscan explorer: https://assethub-paseo.subscan.io/
+         * EVM explorer: https://blockscout-passet-hub.parity-testnet.parity.io/
+         * Substrate/EVM explorer: https://assethub-paseo.subscan.io/
+         * PAPI explorer: https://dev.papi.how/explorer#networkId=passet_hub&endpoint=wss%3A%2F%2Ftestnet-passet-hub.polkadot.io
          */
         polkadotHubTestnet: {
             polkavm: true,
@@ -42,8 +46,9 @@ const config: HardhatUserConfig = {
         },
         /** Kusama - Privacy-focused Live Network
          * token: https://coinmarketcap.com/currencies/kusama/#Markets
-         * blockscout explorer: https://blockscout-kusama-asset-hub.parity-chains-scw.parity.io/
-         * subscan explorer: https://assethub-kusama.subscan.io/
+         * EVM explorer: https://blockscout-kusama-asset-hub.parity-chains-scw.parity.io/
+         * Substrate/EVM explorer: https://assethub-kusama.subscan.io/
+         * PAPI explorer: https://dev.papi.how/explorer#networkId=kusama_asset_hub&endpoint=light-client
          */
         kusamaHub: {
             polkavm: true,
@@ -53,8 +58,9 @@ const config: HardhatUserConfig = {
         },
         /** Internal Parity Testnet
          * faucet: https://faucet.polkadot.io/westend
-         * blockscout explorer: https://blockscout-asset-hub.parity-chains-scw.parity.io/
-         * subscan explorer: https://assethub-westend.subscan.io/
+         * EVM explorer: https://blockscout-asset-hub.parity-chains-scw.parity.io/
+         * Substrate/EVM explorer: https://assethub-westend.subscan.io/
+         * PAPI explorer: https://dev.papi.how/explorer#networkId=westend_asset_hub&endpoint=light-client
          */
         westendHub: {
             polkavm: true,
