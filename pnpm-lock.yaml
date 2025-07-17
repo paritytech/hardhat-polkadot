@@ -34,6 +34,10 @@ importers:
         version: 0.8.28(debug@4.4.1)
 
   examples/using-xcm:
+    dependencies:
+      '@polkadot-api/descriptors':
+        specifier: file:.papi/descriptors
+        version: file:examples/using-xcm/.papi/descriptors(polkadot-api@1.14.1(rxjs@7.8.2))
     devDependencies:
       '@nomicfoundation/hardhat-toolbox':
         specifier: ^5.0.0
@@ -752,10 +756,6 @@ packages:
   '@noble/curves@1.4.2':
     resolution: {integrity: sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw==}
 
-  '@noble/curves@1.8.2':
-    resolution: {integrity: sha512-vnI7V6lFNe0tLAuJMu+2sX+FcL14TaCWy1qiczg1VwRmPrpQCdq5ESXQMqUc2tluRNf6irBXrWbl1mGN8uaU/g==}
-    engines: {node: ^14.21.3 || >=16}
-
   '@noble/curves@1.9.0':
     resolution: {integrity: sha512-7YDlXiNMdO1YZeH6t/kvopHHbIZzlxrCV9WLqCY6QhcXOoXiNCMDqJIglZ9Yjx5+w7Dz30TITFrlTjnRg7sKEg==}
     engines: {node: ^14.21.3 || >=16}
@@ -975,6 +975,11 @@ packages:
 
   '@polkadot-api/codegen@0.16.4':
     resolution: {integrity: sha512-lHNTJ3rG0tBRoKzjAhQRs7qYRdrBtvpKIWDo7fgun2A1DEsWxZAvugDs+Qp1m4UcXP5YgjI8bv//a9Qu8SD1XA==}
+
+  '@polkadot-api/descriptors@file:examples/using-xcm/.papi/descriptors':
+    resolution: {directory: examples/using-xcm/.papi/descriptors, type: directory}
+    peerDependencies:
+      polkadot-api: '>=1.11.2'
 
   '@polkadot-api/ink-contracts@0.3.5':
     resolution: {integrity: sha512-91TO9TV0prCz+nDHVaxt/iXldxVY1xZykyook0Tqt+L2NpjM0Rgj7fQe9hysZfw5GUYlf5K2HI7BxRWEQGaorA==}
@@ -4980,6 +4985,10 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.4.0
 
+  '@noble/curves@1.9.0':
+    dependencies:
+      '@noble/hashes': 1.8.0
+
   '@noble/curves@1.9.1':
     dependencies:
       '@noble/hashes': 1.8.0
@@ -5296,6 +5305,10 @@ snapshots:
       '@polkadot-api/metadata-compatibility': 0.3.0
       '@polkadot-api/substrate-bindings': 0.14.0
       '@polkadot-api/utils': 0.2.0
+
+  '@polkadot-api/descriptors@file:examples/using-xcm/.papi/descriptors(polkadot-api@1.14.1(rxjs@7.8.2))':
+    dependencies:
+      polkadot-api: 1.14.1(rxjs@7.8.2)
 
   '@polkadot-api/ink-contracts@0.3.5':
     dependencies:
