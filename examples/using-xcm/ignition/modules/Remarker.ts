@@ -1,9 +1,11 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules"
 
-const INITIAL_MESSAGE = "0x05040600004000073448656c6c6f2c20576f726c6421"
+import { getRemark } from "../../utils/xcm/get-remark"
 
 const GreeterModule = buildModule("RemarkerModule", (m) => {
-    const remarker = m.contract("Greeter", [INITIAL_MESSAGE])
+    const message = getRemark("Hello, Polkadot!")
+
+    const remarker = m.contract("Remarker", [message])
 
     return { remarker }
 })
