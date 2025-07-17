@@ -3,7 +3,9 @@ import path from "path"
 
 import axios from "axios"
 import { execSync } from "child_process"
-import { CompilerName, CompilerPlatform, type CompilerBuild, type CompilerList } from "./types"
+import { CompilerPlatform } from "hardhat/internal/solidity/compiler/downloader"
+import { CompilerName, type CompilerBuild, type CompilerList } from "./types"
+import { COMPILER_REPOSITORY_URL } from "./constants"
 
 const TEMP_FILE_PREFIX = "tmp-"
 
@@ -26,19 +28,26 @@ export async function download(
     timeoutMillis = 10000,
 ) {
     if (isList) {
-        const response = await axios.get(url, {
+        const releasesResponse = await axios.get(url, {
             timeout: timeoutMillis,
             responseType: "json",
         })
 
-        const releases = response.data
+        const releasesData = releasesResponse.data
 
         const releaseInfo: { [version: string]: string } = {}
 
         const builds: CompilerBuild[] = []
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const filteredReleases = releases.filter((r: any) => !r.prerelease)
+        const filteredReleases = releasesData.filter((r: any) => !r.prerelease)
 
+        /**
+         * Solidity provides a list of releases with their corresponding info via the endpoint 
+         * https://binaries.soliditylang.org/${PLATFORM}/list.json .
+         * 
+         * In order to keep the interfaces coherent, and since we don't have such endpoint,
+         * we build the list manually here.
+         */
         if (Array.isArray(filteredReleases) && filteredReleases.length > 0) {
             for (const release of filteredReleases) {
                 const commit = (release.target_commitish as string).slice(0, 6)
@@ -52,8 +61,8 @@ export async function download(
                 if (!asset) {
                     continue
                 } else if (!asset.digest || asset.digest == null) {
-                    const checksum = await axios.get(
-                        `https://github.com/paritytech/revive/releases/download/v${version}/checksums.txt`,
+                    const checksumResponse = await axios.get(
+                        `${COMPILER_REPOSITORY_URL}v${version}/checksums.txt`,
                         {
                             timeout: timeoutMillis,
                             responseType: "text",
@@ -61,7 +70,7 @@ export async function download(
                     )
 
                     const tempFile = `./${TEMP_FILE_PREFIX}checksums.txt`
-                    fsExtra.writeFileSync(tempFile, checksum.data)
+                    fsExtra.writeFileSync(tempFile, checksumResponse.data)
                     try {
                         const checksum = execSync(`grep ${name} ${tempFile}`).toString()
                         sha256 = checksum.trim().split(" ")[0]
@@ -91,7 +100,7 @@ export async function download(
         const list: CompilerList = {
             builds,
             releases: releaseInfo,
-            latestRelease: releases[0].tag_name,
+            latestRelease: releasesData[0].tag_name,
         }
 
         const tmpFilePath = resolveTempFileName(filePath)
@@ -99,7 +108,7 @@ export async function download(
 
         await fsExtra.writeFile(tmpFilePath, JSON.stringify(list), "utf-8")
         return fsExtra.move(tmpFilePath, filePath, { overwrite: true })
-    } else {
+    } 
         const response = await axios.get(url, {
             timeout: timeoutMillis,
             responseType: "arraybuffer",
@@ -110,5 +119,4 @@ export async function download(
 
         await fsExtra.writeFile(tmpFilePath, Buffer.from(response.data))
         return fsExtra.move(tmpFilePath, filePath, { overwrite: true })
-    }
 }

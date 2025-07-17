@@ -9,6 +9,9 @@ export const TASK_COMPILE_SOLIDITY_RUN_RESOLC = "compile:solidity:resolc:run"
 export const TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_RESOLC_COMPILER_START =
     "compile:solidity:log:download-resolc-compiler-start"
 
+export const COMPILER_REPOSITORY_URL = "https://github.com/paritytech/revive/releases/download/"
+export const COMPILER_REPOSITORY_API_URL = "https://api.github.com/repos/paritytech/revive/releases"
+
 export const defaultNpmResolcConfig: ResolcConfig = {
     version: "latest",
     compilerSource: "npm",

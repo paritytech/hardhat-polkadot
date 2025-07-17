@@ -190,9 +190,6 @@ importers:
       '@types/debug':
         specifier: ^4
         version: 4.1.12
-      '@types/fs-extra':
-        specifier: ^11.0.4
-        version: 11.0.4
       '@types/mocha':
         specifier: ^10.0.10
         version: 10.0.10
@@ -233,6 +230,9 @@ importers:
       '@types/dockerode':
         specifier: ^3.3.38
         version: 3.3.39
+      '@types/fs-extra':
+        specifier: ^11.0.4
+        version: 11.0.4
       eslint:
         specifier: ^9.25.1
         version: 9.27.0
@@ -263,9 +263,6 @@ importers:
       '@types/debug':
         specifier: ^4
         version: 4.1.12
-      '@types/fs-extra':
-        specifier: ^11.0.4
-        version: 11.0.4
       '@types/node':
         specifier: ^22.15.3
         version: 22.15.24
@@ -303,6 +300,9 @@ importers:
       '@eslint/js':
         specifier: ^9.30.1
         version: 9.30.1
+      '@types/fs-extra':
+        specifier: ^11.0.4
+        version: 11.0.4
       '@types/semver':
         specifier: ^7.7.0
         version: 7.7.0

@@ -1,5 +1,6 @@
 import { SolcOutput } from "@parity/resolc"
 import type { CompilerInput, SolcConfig } from "hardhat/types"
+import { CompilerPlatform } from "hardhat/internal/solidity/compiler/downloader"
 
 export interface ResolcConfig {
     version: string
@@ -76,20 +77,13 @@ export interface ICompiler {
     compile(input: CompilerInput, config: ResolcConfig): Promise<SolcOutput>
 }
 
-export enum CompilerPlatform {
-    LINUX = "linux-amd64",
-    WINDOWS = "windows-amd64",
-    MACOS = "macosx-amd64",
-    WASM = "wasm",
-}
-
 export enum CompilerName {
     LINUX = "resolc-x86_64-unknown-linux-musl",
     WINDOWS = "resolc-x86_64-pc-windows-msvc.exe",
     MACOS = "resolc-universal-apple-darwin",
     WASM = "resolc.wasm",
 }
-export interface Compiler {
+export interface ResolcCompiler {
     version: string
     longVersion: string
     resolcPath: string

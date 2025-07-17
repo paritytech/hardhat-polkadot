@@ -6,34 +6,25 @@ import os from "os"
 import { execFile } from "child_process"
 import { assertHardhatInvariant } from "hardhat/internal/core/errors"
 import { MultiProcessMutex } from "hardhat/internal/util/multi-process-mutex"
+import { CompilerPlatform, ICompilerDownloader } from "hardhat/internal/solidity/compiler/downloader"
 import { listAttributesSync, removeAttributeSync } from "fs-xattr"
 import { download } from "./download"
 import {
     CompilerName,
-    CompilerPlatform,
-    type Compiler,
+    type ResolcCompiler,
     type CompilerBuild,
     type CompilerList,
 } from "./types"
 import { ResolcPluginError } from "./errors"
+import { COMPILER_REPOSITORY_API_URL, COMPILER_REPOSITORY_URL } from "./constants"
 
 const log = debug("hardhat:core:resolc:downloader")
 
-const COMPILER_REPOSITORY_URL = "https://github.com/paritytech/revive/releases/download/"
-
-export interface ICompilerDownloader {
-    isCompilerDownloaded(version: string): Promise<boolean>
-
-    downloadCompiler(
-        version: string,
-        downloadStartedCb: (isCompilerDownloaded: boolean) => Promise<any>,
-        downloadEndedCb: (isCompilerDownloaded: boolean) => Promise<any>,
-    ): Promise<void>
-
-    getCompiler(version: string): Promise<Compiler | undefined>
+export interface IResolcCompilerDownloader extends Omit<ICompilerDownloader, 'getCompiler'> {
+    getCompiler(version: string): Promise<ResolcCompiler | undefined>
 }
 
-export class ResolcCompilerDownloader implements ICompilerDownloader {
+export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
     public static getCompilerPlatform(): CompilerPlatform {
         switch (os.platform()) {
             case "win32":
@@ -83,7 +74,7 @@ export class ResolcCompilerDownloader implements ICompilerDownloader {
         private readonly _compilersDir: string,
         private readonly _compilerListCachePeriodMs = ResolcCompilerDownloader.defaultCompilerListCachePeriod,
         private readonly _downloadFunction: typeof download = download,
-    ) {}
+    ) { }
 
     public async isCompilerDownloaded(version: string): Promise<boolean> {
         const build = await this._getCompilerBuild(version)
@@ -153,7 +144,7 @@ export class ResolcCompilerDownloader implements ICompilerDownloader {
         })
     }
 
-    public async getCompiler(version: string): Promise<Compiler | undefined> {
+    public async getCompiler(version: string): Promise<ResolcCompiler | undefined> {
         const build = await this._getCompilerBuild(version)
 
         assertHardhatInvariant(
@@ -181,7 +172,7 @@ export class ResolcCompilerDownloader implements ICompilerDownloader {
     }
 
     private async _downloadCompilerList(): Promise<void> {
-        const url = "https://api.github.com/repos/paritytech/revive/releases"
+        const url = COMPILER_REPOSITORY_API_URL;
         const downloadPath = this._getCompilerListPath()
         const name = ResolcCompilerDownloader.getCompilerName()
         const platform = ResolcCompilerDownloader.getCompilerPlatform()
