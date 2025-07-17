@@ -277,9 +277,10 @@ export async function getLatestImageName(containerName: string): Promise<string 
 
     if (imageResponse.status == 200) {
         const imageList = imageResponse.data
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         imageList.results
             .sort(
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (a: any, b: any) =>
                     new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime(),
             )
