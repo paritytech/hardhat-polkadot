@@ -6,21 +6,19 @@ import os from "os"
 import { execFile } from "child_process"
 import { assertHardhatInvariant } from "hardhat/internal/core/errors"
 import { MultiProcessMutex } from "hardhat/internal/util/multi-process-mutex"
-import { CompilerPlatform, ICompilerDownloader } from "hardhat/internal/solidity/compiler/downloader"
+import {
+    CompilerPlatform,
+    ICompilerDownloader,
+} from "hardhat/internal/solidity/compiler/downloader"
 import { listAttributesSync, removeAttributeSync } from "fs-xattr"
 import { download } from "./download"
-import {
-    CompilerName,
-    type ResolcCompiler,
-    type CompilerBuild,
-    type CompilerList,
-} from "./types"
+import { CompilerName, type ResolcCompiler, type CompilerBuild, type CompilerList } from "./types"
 import { ResolcPluginError } from "./errors"
 import { COMPILER_REPOSITORY_API_URL, COMPILER_REPOSITORY_URL } from "./constants"
 
 const log = debug("hardhat:core:resolc:downloader")
 
-export interface IResolcCompilerDownloader extends Omit<ICompilerDownloader, 'getCompiler'> {
+export interface IResolcCompilerDownloader extends Omit<ICompilerDownloader, "getCompiler"> {
     getCompiler(version: string): Promise<ResolcCompiler | undefined>
 }
 
@@ -74,7 +72,7 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
         private readonly _compilersDir: string,
         private readonly _compilerListCachePeriodMs = ResolcCompilerDownloader.defaultCompilerListCachePeriod,
         private readonly _downloadFunction: typeof download = download,
-    ) { }
+    ) {}
 
     public async isCompilerDownloaded(version: string): Promise<boolean> {
         const build = await this._getCompilerBuild(version)
@@ -172,7 +170,7 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
     }
 
     private async _downloadCompilerList(): Promise<void> {
-        const url = COMPILER_REPOSITORY_API_URL;
+        const url = COMPILER_REPOSITORY_API_URL
         const downloadPath = this._getCompilerListPath()
         const name = ResolcCompilerDownloader.getCompilerName()
         const platform = ResolcCompilerDownloader.getCompilerPlatform()

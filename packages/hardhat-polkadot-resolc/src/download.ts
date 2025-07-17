@@ -42,9 +42,9 @@ export async function download(
         const filteredReleases = releasesData.filter((r: any) => !r.prerelease)
 
         /**
-         * Solidity provides a list of releases with their corresponding info via the endpoint 
+         * Solidity provides a list of releases with their corresponding info via the endpoint
          * https://binaries.soliditylang.org/${PLATFORM}/list.json .
-         * 
+         *
          * In order to keep the interfaces coherent, and since we don't have such endpoint,
          * we build the list manually here.
          */
@@ -108,15 +108,15 @@ export async function download(
 
         await fsExtra.writeFile(tmpFilePath, JSON.stringify(list), "utf-8")
         return fsExtra.move(tmpFilePath, filePath, { overwrite: true })
-    } 
-        const response = await axios.get(url, {
-            timeout: timeoutMillis,
-            responseType: "arraybuffer",
-        })
+    }
+    const response = await axios.get(url, {
+        timeout: timeoutMillis,
+        responseType: "arraybuffer",
+    })
 
-        const tmpFilePath = resolveTempFileName(filePath)
-        await fsExtra.ensureDir(path.dirname(filePath))
+    const tmpFilePath = resolveTempFileName(filePath)
+    await fsExtra.ensureDir(path.dirname(filePath))
 
-        await fsExtra.writeFile(tmpFilePath, Buffer.from(response.data))
-        return fsExtra.move(tmpFilePath, filePath, { overwrite: true })
+    await fsExtra.writeFile(tmpFilePath, Buffer.from(response.data))
+    return fsExtra.move(tmpFilePath, filePath, { overwrite: true })
 }
