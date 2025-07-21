@@ -263,6 +263,15 @@ task(
         nodePort = await getAvailablePort(nodePort, MAX_PORT_ATTEMPTS)
         adapterPort = await getAvailablePort(adapterPort, MAX_PORT_ATTEMPTS)
 
+        const nodePath = userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath
+        const adapterPath = userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath
+
+        const server: RpcServer = await run(TASK_NODE_POLKADOT_CREATE_SERVER, {
+            docker: userConfig.networks?.hardhat?.docker,
+            nodePath,
+            adapterPath,
+        })
+
         const nodeCommands: HardhatNetworkUserConfig["nodeConfig"] = Object.assign(
             {},
             userConfig.networks?.hardhat?.nodeConfig,
@@ -283,12 +292,6 @@ task(
             forkBlockNumber: config.networks.hardhat.forking?.blockNumber,
             nodeCommands,
             adapterCommands,
-        })
-
-        const server = createRpcServer({
-            nodePath: userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath,
-            adapterPath: userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath,
-            isForking: config.networks.hardhat.forking?.enabled || false,
         })
 
         try {
