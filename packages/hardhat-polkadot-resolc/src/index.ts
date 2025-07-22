@@ -54,7 +54,7 @@ const logDebug = debug("hardhat:core:tasks:compile")
 extendConfig((config, userConfig) => {
     if (!config.networks.hardhat.polkavm) return
 
-    const isBinary = config.resolc?.compilerSource === "binary" || undefined
+    const isBinary = config.resolc?.compilerSource === "binary" || !config.resolc.compilerSource;
     const defaultConfig = isBinary ? defaultBinaryResolcConfig : defaultNpmResolcConfig
     const customConfig = userConfig?.resolc || {}
 
