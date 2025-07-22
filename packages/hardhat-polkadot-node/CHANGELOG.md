@@ -1,12 +1,20 @@
 # Changelog
 
+## 0.1.4 (2025-07-22)
+### Bug fixes
+
+- Enable `Docker` for running tests. ([#239](https://github.com/paritytech/hardhat-polkadot/pull/239)) ([cac72f6](https://github.com/paritytech/hardhat-polkadot/commit/cac72f6270ac41b3c1d22045c82ca77ca73240fd))
+
+
 ## 0.1.3-p1 (2025-07-17)
+🔧 **Hotfix for `0.1.3`**
 ### Chores
 
 - Bump hardhat to 2.26.0 ([#235](https://github.com/paritytech/hardhat-polkadot/pull/235)) ([89efa94](https://github.com/paritytech/hardhat-polkadot/commit/89efa9498cbe16e32a97519a40a8e1ce4b915f08))
 
 
 ## 0.1.3-p0 (2025-07-14)
+🔧 **Hotfix for `0.1.3`**
 ### Bug fixes
 
 - Add consensus type to dev node options. ([#228](https://github.com/paritytech/hardhat-polkadot/pull/228)) ([d0846cd](https://github.com/paritytech/hardhat-polkadot/commit/d0846cd2feef66232f7e97d1adffaccb55d4ec58))

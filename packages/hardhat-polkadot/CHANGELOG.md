@@ -1,12 +1,21 @@
 # Changelog
 
+## 0.1.9 (2025-07-22)
+### Internal
+
+- Bumped `@parity/hardhat-polkadot-resolc` to `0.1.7`.
+- Bumped `@parity/hardhat-polkadot-node` to `0.1.4`.
+
+
 ## 0.1.8-p1 (2025-07-17)
+🔧 **Hotfix for `0.1.8`**
 ### Chores
 
 - Bump hardhat to 2.26.0 ([#235](https://github.com/paritytech/hardhat-polkadot/pull/235)) ([89efa94](https://github.com/paritytech/hardhat-polkadot/commit/89efa9498cbe16e32a97519a40a8e1ce4b915f08))
 
 
 ## 0.1.8-p0 (2025-07-14)
+🔧 **Hotfix for `0.1.8`**
 ### Bug fixes
 
 - Fix testnet url. ([#226](https://github.com/paritytech/hardhat-polkadot/pull/226)) ([c9da20c](https://github.com/paritytech/hardhat-polkadot/commit/c9da20cecc146dd2e5052b2877c1c965f82e0a83))
