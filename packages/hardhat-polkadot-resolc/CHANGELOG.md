@@ -1,9 +1,17 @@
 # Changelog
 
+## 0.1.7 (2025-07-22)
+### Chores
+
+- Promote `0.1.6-p0` hotfix to stable release. No code changes
+
+
 ## 0.1.6-p0 (2025-07-17)
+🔧 **Hotfix for `0.1.6`**
 ### Chores
 
 - Bump hardhat to 2.26.0 ([#235](https://github.com/paritytech/hardhat-polkadot/pull/235)) ([89efa94](https://github.com/paritytech/hardhat-polkadot/commit/89efa9498cbe16e32a97519a40a8e1ce4b915f08))
+
 
 ## 0.1.6 (2025-07-04)
 ### Bug Fixes
