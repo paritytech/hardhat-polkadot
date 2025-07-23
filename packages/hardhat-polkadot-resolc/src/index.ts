@@ -54,8 +54,10 @@ const logDebug = debug("hardhat:core:tasks:compile")
 extendConfig((config, userConfig) => {
     if (!config.networks.hardhat.polkavm) return
 
-    const isBinary = config.resolc?.compilerSource === "binary" || !config.resolc?.compilerSource
-    const defaultConfig = isBinary ? defaultBinaryResolcConfig : defaultNpmResolcConfig
+    // We check for `npm` as `compilerSource`, because for every other case
+    // we prefer using the binary.
+    const isNpm = config.resolc?.compilerSource === "npm"
+    const defaultConfig = isNpm ? defaultNpmResolcConfig : defaultBinaryResolcConfig
     const customConfig = userConfig?.resolc || {}
 
     const optimizer = Object.assign(
