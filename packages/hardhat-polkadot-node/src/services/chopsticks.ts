@@ -12,7 +12,6 @@ export class ChopsticksService extends Service {
         super(commandArgs, blockProcess)
 
         const portArg = commandArgs.find((arg) => arg.startsWith("--port="))
-        console.log("portArg:", portArg)
         this.port = portArg ? parseInt(portArg.split("=")[1], 10) : NODE_START_PORT
     }
 
@@ -30,8 +29,6 @@ export class ChopsticksService extends Service {
                 stdioConfig = ["ignore", "ignore", "ignore"]
             }
 
-            console.log("Command Args:", this.commandArgs)
-            console.log("this.port:", this.port)
             this.process = spawn(this.commandArgs[0], this.commandArgs.slice(1), {
                 stdio: stdioConfig,
             })

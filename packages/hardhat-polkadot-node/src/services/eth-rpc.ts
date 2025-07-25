@@ -38,8 +38,6 @@ export class EthRpcService extends Service {
             this.process.on("error", this._handleOnError("Eth RPC Adapter", reject))
             this.process.on("exit", this._handleOnExit("Eth RPC Adapter"))
 
-            console.log("heyy")
-            console.log("this.blockProcess:", this.blockProcess)
             if (!this.blockProcess) {
                 resolve()
             }
