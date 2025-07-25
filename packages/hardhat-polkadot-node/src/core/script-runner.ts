@@ -3,8 +3,8 @@ import { HardhatArguments } from "hardhat/types"
 import { getEnvVariablesMap } from "hardhat/internal/core/params/env-variables"
 import path from "path"
 
-import { CommandArguments } from "src/types"
-import { SubstrateNodeService } from "src/services"
+import { CommandArguments } from "../types"
+import { SubstrateNodeService } from "../services"
 import { startServer } from "../utils"
 
 export async function runScript(

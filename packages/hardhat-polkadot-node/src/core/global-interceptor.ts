@@ -2,7 +2,8 @@ import { HardhatRuntimeEnvironment, RunSuperFunction, TaskArguments } from "hard
 import { GlobalWithHardhatContext } from "hardhat/src/internal/context"
 import { HARDHAT_NETWORK_NAME } from "hardhat/plugins"
 import { Environment } from "hardhat/internal/core/runtime-environment"
-import { SubstrateNodeService } from "src/services"
+
+import { SubstrateNodeService } from "../services"
 import { configureNetwork, startServer } from "../utils"
 import { PolkadotTasksWithWrappedNode } from "./global-task"
 
