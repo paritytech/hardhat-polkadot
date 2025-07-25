@@ -6,6 +6,7 @@ module.exports = {
     networks: {
         hardhat: {
             polkavm: true,
+            docker: true,
         },
         localNode: {
             polkavm: true,

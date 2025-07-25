@@ -2,8 +2,9 @@ import { HardhatRuntimeEnvironment, RunSuperFunction, TaskArguments } from "hard
 import { GlobalWithHardhatContext } from "hardhat/src/internal/context"
 import { HARDHAT_NETWORK_NAME } from "hardhat/plugins"
 import { Environment } from "hardhat/internal/core/runtime-environment"
+
+import { SubstrateNodeService } from "../services"
 import { configureNetwork, startServer } from "../utils"
-import { waitForNodeToBeReady } from "../servers/utils"
 import { PolkadotTasksWithWrappedNode } from "./global-task"
 
 export function interceptAndWrapTasksWithNode() {
@@ -55,7 +56,7 @@ async function wrapTaskWithNode(
     })
     try {
         await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false)
-        await waitForNodeToBeReady(port)
+        await SubstrateNodeService.waitForNodeToBeReady(port)
         const oldNetwork = env.network
         await configureNetwork(env.config, env.network, port)
         ;(env as unknown as Environment).injectToGlobal()

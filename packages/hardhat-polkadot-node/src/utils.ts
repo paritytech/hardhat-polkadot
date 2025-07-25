@@ -3,7 +3,14 @@ import net from "net"
 import { createProvider } from "hardhat/internal/core/providers/construction"
 import type { HardhatConfig } from "hardhat/types"
 import { LRUCache } from "lru-cache"
+import fs from "fs"
+import os from "os"
+import path from "path"
+import { HardhatNetworkUserConfig } from "hardhat/types/config"
 
+import { createRpcServer } from "./rpc-server"
+import type { CliCommands, CommandArguments, SplitCommands } from "./types"
+import { PolkadotNodePluginError } from "./errors"
 import {
     BASE_URL,
     MAX_PORT_ATTEMPTS,
@@ -16,11 +23,9 @@ import {
     POLKADOT_TEST_NODE_NETWORK_NAME,
     RPC_ENDPOINT_PATH,
 } from "./constants"
-import { PolkadotNodePluginError } from "./errors"
-import type { CliCommands, CommandArguments, SplitCommands } from "./types"
-import { createRpcServer } from "./servers"
 
 export const PARITYPR_DOCKER_REGISTRY = "https://registry.hub.docker.com/v2/repositories/paritypr/"
+const DOCKER_SOCKET_DEFAULT_PATH = "/var/run/docker.sock"
 
 const cache = new LRUCache<string, string>({
     max: 50,
@@ -309,4 +314,49 @@ export async function getLatestImageName(containerName: string): Promise<string 
     } else {
         throw new Error(`Failed to fetch tags: ${imageResponse.statusText}`)
     }
+}
+
+export function getDockerSocketPath(
+    docker?: HardhatNetworkUserConfig["docker"],
+): Extract<HardhatNetworkUserConfig["docker"], string> {
+    const customDockerSocketPath = typeof docker === "string" ? docker : undefined
+    const dockerSocketPath =
+        customDockerSocketPath ||
+        (fs.existsSync(path.join(os.homedir(), ".docker", "run", "docker.sock"))
+            ? path.join(os.homedir(), ".docker", "run", "docker.sock")
+            : DOCKER_SOCKET_DEFAULT_PATH)
+    return dockerSocketPath
+}
+
+export async function waitForServiceToBeReady(
+    port: number,
+    payload: object,
+    maxAttempts: number,
+): Promise<void> {
+    let attempts = 0
+    let waitTime = 1000
+    const backoffFactor = 2
+    const maxWaitTime = 30000
+    const endpoint = `${BASE_URL}:${port}`
+
+    while (attempts < maxAttempts) {
+        try {
+            const response = await axios.post(endpoint, payload)
+
+            if (response.status == 200) {
+                return
+            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (_e: any) {
+            // If it fails, it will just try again
+        }
+
+        attempts++
+
+        await new Promise((r) => setTimeout(r, waitTime))
+
+        waitTime = Math.min(waitTime * backoffFactor, maxWaitTime)
+    }
+
+    throw new PolkadotNodePluginError("Server didn't respond after multiple attempts")
 }
