@@ -4,9 +4,17 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'packages/**'
+      - 'tests/**'
+      - 'pnpm-*.yaml'
   pull_request:
     branches:
       - main
+    paths:
+      - 'packages/**'
+      - 'tests/**'
+      - 'pnpm-*.yaml'
 
 jobs:
   run-unit-stests:
