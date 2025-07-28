@@ -9,27 +9,26 @@ on:
       - main
 
 jobs:
-  run-unit-stests:
+  run-unit-tests:
     strategy:
       matrix:
         # Disabled windows because it's too slow
-        os: [ubuntu-latest, macos-latest]
+        os: [macos-latest, ubuntu-latest]
         node: ["22"]  
     name: Run unit tests on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
-
+        with:
+          version: 9.3.0
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-          cache: pnpm
 
       - name: Run tests
+        working-directory: ${{ github.workspace }}/tests
         run: |
-          cd tests
           chmod +x run.sh
           ./run.sh --unit
         shell: bash
@@ -44,9 +43,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
