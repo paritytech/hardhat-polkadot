@@ -35,6 +35,8 @@ esac
 
 for file in ./$DIR/*; do
     FILE_NAME=$(basename "$file")
+    printf "Running test: $FILE_NAME"
+
     cp "$file" "$TMP_TESTS_DIR/$FILE_NAME"
     chmod +x "$TMP_TESTS_DIR/$FILE_NAME"
     pushd "$TMP_TESTS_DIR" >/dev/null  # cd into the fixture folder, saving old dir

@@ -1,3 +1,4 @@
+require("@nomicfoundation/hardhat-toolbox")
 require("@parity/hardhat-polkadot")
 
 module.exports = {
@@ -5,11 +6,10 @@ module.exports = {
     networks: {
         hardhat: {
             polkavm: true,
+            docker: true,
             forking: {
                 url: "https://testnet-passet-hub.polkadot.io",
             },
-            accounts: ["271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687"],
-            docker: true,
         },
     },
 }
