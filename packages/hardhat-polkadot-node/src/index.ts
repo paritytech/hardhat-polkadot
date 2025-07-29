@@ -245,7 +245,7 @@ task(
         { run, network, userConfig, config },
         runSuper,
     ) => {
-        if (network.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
+        if (network.config.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
             return await runSuper()
         }
 

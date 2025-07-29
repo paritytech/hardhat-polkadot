@@ -55,12 +55,13 @@ export async function download(
                 const version = (release.tag_name as string).slice(1)
                 const build = commit
                 const longVersion = `${version}+commit.${commit}.llvm-18.1.8`
+
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const asset = release.assets.find((a: any) => a.name == name)
+                if (!asset) continue
+
                 let sha256 = ""
-                if (!asset) {
-                    continue
-                } else if (!asset.digest || asset.digest == null) {
+                if (!asset.digest || asset.digest == null) {
                     const checksumResponse = await axios.get(
                         `${COMPILER_REPOSITORY_URL}v${version}/checksums.txt`,
                         {
