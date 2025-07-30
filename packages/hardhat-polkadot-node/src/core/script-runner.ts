@@ -2,9 +2,10 @@ import { isRunningHardhatCoreTests } from "hardhat/internal/core/execution-mode"
 import { HardhatArguments } from "hardhat/types"
 import { getEnvVariablesMap } from "hardhat/internal/core/params/env-variables"
 import path from "path"
-import { CommandArguments } from "src/types"
+
+import { CommandArguments } from "../types"
+import { SubstrateNodeService } from "../services"
 import { startServer } from "../utils"
-import { waitForNodeToBeReady } from "../servers/utils"
 
 export async function runScript(
     config: CommandArguments,
@@ -24,7 +25,7 @@ export async function runScript(
 
     const { commandArgs, server, port } = await startServer(config)
     await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false)
-    await waitForNodeToBeReady(port)
+    await SubstrateNodeService.waitForNodeToBeReady(port)
 
     const envVars = { ...process.env, ...extraEnvVars, polkadotNodePort: port.toString() }
 
