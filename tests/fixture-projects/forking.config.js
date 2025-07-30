@@ -7,10 +7,9 @@ module.exports = {
         hardhat: {
             polkavm: true,
             docker: true,
-        },
-        localNode: {
-            polkavm: true,
-            url: `http://127.0.0.1:8545`,
+            forking: {
+                url: "https://testnet-passet-hub.polkadot.io",
+            },
         },
     },
 }

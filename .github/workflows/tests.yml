@@ -25,6 +25,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
+          cache: pnpm
 
       - name: Run tests
         working-directory: ${{ github.workspace }}/tests
@@ -44,14 +45,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+        with:
+            version: 9.3.0
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
           cache: pnpm
 
       - name: Run tests
+        working-directory: ${{ github.workspace }}/tests
         run: |
-          cd tests
           chmod +x run.sh
           ./run.sh --e2e
         shell: bash

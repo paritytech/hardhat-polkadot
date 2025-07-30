@@ -10,6 +10,7 @@ npm add $HARDHAT_POLKADOT_TGZ_PATH
 npm install # install modules specified in the package.json
 
 # When/Then
-run_test_and_handle_failure "npx hardhat compile --show-stack-traces" 1
+run_test_and_handle_failure "npx hardhat compile --show-stack-traces" 0
 
-echo "Multiple solidity versions are not supported ✅"
+echo "Multiple solidity versions compile successfully in fixture-projects/foo" \
+    "creating the appropriate artifacts ✅"

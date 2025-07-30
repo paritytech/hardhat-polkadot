@@ -10,7 +10,7 @@
       "mountDockerSocket": true
     },
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "18"
+      "version": "22"
     }
   },
   "postStartCommand": "sudo chgrp docker /var/run/docker.sock",

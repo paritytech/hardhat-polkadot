@@ -25,31 +25,21 @@ printf "Package manager version: npm version $(npm --version)\n"
 printf "@parity/hardhat-polkadot package in $HARDHAT_POLKADOT_TGZ_PATH\n"
 printf "Running tests in $TMP_TESTS_DIR\n\n"
 
-# 4) run tests according to flag passes
-if [[ "$TESTS_TYPE" == "--unit" || "$TESTS_TYPE" == "unit" ]]; then
-    for file in ./unit/*; do
-        FILE_NAME=$(basename "$file")
-        if [[ "$FILE_NAME" == "compile-multiple.test.sh" ]]; then
-            continue
-        fi
-        cp "$file" "$TMP_TESTS_DIR/$FILE_NAME"
-        chmod +x "$TMP_TESTS_DIR/$FILE_NAME"
-        pushd "$TMP_TESTS_DIR" >/dev/null  # cd into the fixture folder, saving old dir
-        ./"$FILE_NAME"  # run $file inside tmp
-        popd >/dev/null # cd back to start
-    done
-fi
+# 4) run tests in {DIR} according to flag passed
+case "$TESTS_TYPE" in
+  unit|--unit) DIR=unit ;;
+  e2e|--e2e)   DIR=e2e  ;;
+  *) echo "Unknown test type: $TESTS_TYPE" >&2; exit 1 ;;
+esac
 
-if [[ "$TESTS_TYPE" == "--e2e" || "$TESTS_TYPE" == "e2e" ]]; then
-    for file in ./e2e/*; do
-        FILE_NAME=$(basename "$file")
-        if [[ "$FILE_NAME" == "3-deploy-live.test.sh" ]]; then
-            continue
-        fi
-        cp "$file" "$TMP_TESTS_DIR/$FILE_NAME"
-        chmod +x "$TMP_TESTS_DIR/$FILE_NAME"
-        pushd "$TMP_TESTS_DIR" >/dev/null  # cd into the fixture folder, saving old dir
-        ./"$FILE_NAME"  # run $file inside tmp
-        popd >/dev/null # cd back to start
-    done
-fi
+
+for file in ./$DIR/*; do
+    FILE_NAME=$(basename "$file")
+    printf "Running test: $FILE_NAME"
+
+    cp "$file" "$TMP_TESTS_DIR/$FILE_NAME"
+    chmod +x "$TMP_TESTS_DIR/$FILE_NAME"
+    pushd "$TMP_TESTS_DIR" >/dev/null  # cd into the fixture folder, saving old dir
+    ./"$FILE_NAME"  # run $file inside tmp
+    popd >/dev/null # cd back to start
+done

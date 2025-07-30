@@ -208,9 +208,9 @@ subtask(
         const config = {
             ...hre.config.resolc,
             settings: {
-                ...hre.config.resolc.settings,
                 resolcPath: args.resolcPath,
                 solcPath: args.solcPath,
+                ...hre.config.resolc.settings,
             },
         }
 

@@ -26,3 +26,9 @@ act -j run-unit-tests -P macos-latest=-self-hosted -b
 ```bash
 act -j run-e2e-tests -P ubuntu-latest=catthehacker/ubuntu:act-20.04 --reuse -b
 ```
+
+#### Run workflow `run-e2e-tests` locally in a macos with docker
+
+```bash
+act -j run-e2e-tests -P ubuntu-latest=-self-hosted -b
+```
