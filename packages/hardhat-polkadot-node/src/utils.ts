@@ -6,7 +6,7 @@ import { LRUCache } from "lru-cache"
 import fs from "fs"
 import os from "os"
 import path from "path"
-import { HardhatNetworkUserConfig } from "hardhat/types/config"
+import type { HardhatNetworkUserConfig } from "hardhat/types/config"
 
 import { createRpcServer } from "./rpc-server"
 import type { CliCommands, CommandArguments, SplitCommands } from "./types"
