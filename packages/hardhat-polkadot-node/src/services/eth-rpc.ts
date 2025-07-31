@@ -45,7 +45,9 @@ export class EthRpcService extends Service {
     }
 
     public async from_docker(docker: Docker, nodePort: number): Promise<void> {
-        const imageTag = await getLatestImageName(ADAPTER_CONTAINER_NAME)
+        // TODO: use latestImage once it is more stable
+        // const imageTag = await getLatestImageName(ADAPTER_CONTAINER_NAME)
+        const imageTag = "master-87a8fb03"
 
         const container = docker.getContainer(ADAPTER_CONTAINER_NAME)
         await container

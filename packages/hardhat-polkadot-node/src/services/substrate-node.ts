@@ -45,7 +45,9 @@ export class SubstrateNodeService extends Service {
     }
 
     public async from_docker(docker: Docker): Promise<void> {
-        const imageTag = await getLatestImageName(SUBSTRATE_NODE_CONTAINER_NAME)
+        // TODO: use latestImage once it is more stable
+        // const imageTag = await getLatestImageName(SUBSTRATE_NODE_CONTAINER_NAME)
+        const imageTag = "master-a209e590"
 
         const container = docker.getContainer(SUBSTRATE_NODE_CONTAINER_NAME)
         await container
