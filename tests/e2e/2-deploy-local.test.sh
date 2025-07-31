@@ -11,7 +11,8 @@ npm install # install modules specified in the package.json
 npx hardhat node > hardhat-node.log 2>&1 & # Start the Hardhat node in the background
 HARDHAT_NODE_PID=$!
 while ! grep -q "Imported #5" hardhat-node.log; do  # Wait until producing blocks appears
-  sleep 0.2
+  tail -n 5 hardhat-node.log
+  sleep 1
 done
 trap "kill $HARDHAT_NODE_PID" EXIT
 
