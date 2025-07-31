@@ -4,6 +4,7 @@ import hre from "hardhat"
 import { TEST_NETWORKS } from "../../hardhat.config"
 import { getRemark } from "../../utils/xcm/get-remark"
 
+// npx hardhat test --network polkadotHubTestnet
 !TEST_NETWORKS.includes(hre.network.name)
     ? describe.skip(`Not available for network ${hre.network.name}`, function () {})
     : describe("Remarker", function () {
