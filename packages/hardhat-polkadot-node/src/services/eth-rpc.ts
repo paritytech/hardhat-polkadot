@@ -3,7 +3,7 @@ import chalk from "chalk"
 import { run } from "run-container"
 import Docker from "dockerode"
 import { ETH_RPC_ADAPTER_START_PORT, RPC_ENDPOINT_PATH, NODE_RPC_URL_BASE_URL } from "../constants"
-import { getLatestImageName, waitForServiceToBeReady } from "../utils"
+import { waitForServiceToBeReady } from "../utils"
 import { Service } from "./index"
 
 const ADAPTER_CONTAINER_NAME = "eth-rpc"

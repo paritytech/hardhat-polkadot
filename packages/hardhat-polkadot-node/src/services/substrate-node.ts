@@ -4,7 +4,7 @@ import { runSimple } from "run-container"
 import Docker from "dockerode"
 
 import { NODE_START_PORT } from "../constants"
-import { getLatestImageName, waitForServiceToBeReady } from "../utils"
+import { waitForServiceToBeReady } from "../utils"
 import { Service } from "./index"
 
 const SUBSTRATE_NODE_CONTAINER_NAME = "substrate"
