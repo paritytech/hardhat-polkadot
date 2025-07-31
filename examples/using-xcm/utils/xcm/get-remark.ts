@@ -11,8 +11,10 @@ import { getWsProvider } from "polkadot-api/ws-provider/web"
 export async function getRemark(remark: string): Promise<string> {
     const codecs = await getTypedCodecs(passetHub)
 
-    const PAssetHubClient = createClient(withPolkadotSdkCompat(getWsProvider("https://testnet-passet-hub.polkadot.io")));
-    const PAssetHubApi = PAssetHubClient.getTypedApi(passetHub);
+    const PAssetHubClient = createClient(
+        withPolkadotSdkCompat(getWsProvider("https://testnet-passet-hub.polkadot.io")),
+    )
+    const PAssetHubApi = PAssetHubClient.getTypedApi(passetHub)
 
     const remarkWithEventEncoded = await PAssetHubApi.tx.System.remark_with_event({
         remark: Binary.fromText(remark),
