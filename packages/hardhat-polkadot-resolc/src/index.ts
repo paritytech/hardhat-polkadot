@@ -29,10 +29,12 @@ import type {
     RunSuperFunction,
     SolcBuild,
     TaskArguments,
+    NetworkConfig,
 } from "hardhat/types"
 import { assertHardhatInvariant } from "hardhat/internal/core/errors"
 import chalk from "chalk"
 import fs from "fs"
+
 import { getArtifactFromContractOutput, pluralize, updateDefaultCompilerConfig } from "./utils"
 import { compile } from "./compile"
 import {
@@ -52,7 +54,11 @@ import { ResolcCompilerDownloader } from "./downloader"
 const logDebug = debug("hardhat:core:tasks:compile")
 
 extendConfig((config, userConfig) => {
-    if (!config.networks.hardhat.polkavm) return
+    // Check if any network is using the polkavm flag
+    const hasPolkavm = Object.values(config.networks).some(
+        (network: NetworkConfig) => network && network.polkavm,
+    )
+    if (!hasPolkavm) return
 
     // We check for `npm` as `compilerSource`, because for every other case
     // we prefer using the binary.
