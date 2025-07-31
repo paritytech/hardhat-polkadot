@@ -8,6 +8,7 @@ cp ./basic-test-and-deploy.config.js ./lock/hardhat.config.js
 cd ./lock # relative to tmp folder
 npm add $HARDHAT_POLKADOT_TGZ_PATH
 npm install # install modules specified in the package.json
+lsof -ti tcp:8000 | xargs -r kill -9
 npx hardhat node > hardhat-node.log 2>&1 & # Start the Hardhat node in the background
 HARDHAT_NODE_PID=$!
 while ! grep -q "Imported #5" hardhat-node.log; do  # Wait until producing blocks appears
