@@ -5,6 +5,7 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.7",
     "@nomicfoundation/hardhat-ignition": "^0.15.11",
+    "@nomicfoundation/hardhat-network-helpers": "^1.1.0",
     "@nomicfoundation/hardhat-verify": "^2.0.14",
     "@parity/hardhat-polkadot": "^0.1.8",
     "@types/chai": "^4.3.16",
