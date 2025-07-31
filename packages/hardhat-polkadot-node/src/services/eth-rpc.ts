@@ -47,7 +47,11 @@ export class EthRpcService extends Service {
     public async from_docker(docker: Docker, nodePort: number): Promise<void> {
         const imageTag = await getLatestImageName(ADAPTER_CONTAINER_NAME)
 
-        await docker.getContainer(ADAPTER_CONTAINER_NAME).remove({ force: true })
+        const container = docker.getContainer(ADAPTER_CONTAINER_NAME)
+        await container
+            .inspect()
+            .then(() => container.remove({ force: true }))
+            .catch(() => {})
 
         this.container = await run({
             Image: `paritypr/eth-rpc:${imageTag}`,

@@ -47,7 +47,11 @@ export class SubstrateNodeService extends Service {
     public async from_docker(docker: Docker): Promise<void> {
         const imageTag = await getLatestImageName(SUBSTRATE_NODE_CONTAINER_NAME)
 
-        await docker.getContainer(SUBSTRATE_NODE_CONTAINER_NAME).remove({ force: true })
+        const container = docker.getContainer(SUBSTRATE_NODE_CONTAINER_NAME)
+        await container
+            .inspect()
+            .then(() => container.remove({ force: true }))
+            .catch(() => {})
 
         this.container = await runSimple({
             name: SUBSTRATE_NODE_CONTAINER_NAME,
