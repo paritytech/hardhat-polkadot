@@ -13,8 +13,7 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@parity/hardhat-polkadot": "^0.1.8",
-    "polkadot-api": "^1.14.1",
-    "solc": "0.8.28"
+    "polkadot-api": "^1.14.1"
   },
   "dependencies": {
     "@polkadot-api/descriptors": "file:.papi/descriptors"
