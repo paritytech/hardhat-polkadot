@@ -14,11 +14,24 @@ import { blake2AsHex } from "@polkadot/util-crypto"
 !TEST_NETWORKS.includes(hre.network.name)
     ? describe.skip
     : describe("Remarker", function () {
+          // We define a fixture to reuse the same deployment across tests.
+          //
+          // ⚠️ Note: `loadFixture` does not currently work with PolkaVM-compatible networks.
+          async function deployRemarkerFixture() {
+              const [deployer] = await hre.ethers.getSigners()
+
+              const remarkString = "Hello, Polkadot!"
+              const message = await getRemark(remarkString)
+
+              const remarkerFactory = await hre.ethers.getContractFactory("Remarker")
+              const remarker = await remarkerFactory.connect(deployer).deploy(message)
+
+              return { remarker, remarkString }
+          }
+
           it("Should set the message to the constructor argument and emit an event", async function () {
               // Deploy the contract
-              const Remarker = await hre.ethers.getContractFactory("Remarker")
-              const remarkString = "Hello, Polkadot!"
-              const remarker = await Remarker.deploy(await getRemark(remarkString))
+              const { remarker, remarkString } = await deployRemarkerFixture()
 
               // Connect to PAsset Hub
               const client = createClient(
@@ -44,8 +57,6 @@ import { blake2AsHex } from "@polkadot/util-crypto"
               const event = await eventPromise
 
               const expectedHash = blake2AsHex(remarkString)
-              console.log("Event hash:", event.hash.asHex())
-              console.log("Expected hash:", expectedHash)
               expect(event.hash.asHex()).to.equal(expectedHash)
           })
       })
