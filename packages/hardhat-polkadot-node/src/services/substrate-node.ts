@@ -3,7 +3,7 @@ import chalk from "chalk"
 import { runSimple } from "run-container"
 
 import { NODE_START_PORT } from "../constants"
-import { getLatestImageName, waitForServiceToBeReady } from "../utils"
+import { waitForServiceToBeReady } from "../utils"
 import { Service } from "./index"
 
 const SUBSTRATE_NODE_CONTAINER_NAME = "substrate"
@@ -44,7 +44,9 @@ export class SubstrateNodeService extends Service {
     }
 
     public async from_docker(): Promise<void> {
-        const imageTag = await getLatestImageName(SUBSTRATE_NODE_CONTAINER_NAME)
+        // TODO: use latestImage once it is more stable
+        // const imageTag = await getLatestImageName(SUBSTRATE_NODE_CONTAINER_NAME)
+        const imageTag = "master-a209e590"
 
         this.container = await runSimple({
             name: SUBSTRATE_NODE_CONTAINER_NAME,

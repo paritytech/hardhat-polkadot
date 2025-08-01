@@ -21,6 +21,7 @@ import {
     TASK_NODE_POLKADOT,
     TASK_NODE_POLKADOT_CREATE_SERVER,
     TASK_RUN_POLKADOT_NODE_IN_SEPARATE_PROCESS,
+    NETWORK_ACCOUNTS,
 } from "./constants"
 import { createRpcServer } from "./rpc-server"
 import {
@@ -31,6 +32,7 @@ import {
 } from "./utils"
 import { PolkadotNodePluginError } from "./errors"
 import { interceptAndWrapTasksWithNode } from "./core/global-interceptor"
+import { handleFactoryDependencies } from "./core/factory-support"
 import { runScriptWithHardhat } from "./core/script-runner"
 import { RpcServer } from "./types"
 import { EthRpcService, SubstrateNodeService } from "./services"
@@ -245,12 +247,17 @@ task(
         { run, network, userConfig, config },
         runSuper,
     ) => {
+        if (!noCompile) await run(TASK_COMPILE, { quiet: true })
         if (network.config.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
+            await handleFactoryDependencies(
+                config.paths.artifacts,
+                network.provider,
+                network.config.url
+                network.config?.polkadotUrl ??
+                    (ETH_RPC_ADAPTER_START_PORT[network.config.url] || ""),
+                network.config?.accounts === "remote" ? NETWORK_ACCOUNTS.POLKADOT[0] : "undefined",
+            )
             return await runSuper()
-        }
-
-        if (!noCompile) {
-            await run(TASK_COMPILE, { quiet: true })
         }
 
         const files = await run(TASK_TEST_GET_TEST_FILES, { testFiles })

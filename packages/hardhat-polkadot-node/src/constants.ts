@@ -41,5 +41,11 @@ export const NETWORK_GAS_PRICE = {
 export const NETWORK_ETH = {
     LOCALHOST: "localhost",
 }
+export const ETH_RPC_TO_SUBSTRATE_RPC = {
+    "https://testnet-passet-hub-eth-rpc.polkadot.io": "ws://testnet-passet-hub.polkadot.io",
+    "https://kusama-asset-hub-eth-rpc.polkadot.io": "ws://kusama-asset-hub.polkadot.io",
+    "https://westend-asset-hub-eth-rpc.polkadot.io": "ws://westend-asset-hub.polkadot.io",
+    "http://localhost:8545": "ws://localhost:8000",
+}
 
 export const DEFAULT_TIMEOUT_MILISECONDS = 30000

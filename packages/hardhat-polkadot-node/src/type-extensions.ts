@@ -52,6 +52,7 @@ declare module "hardhat/types/config" {
     interface HttpNetworkConfig {
         polkavm?: boolean
         ethNetwork?: string
+        polkadotUrl?: string
     }
 }
 
