@@ -36,6 +36,8 @@
     "eslint:fix": "eslint 'src/**/*.ts' --fix"
   },
   "dependencies": {
+    "@polkadot/api": "^16.4.3",
+    "@polkadot/util": "^13.5.4",
     "@types/debug": "^4",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.15.3",
@@ -44,7 +46,7 @@
     "debug": "^4.4.0",
     "dockerode": "^4.0.6",
     "ethers": "^6.15.0",
-    "glob": "^11.0.3",
+    "fast-glob": "^3.3.3",
     "lru-cache": "^11.1.0",
     "run-container": "^2.0.12",
     "source-map-support": "^0.5.21",
