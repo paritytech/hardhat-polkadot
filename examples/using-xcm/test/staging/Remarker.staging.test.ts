@@ -12,7 +12,7 @@ import { passetHub } from "@polkadot-api/descriptors"
 import { blake2AsHex } from "@polkadot/util-crypto"
 
 !TEST_NETWORKS.includes(hre.network.name)
-    ? describe.skip
+    ? describe.skip(`Not available for network ${hre.network.name}`, function () {})
     : describe("Remarker", function () {
           // We define a fixture to reuse the same deployment across tests.
           //
