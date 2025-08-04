@@ -39,7 +39,7 @@ const config: HardhatUserConfig = {
         polkadotHubTestnet: {
             polkavm: true,
             url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
-            accounts: !!PRIVATE_KEY
+            accounts: PRIVATE_KEY
                 ? [PRIVATE_KEY]
                 : ["271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687"],
             chainId: 420420422,
@@ -53,7 +53,8 @@ const config: HardhatUserConfig = {
         kusamaHub: {
             polkavm: true,
             url: "https://kusama-asset-hub-eth-rpc.polkadot.io",
-            accounts: !!PRIVATE_KEY ? [PRIVATE_KEY] : [],
+            polkadotUrl: "ws://kusama-asset-hub.polkadot.io",
+            accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
             chainId: 420420418,
         },
         /** Internal Parity Testnet
@@ -65,7 +66,7 @@ const config: HardhatUserConfig = {
         westendHub: {
             polkavm: true,
             url: "https://westend-asset-hub-eth-rpc.polkadot.io",
-            accounts: !!PRIVATE_KEY
+            accounts: PRIVATE_KEY
                 ? [PRIVATE_KEY]
                 : ["271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687"],
             chainId: 420420421,
