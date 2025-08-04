@@ -4,15 +4,15 @@ import "@parity/hardhat-polkadot"
 
 const config: HardhatUserConfig = {
     solidity: "0.8.28",
-    // npx hardhat node
     networks: {
+        // npx hardhat node
         hardhat: {
             polkavm: true,
             forking: {
                 url: "https://testnet-passet-hub.polkadot.io",
             },
             adapterConfig: {
-                adapterBinaryPath: "/Users/tiago/Projects/polkadot-sdk/target/production/eth-rpc",
+                adapterBinaryPath: "./bin/eth-rpc",
                 dev: true,
             },
         },
