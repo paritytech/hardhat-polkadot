@@ -30,13 +30,13 @@ describe('Greeter', function () {
         const greeterFactory = await hre.ethers.getContractFactory('Greeter');
         const greeter = await greeterFactory.connect(deployer).deploy('Hello, world!');
 
-        return { greeter };
+        return { greeter, deployer };
     }
 
     it('Should set the greeting to the constructor argument', async function () {
-        const greeter = isPolkaVMCompatible
-            ? (await deployGreeterFixture()).greeter
-            : (await loadFixture(deployGreeterFixture)).greeter;
+        const { greeter } = isPolkaVMCompatible
+            ? await deployGreeterFixture()
+            : await loadFixture(deployGreeterFixture);
 
         expect(await greeter.greet()).to.equal('Hello, world!');
     });

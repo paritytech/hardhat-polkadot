@@ -28,7 +28,7 @@ $ pnpm add -D @parity/hardhat-polkadot-node
 
 ## Configuration
 
-Import the package in the `hardhat.config.ts` file:
+1. Import the package in the `hardhat.config` file:
 
 ```js
 ...
@@ -36,11 +36,11 @@ import "@parity/hardhat-polkadot-node";
 ...
 ```
 
+2. Configure a PolkaVM-compatible node and eth-rpc in `hardhat.config` according to [available options](https://github.com/paritytech/hardhat-polkadot/blob/500cba0310fad38cf01cc7b11cb2e4043bd71482/packages/hardhat-polkadot-node/src/type-extensions.ts#L4). 
+
 ## Usage
 
 ### From `hardhat.config`
-
-Configure a PolkaVM-compatible node and eth-rpc in `hardhat.config.js` according to [available options](https://github.com/paritytech/hardhat-polkadot/blob/ebb5b48bd8bc6f9d8906d8223736f8a8f7e2724f/packages/hardhat-polkadot-node/src/type-extensions.ts#L5). 
 
 See [Examples](https://github.com/paritytech/hardhat-polkadot/tree/main/examples).
 
