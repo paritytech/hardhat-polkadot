@@ -6,9 +6,6 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY
 
 const config: HardhatUserConfig = {
     solidity: "0.8.28",
-    resolc: {
-        compilerSource: "npm",
-    },
     networks: {
         // npx hardhat node
         hardhat: {
@@ -53,7 +50,7 @@ const config: HardhatUserConfig = {
         kusamaHub: {
             polkavm: true,
             url: "https://kusama-asset-hub-eth-rpc.polkadot.io",
-            polkadotUrl: "ws://kusama-asset-hub.polkadot.io",
+            polkadotUrl: "wss://kusama-asset-hub-rpc.polkadot.io",
             accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
             chainId: 420420418,
         },
