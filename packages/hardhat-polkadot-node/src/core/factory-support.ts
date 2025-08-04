@@ -1,10 +1,16 @@
 import { Wallet, JsonRpcProvider } from "ethers"
 import fs from "fs"
 import { glob } from "fast-glob"
-import { EthereumProvider } from "hardhat/types"
+import chalk from "chalk"
+import {
+    HardhatNetworkAccountsConfig,
+    HardhatNetworkConfig,
+    HttpNetworkAccountsConfig,
+} from "hardhat/types"
 import { ApiPromise, WsProvider } from "@polkadot/api"
 import { hexToU8a, u8aToHex } from "@polkadot/util"
 import path from "path"
+import { getPolkadotRpcUrl } from "../utils"
 
 const MAGIC_DEPLOY_ADDRESS = "0x6d6f646c70792f70616464720000000000000000"
 
@@ -20,10 +26,9 @@ type Contracts = Record<
  */
 export async function handleFactoryDependencies(
     pathToArtifacts: string,
-    provider: EthereumProvider,
-    ethUrl: string,
-    polkadotUrl: string,
-    account: string,
+    ethRpcUrl: HardhatNetworkConfig["url"],
+    polkadotRpcUrl: HardhatNetworkConfig["polkadotUrl"],
+    accounts: string[] | HardhatNetworkAccountsConfig | HttpNetworkAccountsConfig,
 ) {
     // get last build info file
     const files = await glob(`${pathToArtifacts}/build-info/*.json`)
@@ -35,26 +40,36 @@ export async function handleFactoryDependencies(
             const factoryDependencies = artifact.factoryDependencies
             if (!factoryDependencies || Object.keys(factoryDependencies).length === 0) continue
 
-            const provider = new JsonRpcProvider(ethUrl)
-            console.log("0", account)
-            const wallet = new Wallet(account, provider as any)
-            const ws = new WsProvider(polkadotUrl)
-            const api = await ApiPromise.create({ provider: ws })
+            const provider = new JsonRpcProvider(ethRpcUrl)
+            const wallet = new Wallet(getPrivateKey(accounts), provider)
+            const polkadotProviderUrl = await getPolkadotRpcUrl(ethRpcUrl, polkadotRpcUrl)
+            const ws = new WsProvider(polkadotProviderUrl)
+            const api = await ApiPromise.create({
+                provider: ws,
+                noInitWarn: true,
+            })
             await api.isReady
 
             for (const [hash, identifier] of Object.entries(factoryDependencies)) {
-                // check if code exists
+                // check if hash code already exists
                 const codeExists = await api.query.revive
                     .pristineCode(hexToU8a(`0x${hash}`))
-                    .then((code) => code.isSome)
-
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    .then((code) => (code as any).isSome)
                 if (codeExists) continue
 
+                console.info(
+                    chalk.yellow(
+                        `Factory dependency ${identifier} found but not uploaded yet. Uploading...`,
+                    ),
+                )
+                // get the bytecode from the artifact
                 const [sourcePath, contractName] = identifier.split(":")
                 const artifactPath = path.join(pathToArtifacts, sourcePath, `${contractName}.json`)
                 const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf8"))
                 const bytecode = artifact.bytecode?.object ?? artifact.bytecode
 
+                // upload the bytecode throught the ETH RPC
                 const call = api.tx.revive.uploadCode(bytecode, 10000000000000000000n)
                 const payload = call.method.toU8a()
                 const tx = await wallet.sendTransaction({
@@ -65,4 +80,14 @@ export async function handleFactoryDependencies(
             }
         }
     }
+}
+
+function getPrivateKey(
+    accounts: string[] | HardhatNetworkAccountsConfig | HttpNetworkAccountsConfig,
+): string {
+    if (Array.isArray(accounts)) {
+        if (typeof accounts[0] === "string") return accounts[0]
+        return accounts[0].privateKey
+    }
+    throw new Error("Unsupported accounts format")
 }

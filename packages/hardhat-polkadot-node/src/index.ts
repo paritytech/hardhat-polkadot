@@ -21,7 +21,7 @@ import {
     TASK_NODE_POLKADOT,
     TASK_NODE_POLKADOT_CREATE_SERVER,
     TASK_RUN_POLKADOT_NODE_IN_SEPARATE_PROCESS,
-    NETWORK_ACCOUNTS,
+    POLKADOT_NETWORK_ACCOUNTS,
 } from "./constants"
 import { createRpcServer } from "./rpc-server"
 import {
@@ -249,14 +249,13 @@ task(
     ) => {
         if (!noCompile) await run(TASK_COMPILE, { quiet: true })
         if (network.config.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
-            await handleFactoryDependencies(
-                config.paths.artifacts,
-                network.provider,
-                network.config.url
-                network.config?.polkadotUrl ??
-                    (ETH_RPC_ADAPTER_START_PORT[network.config.url] || ""),
-                network.config?.accounts === "remote" ? NETWORK_ACCOUNTS.POLKADOT[0] : "undefined",
-            )
+            if (network.config.polkavm)
+                await handleFactoryDependencies(
+                    config.paths.artifacts,
+                    network.config.url,
+                    network.config.polkadotUrl,
+                    network.config.accounts,
+                )
             return await runSuper()
         }
 
@@ -309,6 +308,12 @@ task(
 
             let testFailures = 0
             try {
+                await handleFactoryDependencies(
+                    config.paths.artifacts,
+                    `http://localhost:${adapterPort}`,
+                    `ws://localhost:${nodePort}`,
+                    POLKADOT_NETWORK_ACCOUNTS,
+                )
                 testFailures = await run(TASK_TEST_RUN_MOCHA_TESTS, {
                     testFiles: files,
                     parallel,
