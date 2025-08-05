@@ -1,17 +1,21 @@
 <div align="center">
 
-# Hardhat plugin for smart contracts on Polkadot
+# Use Hardhat on Polkadot
 <!-- markdownlint-disable-next-line MD013 -->
 ![CICD](https://github.com/paritytech/hardhat-polkadot/actions/workflows/tests.yml/badge.svg)
 
-<div align="center" >
+<div>
   <a href="https://polkadot.com" target="_blank">
     <img height="70px" alt="Polkadot Logo Light" src="https://github.com/paritytech/polkadot-sdk/raw/master/docs/images/Polkadot_Logo_Horizontal_Pink_Black.png#gh-light-mode-only" />
   </a>
+</div>
+<div>
   <a href="https://hardhat.org" target="_blank">
-    <img height="60px" alt="Hardhat Logo Light" src="https://hardhat.org/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhardhat-logo.5c5f687b.svg&w=384&q=75" />
+    <img width="250" alt="Hardhat Logo Light" src="https://hardhat.org/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhardhat-logo.5c5f687b.svg&w=384&q=75" />
   </a>
 </div>
+
+<br>
 
 > Polkadot is a comprehensive blockchain platform for developers to deploy high-performance Web3 applications. This repository provides plugins that integrate with the [Hardhat](https://hardhat.org/) environment for developing and deploying Ethereum-compatible smart contracts on the Polkadot network.
 
