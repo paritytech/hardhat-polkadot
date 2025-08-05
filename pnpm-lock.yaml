@@ -90,12 +90,12 @@ importers:
 
   packages/hardhat-polkadot-node:
     dependencies:
+      '@polkadot-api/utils':
+        specifier: ^0.2.0
+        version: 0.2.0
       '@polkadot/api':
         specifier: ^16.4.3
         version: 16.4.3
-      '@polkadot/util':
-        specifier: ^13.5.4
-        version: 13.5.4
       '@types/debug':
         specifier: ^4
         version: 4.1.12
@@ -594,6 +594,9 @@ packages:
 
   '@polkadot-api/utils@0.1.0':
     resolution: {integrity: sha512-MXzWZeuGxKizPx2Xf/47wx9sr/uxKw39bVJUptTJdsaQn/TGq+z310mHzf1RCGvC1diHM8f593KrnDgc9oNbJA==}
+
+  '@polkadot-api/utils@0.2.0':
+    resolution: {integrity: sha512-nY3i5fQJoAxU4n3bD7Fs208/KR2J95SGfVc58kDjbRYN5a84kWaGEqzjBNtP9oqht49POM8Bm9mbIrkvC1Bzuw==}
 
   '@polkadot/api-augment@16.4.3':
     resolution: {integrity: sha512-0dchDoz1bg3BEXp8GKM0uPXDFi+CC4XftTPVXiJVji0Uh+UpA7nwuPZCFunUWGyE8A4odQh/gOlOsRBVgCrngQ==}
@@ -3290,6 +3293,8 @@ snapshots:
 
   '@polkadot-api/utils@0.1.0':
     optional: true
+
+  '@polkadot-api/utils@0.2.0': {}
 
   '@polkadot/api-augment@16.4.3':
     dependencies:

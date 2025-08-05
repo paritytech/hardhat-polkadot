@@ -8,8 +8,9 @@ import {
     HttpNetworkAccountsConfig,
 } from "hardhat/types"
 import { ApiPromise, WsProvider } from "@polkadot/api"
-import { hexToU8a, u8aToHex } from "@polkadot/util"
+import { toHex, fromHex } from "@polkadot-api/utils"
 import path from "path"
+
 import { getPolkadotRpcUrl } from "../utils"
 
 const MAGIC_DEPLOY_ADDRESS = "0x6d6f646c70792f70616464720000000000000000"
@@ -53,7 +54,7 @@ export async function handleFactoryDependencies(
             for (const [hash, identifier] of Object.entries(factoryDependencies)) {
                 // check if hash code already exists
                 const codeExists = await api.query.revive
-                    .pristineCode(hexToU8a(`0x${hash}`))
+                    .pristineCode(fromHex(`0x${hash}`))
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     .then((code) => (code as any).isSome)
                 if (codeExists) continue
@@ -74,10 +75,12 @@ export async function handleFactoryDependencies(
                 const payload = call.method.toU8a()
                 const tx = await wallet.sendTransaction({
                     to: MAGIC_DEPLOY_ADDRESS,
-                    data: u8aToHex(payload),
+                    data: toHex(payload),
                 })
                 await tx.wait()
             }
+
+            await api.disconnect()
         }
     }
 }
