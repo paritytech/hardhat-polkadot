@@ -362,18 +362,19 @@ export async function waitForServiceToBeReady(
     throw new PolkadotNodePluginError("Server didn't respond after multiple attempts")
 }
 
-export async function getPolkadotRpcUrl(
+export function getPolkadotRpcUrl(
     ethRpcUrl: HardhatNetworkConfig["url"],
     polkadotRpcUrl: HardhatNetworkConfig["polkadotUrl"],
-): Promise<string> {
+): string {
     // Case 1: Explicit config
     if (polkadotRpcUrl) return polkadotRpcUrl
 
     // Case 2: Infer from ETH RPC URL
     if (ethRpcUrl) {
         const url = ethRpcUrl.replace(/^https?:\/\//, "")
-        if (Object.keys(ETH_RPC_TO_SUBSTRATE_RPC).includes(url))
+        if (url in ETH_RPC_TO_SUBSTRATE_RPC) {
             return ETH_RPC_TO_SUBSTRATE_RPC[url]
+        }
     }
 
     throw new PolkadotNodePluginError(

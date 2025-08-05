@@ -11,9 +11,11 @@ import { ApiPromise, WsProvider } from "@polkadot/api"
 import { toHex, fromHex } from "@polkadot-api/utils"
 import path from "path"
 
+import { PolkadotNodePluginError } from "../errors"
 import { getPolkadotRpcUrl } from "../utils"
 
 const MAGIC_DEPLOY_ADDRESS = "0x6d6f646c70792f70616464720000000000000000"
+const DEFAULT_UPLOAD_CODE_GAS_LIMIT = 10_000_000_000
 
 type Contracts = Record<
     string,
@@ -44,7 +46,7 @@ export async function handleFactoryDependencies(
 
             const provider = new JsonRpcProvider(ethRpcUrl)
             const wallet = new Wallet(getPrivateKey(accounts), provider)
-            const polkadotProviderUrl = await getPolkadotRpcUrl(ethRpcUrl, polkadotRpcUrl)
+            const polkadotProviderUrl = getPolkadotRpcUrl(ethRpcUrl, polkadotRpcUrl)
             const ws = new WsProvider(polkadotProviderUrl)
             const api = await ApiPromise.create({
                 provider: ws,
@@ -72,7 +74,7 @@ export async function handleFactoryDependencies(
                 const bytecode = artifact.bytecode?.object ?? artifact.bytecode
 
                 // upload the bytecode throught the ETH RPC
-                const storageLimit = api.createType("Compact<u128>", 10000000000)
+                const storageLimit = api.createType("Compact<u128>", DEFAULT_UPLOAD_CODE_GAS_LIMIT)
                 const call = api.tx.revive.uploadCode(bytecode, storageLimit)
                 const payload = call.method.toU8a()
                 const tx = await wallet.sendTransaction({
@@ -91,8 +93,9 @@ function getPrivateKey(
     accounts: string[] | HardhatNetworkAccountsConfig | HttpNetworkAccountsConfig,
 ): string {
     if (Array.isArray(accounts)) {
+        if (accounts.length === 0) throw new PolkadotNodePluginError("Accounts array is empty.")
         if (typeof accounts[0] === "string") return accounts[0]
         return accounts[0].privateKey
     }
-    throw new Error("Unsupported accounts format")
+    throw new PolkadotNodePluginError("Could not retrieve private key.")
 }
