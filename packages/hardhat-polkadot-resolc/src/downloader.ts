@@ -106,6 +106,7 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
                 try {
                     await this._downloadCompilerList()
                 } catch (_e: any) {
+                    console.log("_e", _e)
                     throw new ResolcPluginError(
                         `Resolc version ${version} is invalid or hasn't been released yet`,
                     )
@@ -114,6 +115,7 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
                 build = await this._getCompilerBuild(version)
             }
 
+            console.log("build", build)
             if (build === undefined) {
                 throw new ResolcPluginError(
                     `Resolc version ${version} is invalid or hasn't been released yet`,
