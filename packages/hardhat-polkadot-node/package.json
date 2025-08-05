@@ -36,7 +36,6 @@
     "eslint:fix": "eslint 'src/**/*.ts' --fix"
   },
   "dependencies": {
-    "@polkadot/api": "^16.4.3",
     "@types/debug": "^4",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.15.3",
