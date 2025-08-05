@@ -62,6 +62,12 @@ export async function download(
 
                 let sha256 = ""
                 if (!asset.digest || asset.digest == null) {
+                    console.log("platform", platform)
+                    console.log("name", name)
+                    console.log("COMPILER_REPOSITORY_URL", COMPILER_REPOSITORY_URL)
+                    console.log("version", version)
+                    console.log("asset", asset)
+
                     const checksumResponse = await axios.get(
                         `${COMPILER_REPOSITORY_URL}v${version}/checksums.txt`,
                         {
@@ -69,6 +75,7 @@ export async function download(
                             responseType: "text",
                         },
                     )
+                    console.log("checksumResponse", checksumResponse)
 
                     const tempFile = `./${TEMP_FILE_PREFIX}checksums.txt`
                     fsExtra.writeFileSync(tempFile, checksumResponse.data)
