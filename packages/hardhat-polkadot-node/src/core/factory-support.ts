@@ -33,6 +33,7 @@ export async function handleFactoryDependencies(
 ) {
     // get last build info file
     const files = await glob(`${pathToArtifacts}/build-info/*.json`)
+    if (files.length === 0) return
     files.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs)
     const lastBuildInfo = JSON.parse(fs.readFileSync(files[0], "utf8"))
 
@@ -71,7 +72,8 @@ export async function handleFactoryDependencies(
                 const bytecode = artifact.bytecode?.object ?? artifact.bytecode
 
                 // upload the bytecode throught the ETH RPC
-                const call = api.tx.revive.uploadCode(bytecode, 10000000000000000000n)
+                const storageLimit = api.createType("Compact<u128>", 10000000000)
+                const call = api.tx.revive.uploadCode(bytecode, storageLimit)
                 const payload = call.method.toU8a()
                 const tx = await wallet.sendTransaction({
                     to: MAGIC_DEPLOY_ADDRESS,
