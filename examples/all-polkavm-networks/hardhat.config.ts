@@ -50,6 +50,7 @@ const config: HardhatUserConfig = {
         kusamaHub: {
             polkavm: true,
             url: "https://kusama-asset-hub-eth-rpc.polkadot.io",
+            polkadotUrl: "wss://kusama-asset-hub-rpc.polkadot.io",
             accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
             chainId: 420420418,
         },

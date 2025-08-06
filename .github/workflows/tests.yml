@@ -4,9 +4,15 @@ on:
   push:
     branches:
       - main
+      - 'packages/**'
+      - 'tests/**'
+      - 'pnpm-lock.yaml'
   pull_request:
     branches:
       - main
+      - 'packages/**'
+      - 'tests/**'
+      - 'pnpm-lock.yaml'
 
 jobs:
   run-unit-tests:
