@@ -15,7 +15,7 @@ import { PolkadotNodePluginError } from "../errors"
 import { getPolkadotRpcUrl } from "../utils"
 
 const MAGIC_DEPLOY_ADDRESS = "0x6d6f646c70792f70616464720000000000000000"
-const DEFAULT_UPLOAD_CODE_GAS_LIMIT = 10_000_000_000
+const DEFAULT_UPLOAD_CODE_GAS_LIMIT = 10_000_000_000_000_000_000_000_000_000_000n
 
 type Contracts = Record<
     string,
@@ -49,6 +49,7 @@ export async function handleFactoryDependencies(
             const dotProvider = getWsProvider(getPolkadotRpcUrl(ethRpcUrl, polkadotRpcUrl))
             const client = createClient(dotProvider)
             const api = client.getUnsafeApi()
+            const unsafeToken = await api.runtimeToken
 
             for (const [hash, identifier] of Object.entries(factoryDependencies)) {
                 // check if hash code already exist
@@ -67,11 +68,11 @@ export async function handleFactoryDependencies(
                 const bytecode = artifact.bytecode?.object ?? artifact.bytecode
 
                 // upload the bytecode throught the ETH RPC
-                const call = api.tx.Revive.UploadCode({
-                    code: bytecode,
-                    storageLimit: DEFAULT_UPLOAD_CODE_GAS_LIMIT,
+                const call = api.tx.Revive.upload_code({
+                    code: Binary.fromHex(bytecode),
+                    storage_deposit_limit: DEFAULT_UPLOAD_CODE_GAS_LIMIT,
                 })
-                const payload = await call.getEncodedData()
+                const payload = call.getEncodedData(unsafeToken)
                 const tx = await wallet.sendTransaction({
                     to: MAGIC_DEPLOY_ADDRESS,
                     data: payload.asHex(),
