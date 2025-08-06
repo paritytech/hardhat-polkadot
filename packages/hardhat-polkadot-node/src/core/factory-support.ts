@@ -52,10 +52,8 @@ export async function handleFactoryDependencies(
 
             for (const [hash, identifier] of Object.entries(factoryDependencies)) {
                 // check if hash code already exist
-                const codeExists = await api.query.Revive.PristineCode.getValue(
-                    Binary.fromHex(hash),
-                )
-                if (codeExists) continue
+                const code = await api.query.Revive.PristineCode.getValue(Binary.fromHex(hash))
+                if (code) continue
 
                 console.info(
                     chalk.yellow(
@@ -69,7 +67,7 @@ export async function handleFactoryDependencies(
                 const bytecode = artifact.bytecode?.object ?? artifact.bytecode
 
                 // upload the bytecode throught the ETH RPC
-                const call = api.tx.revive.uploadCode({
+                const call = api.tx.Revive.UploadCode({
                     code: bytecode,
                     storageLimit: DEFAULT_UPLOAD_CODE_GAS_LIMIT,
                 })
