@@ -264,10 +264,10 @@ export async function startServer(
         adapterCommands: { adapterPort: currentAdapterPort },
     })
     const commandArgs = constructCommandArgs(updatedCommands)
-
     return {
         commandArgs,
         server: createRpcServer({
+            docker: commands.docker,
             nodePath,
             adapterPath: adapterPath || commands.adapterCommands?.adapterBinaryPath,
             isForking: commands.forking?.enabled,

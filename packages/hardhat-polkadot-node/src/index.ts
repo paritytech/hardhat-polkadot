@@ -50,6 +50,7 @@ task(TASK_RUN).setAction(async (args, hre, runSuper) => {
             forkBlockNumber: hre.config.networks.hardhat.forking?.blockNumber,
             nodeCommands: hre.userConfig.networks?.hardhat?.nodeConfig,
             adapterCommands: hre.userConfig.networks?.hardhat?.adapterConfig,
+            docker: hre.userConfig.networks?.hardhat?.docker,
         },
         hre.hardhatArguments,
         path.resolve(args.script),
