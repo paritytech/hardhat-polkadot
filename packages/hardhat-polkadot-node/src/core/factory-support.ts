@@ -55,14 +55,14 @@ export async function handleFactoryDependencies(
                 // check if hash code already exist
                 const code = await api.query.Revive.PristineCode.getValue(Binary.fromHex(hash))
                 if (code) continue
-
+                const [sourcePath, contractName] = identifier.split(":")
                 console.info(
                     chalk.yellow(
-                        `Factory dependency ${identifier} found but not uploaded yet. Uploading...`,
+                        `Factory dependency in ${contractName} found but not uploaded yet. Uploading...`,
                     ),
                 )
                 // get the bytecode from the artifact
-                const [sourcePath, contractName] = identifier.split(":")
+
                 const artifactPath = path.join(pathToArtifacts, sourcePath, `${contractName}.json`)
                 const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf8"))
                 const bytecode = artifact.bytecode?.object ?? artifact.bytecode
