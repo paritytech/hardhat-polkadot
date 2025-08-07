@@ -17,6 +17,7 @@ export interface CommandArguments {
     forkBlockNumber?: string | number
     nodeCommands?: HardhatNetworkUserConfig["nodeConfig"]
     adapterCommands?: HardhatNetworkUserConfig["adapterConfig"]
+    docker?: HardhatNetworkUserConfig["docker"]
 }
 
 export interface RpcServer {
