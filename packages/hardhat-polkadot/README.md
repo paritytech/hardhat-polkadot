@@ -81,6 +81,12 @@ Get started from a boilerplate.
 $ npx hardhat-polkadot init
 ```
 
+For non-interactive setup with default TypeScript configuration:
+
+```bash
+$ npx hardhat-polkadot init -y
+```
+
 Compile solidity smart contracts for the Polkadot network, creating PolkaVM compatible hardhat artifacts.
 
 ```bash

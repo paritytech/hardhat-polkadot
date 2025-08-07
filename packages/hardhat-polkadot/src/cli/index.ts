@@ -4,10 +4,18 @@ import { createProject } from "./project-creation"
 
 async function main() {
     try {
-        const taskName = process.argv.slice(2)[0]
+        const args = process.argv.slice(2)
+        const taskName = args[0]
+        
+        // Check for -y flag
+        const hasYesFlag = args.includes('-y') || args.includes('--yes')
 
         // Create a new Hardhat project
         if (taskName === "init") {
+            // If -y flag is present, set environment variable for default TypeScript project
+            if (hasYesFlag) {
+                process.env.HARDHAT_CREATE_TYPESCRIPT_PROJECT_WITH_DEFAULTS = "true"
+            }
             return await createNewProject()
         }
     } catch (e) {
