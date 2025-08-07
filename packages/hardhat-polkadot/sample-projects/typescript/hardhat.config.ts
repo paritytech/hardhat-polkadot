@@ -8,10 +8,10 @@ const config: HardhatUserConfig = {
         compilerSource: "npm",
         settings: {
             optimizer: {
-              enabled: true,
-              parameters: 'z',
-              fallbackOz: true,
-              runs: 200,
+                enabled: true,
+                parameters: "z",
+                fallbackOz: true,
+                runs: 200,
             },
             standardJson: true,
         },
@@ -20,7 +20,7 @@ const config: HardhatUserConfig = {
         hardhat: {
             polkavm: true,
             nodeConfig: {
-                nodeBinaryPath: './bin/substrate-node',
+                nodeBinaryPath: "./bin/substrate-node",
                 rpcPort: 8000,
                 dev: true,
             },
@@ -35,8 +35,8 @@ const config: HardhatUserConfig = {
         },
         polkadotHubTestnet: {
             polkavm: true,
-            url: 'https://testnet-passet-hub-eth-rpc.polkadot.io',
-            accounts: [vars.get('TEST_ACC_PRIVATE_KEY')],
+            url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
+            accounts: [vars.get("TEST_ACC_PRIVATE_KEY")],
         },
     },
 }

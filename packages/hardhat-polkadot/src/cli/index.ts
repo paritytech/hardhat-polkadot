@@ -6,9 +6,9 @@ async function main() {
     try {
         const args = process.argv.slice(2)
         const taskName = args[0]
-        
+
         // Check for -y flag
-        const hasYesFlag = args.includes('-y') || args.includes('--yes')
+        const hasYesFlag = args.includes("-y") || args.includes("--yes")
 
         // Create a new Hardhat project
         if (taskName === "init") {
