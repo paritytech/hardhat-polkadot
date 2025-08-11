@@ -1,0 +1,160 @@
+name: Compile Nodes
+
+on:
+  workflow_dispatch:
+    inputs:
+      node:
+        description: Which node to build
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - dev-node
+          - eth-rpc
+      publish_release:
+        description: Publish a GitHub Release with built binaries
+        required: false
+        default: false
+        type: boolean
+
+  workflow_call:
+    inputs:
+      node:
+        description: Which node to build
+        required: true
+        default: all
+        type: string
+      publish_release:
+        description: Publish a GitHub Release with built binaries
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+env:
+  POLKADOT_SDK_REPO: "https://github.com/paritytech/polkadot-sdk.git"
+  POLKADOT_SDK_BRANCH: "anp-dirty-node"
+
+jobs:
+  prepare-matrix:
+    name: Prepare matrix
+    runs-on: ubuntu-latest
+    outputs:
+      os_matrix: ${{ steps.set.outputs.os_matrix }}
+      node_matrix: ${{ steps.set.outputs.node_matrix }}
+    steps:
+      - id: set
+        shell: bash
+        run: |
+          set -euo pipefail
+          NODE_INPUT="${{ inputs.node }}"
+
+          if [[ "${NODE_INPUT}" == "dev-node" ]]; then
+            echo 'node_matrix=["dev-node"]'  >> "$GITHUB_OUTPUT"
+          elif [[ "${NODE_INPUT}" == "eth-rpc" ]]; then
+            echo 'node_matrix=["eth-rpc"]'  >> "$GITHUB_OUTPUT"
+          else
+            # Build both binaries within the same job per OS
+            echo 'node_matrix=["all"]'  >> "$GITHUB_OUTPUT"
+          fi
+
+  compile:
+    name: Build ${{ matrix.node }} on ${{ matrix.os }}
+    needs: prepare-matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["linux","macos"]
+        node: ${{ fromJSON(needs.prepare-matrix.outputs.node_matrix) }}
+    runs-on: ${{ (matrix.os == 'macos') && 'parity-macos' || 'parity-default' }}
+    steps:
+      - name: Checkout (repo context)
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Clone polkadot-sdk
+        shell: bash
+        run: |
+          git clone --depth 1 --branch "$POLKADOT_SDK_BRANCH" "$POLKADOT_SDK_REPO" polkadot-sdk
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            polkadot-sdk/target
+          key: ${{ runner.os }}-cargo-${{ matrix.node }}-${{ hashFiles('polkadot-sdk/Cargo.lock') }}
+
+      - name: Build selected binary/binaries
+        working-directory: polkadot-sdk
+        shell: bash
+        run: |
+          set -euxo pipefail
+          case "${{ matrix.node }}" in
+            dev-node)
+              cargo build --release -p revive-dev-node
+              ;;
+            eth-rpc)
+              cargo build --release -p pallet-revive-eth-rpc
+              ;;
+            *)
+              cargo build --release -p revive-dev-node -p pallet-revive-eth-rpc
+              ;;
+          esac
+
+      - name: Stage artifact with OS suffix
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          case "${{ matrix.node }}" in
+            dev-node)
+              cp polkadot-sdk/target/release/revive-dev-node "out/revive-dev-node-${{ matrix.os }}"
+              ;;
+            eth-rpc)
+              cp polkadot-sdk/target/release/eth-rpc "out/eth-rpc-${{ matrix.os }}"
+              ;;
+            *)
+              cp polkadot-sdk/target/release/revive-dev-node "out/revive-dev-node-${{ matrix.os }}"
+              cp polkadot-sdk/target/release/eth-rpc "out/eth-rpc-${{ matrix.os }}"
+          esac
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.node }}-${{ matrix.os }}
+          path: out/*
+          if-no-files-found: error
+
+  publish-release:
+    name: Publish GitHub Release
+    needs: compile
+    if: ${{ inputs.publish_release == true }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: List downloaded files
+        run: |
+          ls -la dist
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nodes-${{ github.run_id }}
+          name: Nodes build ${{ github.run_id }}
+          draft: false
+          prerelease: true
+          generate_release_notes: true
+          files: |
+            dist/*
