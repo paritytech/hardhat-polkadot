@@ -4,18 +4,6 @@ import "@parity/hardhat-polkadot"
 
 const config: HardhatUserConfig = {
     solidity: "0.8.28",
-    resolc: {
-        compilerSource: "npm",
-        settings: {
-            optimizer: {
-                enabled: true,
-                parameters: "z",
-                fallbackOz: true,
-                runs: 200,
-            },
-            standardJson: true,
-        },
-    },
     networks: {
         hardhat: {
             polkavm: true,
@@ -36,7 +24,7 @@ const config: HardhatUserConfig = {
         polkadotHubTestnet: {
             polkavm: true,
             url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
-            accounts: [vars.get("TEST_ACC_PRIVATE_KEY")],
+            accounts: [vars.get("PRIVATE_KEY")],
         },
     },
 }
