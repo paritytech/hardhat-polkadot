@@ -24,7 +24,9 @@
         }
     },
     "bin": {
-        "hardhat-polkadot": "./dist/cli/index.js"
+        "hardhat-polkadot": "./dist/cli/index.js",
+        "revive-dev-node": "./dist/scripts/run-revive-dev-node.js",
+        "eth-rpc": "./dist/scripts/run-eth-rpc.js"
     },
     "keywords": [
         "ethereum",
@@ -35,6 +37,7 @@
     ],
     "scripts": {
         "build": "tsc --build .",
+        "postinstall": "node ./dist/scripts/fetch-binaries.js",
         "build:dev": "tsc --build . --watch",
         "clean": "rimraf dist tsconfig.tsbuildinfo",
         "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
@@ -45,6 +48,7 @@
     },
     "files": [
         "dist/",
+        "vendor/",
         "!**/*.tsbuildinfo",
         "LICENSE",
         "README.md",

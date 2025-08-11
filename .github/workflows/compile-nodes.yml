@@ -40,50 +40,50 @@ env:
   POLKADOT_SDK_BRANCH: "anp-dirty-node"
 
 jobs:
-  prepare-matrix:
-    name: Prepare matrix
-    runs-on: ubuntu-latest
-    outputs:
-      os_matrix: ${{ steps.set.outputs.os_matrix }}
-      node_matrix: ${{ steps.set.outputs.node_matrix }}
-    steps:
-      - id: set
-        shell: bash
-        run: |
-          set -euo pipefail
-          NODE_INPUT="${{ inputs.node }}"
-
-          if [[ "${NODE_INPUT}" == "dev-node" ]]; then
-            echo 'node_matrix=["dev-node"]'  >> "$GITHUB_OUTPUT"
-          elif [[ "${NODE_INPUT}" == "eth-rpc" ]]; then
-            echo 'node_matrix=["eth-rpc"]'  >> "$GITHUB_OUTPUT"
-          else
-            # Build both binaries within the same job per OS
-            echo 'node_matrix=["all"]'  >> "$GITHUB_OUTPUT"
-          fi
+  
 
   compile:
-    name: Build ${{ matrix.node }} on ${{ matrix.os }}
-    needs: prepare-matrix
+    name: Build ${{ matrix.node }} for ${{ matrix.target }}
     strategy:
       fail-fast: false
       matrix:
-        os: ["linux","macos"]
-        node: ${{ fromJSON(needs.prepare-matrix.outputs.node_matrix) }}
-    runs-on: ${{ (matrix.os == 'macos') && 'parity-macos' || 'parity-default' }}
+        node: ["dev-node", "eth-rpc"]
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os_tag: linux
+            arch_tag: x64
+            runner: ubuntu-24.04
+            exe_ext: ''
+          - target: aarch64-apple-darwin
+            os_tag: darwin
+            arch_tag: arm64
+            runner: macos-14
+            exe_ext: ''
+          - target: x86_64-apple-darwin
+            os_tag: darwin
+            arch_tag: x64
+            runner: macos-13
+            exe_ext: ''
+          # Disabled for now
+          # - target: x86_64-pc-windows-msvc
+          #   os_tag: win32
+          #   arch_tag: x64
+          #   runner: windows-2022
+          #   exe_ext: '.exe'
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Install shared dependencies (Linux)
-        if: matrix.os == 'linux'
+        if: matrix.os_tag == 'linux'
         run: |
           sudo apt update
           sudo apt install -y openssl pkg-config g++ git clang cmake curl libssl-dev llvm libudev-dev libclang-dev make protobuf-compiler jq
 
       - name: Install brew
-        if: matrix.os == 'macos'
+        if: matrix.os_tag == 'darwin'
         uses: Homebrew/actions/setup-homebrew@1ccc07ccd54b6048295516a3eb89b192c35057dc # master from 12.09.2024
 
       - name: Install shared dependencies (macOS)
-        if: matrix.os == 'macos'
+        if: matrix.os_tag == 'darwin'
         run: |
           xcode-select --install || true
           brew install openssl pkg-config git curl llvm protobuf jq cmake
@@ -112,7 +112,7 @@ jobs:
         id: toolchain
         with:
           toolchain: ${{ env.RUST_VERSION }}
-          targets: wasm32-unknown-unknown
+          targets: wasm32-unknown-unknown, ${{ matrix.target }}
           components: rustfmt, clippy, rust-src
 
       - name: Check environment
@@ -128,7 +128,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             polkadot-sdk/target
-          key: ${{ runner.os }}-cargo-${{ matrix.node }}-${{ steps.toolchain.outputs.cachekey }}
+          key: ${{ runner.os }}-cargo-${{ matrix.target }}-${{ steps.toolchain.outputs.cachekey }}
 
       - name: Build selected binary/binaries
         working-directory: polkadot-sdk
@@ -137,37 +137,37 @@ jobs:
           set -euxo pipefail
           case "${{ matrix.node }}" in
             dev-node)
-              cargo build --release -p revive-dev-node
+              cargo build --release --target ${{ matrix.target }} -p revive-dev-node
               ;;
             eth-rpc)
-              cargo build --release -p pallet-revive-eth-rpc
+              cargo build --release --target ${{ matrix.target }} -p pallet-revive-eth-rpc
               ;;
             *)
-              cargo build --release -p revive-dev-node -p pallet-revive-eth-rpc
+              cargo build --release --target ${{ matrix.target }} -p revive-dev-node -p pallet-revive-eth-rpc
               ;;
           esac
 
-      - name: Stage artifact with OS suffix
+      - name: Stage artifact with OS/arch suffix
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p out
           case "${{ matrix.node }}" in
             dev-node)
-              cp polkadot-sdk/target/release/revive-dev-node "out/revive-dev-node-${{ matrix.os }}"
+              cp "polkadot-sdk/target/${{ matrix.target }}/release/revive-dev-node${{ matrix.exe_ext }}" "out/revive-dev-node-${{ matrix.os_tag }}-${{ matrix.arch_tag }}${{ matrix.exe_ext }}"
               ;;
             eth-rpc)
-              cp polkadot-sdk/target/release/eth-rpc "out/eth-rpc-${{ matrix.os }}"
+              cp "polkadot-sdk/target/${{ matrix.target }}/release/eth-rpc${{ matrix.exe_ext }}" "out/eth-rpc-${{ matrix.os_tag }}-${{ matrix.arch_tag }}${{ matrix.exe_ext }}"
               ;;
             *)
-              cp polkadot-sdk/target/release/revive-dev-node "out/revive-dev-node-${{ matrix.os }}"
-              cp polkadot-sdk/target/release/eth-rpc "out/eth-rpc-${{ matrix.os }}"
+              cp "polkadot-sdk/target/${{ matrix.target }}/release/revive-dev-node${{ matrix.exe_ext }}" "out/revive-dev-node-${{ matrix.os_tag }}-${{ matrix.arch_tag }}${{ matrix.exe_ext }}"
+              cp "polkadot-sdk/target/${{ matrix.target }}/release/eth-rpc${{ matrix.exe_ext }}" "out/eth-rpc-${{ matrix.os_tag }}-${{ matrix.arch_tag }}${{ matrix.exe_ext }}"
           esac
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.node }}-${{ matrix.os }}
+          name: ${{ matrix.node }}-${{ matrix.os_tag }}-${{ matrix.arch_tag }}
           path: out/*
           if-no-files-found: error
 
@@ -193,7 +193,18 @@ jobs:
           tag_name: nodes-${{ github.run_id }}
           name: Nodes build ${{ github.run_id }}
           draft: false
-          prerelease: true
+          prerelease: true # to prevent marking as latest, since it should be a main npm package
           generate_release_notes: true
+          files: |
+            dist/*
+
+      - name: Create/Update Latest Tag (nodes-latest)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nodes-latest
+          name: Nodes latest
+          draft: false
+          prerelease: true # to prevent marking as latest, since it should be a main npm package
+          generate_release_notes: false
           files: |
             dist/*
