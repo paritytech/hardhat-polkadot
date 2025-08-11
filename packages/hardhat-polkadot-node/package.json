@@ -43,7 +43,7 @@
     "ethers": "^6.15.0",
     "fast-glob": "^3.3.3",
     "lru-cache": "^11.1.0",
-    "polkadot-api": "^1.15.2",
+    "polkadot-api": "1.15.2",
     "run-container": "^2.0.12",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.2"
