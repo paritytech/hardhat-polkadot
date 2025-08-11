@@ -34,7 +34,7 @@ printf "Running tests in $TMP_TESTS_DIR\n\n"
 
 for file in ./$DIR/*; do
     FILE_NAME=$(basename "$file")
-    printf "Running test: $FILE_NAME"
+    printf 'Running test: %s\n' "$FILE_NAME" >&2
 
     cp "$file" "$TMP_TESTS_DIR/$FILE_NAME"
     chmod +x "$TMP_TESTS_DIR/$FILE_NAME"
