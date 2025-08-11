@@ -72,16 +72,54 @@ jobs:
         node: ${{ fromJSON(needs.prepare-matrix.outputs.node_matrix) }}
     runs-on: ${{ (matrix.os == 'macos') && 'parity-macos' || 'parity-default' }}
     steps:
+      - name: Install shared dependencies (Linux)
+        if: matrix.os == 'linux'
+        run: |
+          sudo apt update
+          sudo apt install -y openssl pkg-config g++ git clang cmake curl libssl-dev llvm libudev-dev libclang-dev make protobuf-compiler jq
+
+      - name: Install brew
+        if: matrix.os == 'macos'
+        uses: Homebrew/actions/setup-homebrew@1ccc07ccd54b6048295516a3eb89b192c35057dc # master from 12.09.2024
+
+      - name: Install shared dependencies (macOS)
+        if: matrix.os == 'macos'
+        run: |
+          xcode-select --install || true
+          brew install openssl pkg-config git curl llvm protobuf jq cmake
+
       - name: Checkout (repo context)
         uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
 
       - name: Clone polkadot-sdk
         shell: bash
         run: |
           git clone --depth 1 --branch "$POLKADOT_SDK_BRANCH" "$POLKADOT_SDK_REPO" polkadot-sdk
+
+      - name: Read env variables from polkadot-sdk
+        shell: bash
+        run: |
+          source polkadot-sdk/.github/env
+
+          echo "Current IMAGE: $IMAGE"
+
+          # extract rust version from "IMAGE=docker.io/paritytech/ci-unified:bullseye-1.88.0-2025-06-27-v202507221446"
+          RUST_VERSION=$(echo "$IMAGE" | grep -oP 'bullseye-\K[^ ]+')
+          echo "RUST_VERSION=$RUST_VERSION" >> "$GITHUB_ENV"
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@v1
+        id: toolchain
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          targets: wasm32-unknown-unknown
+          components: rustfmt, clippy, rust-src
+
+      - name: Check environment
+        run: |
+          rustc --version
+          cargo --version
+          df -h
 
       - name: Cache cargo
         uses: actions/cache@v4
@@ -90,7 +128,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             polkadot-sdk/target
-          key: ${{ runner.os }}-cargo-${{ matrix.node }}-${{ hashFiles('polkadot-sdk/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ matrix.node }}-${{ steps.toolchain.outputs.cachekey }}
 
       - name: Build selected binary/binaries
         working-directory: polkadot-sdk
