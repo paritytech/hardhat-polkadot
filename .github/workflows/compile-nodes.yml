@@ -104,7 +104,7 @@ jobs:
           echo "Current IMAGE: $IMAGE"
 
           # extract rust version from "IMAGE=docker.io/paritytech/ci-unified:bullseye-1.88.0-2025-06-27-v202507221446"
-          RUST_VERSION=$(echo "$IMAGE" | grep -oP 'bullseye-\K[^ ]+')
+          RUST_VERSION=$(echo "$IMAGE" | grep -oE '[0-9][.]+[0-9.]+')
           echo "RUST_VERSION=$RUST_VERSION" >> "$GITHUB_ENV"
 
       - name: Install Rust toolchain
