@@ -8,6 +8,10 @@ import { CompilerName, type CompilerBuild, type CompilerList } from "./types"
 import { COMPILER_REPOSITORY_URL } from "./constants"
 
 const TEMP_FILE_PREFIX = "tmp-"
+const request_headers: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+}
+if (process.env.GITHUB_TOKEN) request_headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`
 
 function resolveTempFileName(filePath: string): string {
     const { dir, ext, name } = path.parse(filePath)
@@ -31,6 +35,7 @@ export async function download(
         const releasesResponse = await axios.get(url, {
             timeout: timeoutMillis,
             responseType: "json",
+            headers: request_headers,
         })
 
         const releasesData = releasesResponse.data

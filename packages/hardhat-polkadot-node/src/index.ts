@@ -50,6 +50,7 @@ task(TASK_RUN).setAction(async (args, hre, runSuper) => {
             forkBlockNumber: hre.config.networks.hardhat.forking?.blockNumber,
             nodeCommands: hre.userConfig.networks?.hardhat?.nodeConfig,
             adapterCommands: hre.userConfig.networks?.hardhat?.adapterConfig,
+            docker: hre.userConfig.networks?.hardhat?.docker,
         },
         hre.hardhatArguments,
         path.resolve(args.script),
@@ -249,6 +250,7 @@ task(
     ) => {
         if (!noCompile) await run(TASK_COMPILE, { quiet: true })
         if (network.config.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
+            // If remote polkavm network
             if (network.config.polkavm)
                 await handleFactoryDependencies(
                     config.paths.artifacts,
