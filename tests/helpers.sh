@@ -75,8 +75,6 @@ check_log_value() {
 
 await_start_node() {
   npx hardhat node > hardhat-node.log 2>&1 & # Start the Hardhat node in the background
-  HARDHAT_NODE_PID=$!
-  trap 'kill $HARDHAT_NODE_PID >/dev/null 2>&1 || true' EXIT
 
   for i in $(seq 1 60); do
     tail -n 10 hardhat-node.log
@@ -87,4 +85,10 @@ await_start_node() {
 
     [ -n "$result" ] && [ $((16#$result)) -ge 5 ] && break || sleep 1
   done
+}
+
+stop_node() {
+  docker ps --format '{{.ID}} {{.Ports}}' \
+| awk '/:8000->/ || /:8545->/ {print $1}' \
+| xargs -r docker rm -f
 }
