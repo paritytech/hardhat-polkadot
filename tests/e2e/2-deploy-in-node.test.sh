@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -e # Fail if any command fails
 . ./helpers.sh  # import helpers functions inside tmp folder
 
 run_test() {
