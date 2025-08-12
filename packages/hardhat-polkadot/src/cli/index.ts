@@ -1,6 +1,8 @@
 #!/usr/bin/env node
+import picocolors from "picocolors"
 
 import { createProject } from "./project-creation"
+import { portProject } from "./port-project"
 
 async function main() {
     try {
@@ -17,6 +19,17 @@ async function main() {
                 process.env.HARDHAT_CREATE_TYPESCRIPT_PROJECT_WITH_DEFAULTS = "true"
             }
             return await createNewProject()
+        } else if (taskName === "port") {
+            // Fetch & validate args
+            const projectDir = args[1]
+            if (!projectDir) {
+                console.error(picocolors.red("Error") + ": No project path provided")
+                console.error("Expected " + picocolors.bold("hardhat-polkadot port <dir>"))
+                process.exit(1)
+            }
+
+            // Port project in provided directory
+            return portProject(projectDir)
         }
     } catch (e) {
         console.log(e)
