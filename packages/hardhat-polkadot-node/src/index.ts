@@ -1,5 +1,5 @@
 import { spawn } from "child_process"
-import { task, subtask, types } from "hardhat/config"
+import { task, subtask, types, extendConfig, scope } from "hardhat/config"
 import {
     TASK_COMPILE,
     TASK_NODE,
@@ -14,6 +14,7 @@ import { HARDHAT_NETWORK_NAME } from "hardhat/plugins"
 import { TaskArguments } from "hardhat/types"
 import { HardhatNetworkUserConfig } from "hardhat/types/config"
 import path from "path"
+
 import {
     NODE_START_PORT,
     ETH_RPC_ADAPTER_START_PORT,
@@ -334,5 +335,13 @@ task(
         }
     },
 )
+
+// extends https://github.com/NomicFoundation/hardhat/blob/ba9d569d0ef251e5523d9e8ef0b2c359cc436f27/v-next/hardhat-ignition/src/index.ts#L10
+scope("ignition").task("deploy", async (_taskArgs, { config }, runSuper) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ignitionConfig = (config as any).ignition || {}
+    if (config.networks?.hardhat?.forking) ignitionConfig.requiredConfirmations = 1
+    return await runSuper()
+})
 
 interceptAndWrapTasksWithNode()

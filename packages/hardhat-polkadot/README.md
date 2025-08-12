@@ -1,16 +1,18 @@
 <div align="center">
+  
+  # Use Hardhat on Polkadot
 
-# Hardhat plugin for smart contracts on Polkadot
-
-<div align="center" >
-  <a href="https://polkadot.com" target="_blank">
-    <img height="70px" alt="Polkadot Logo Light" src="https://github.com/paritytech/polkadot-sdk/raw/master/docs/images/Polkadot_Logo_Horizontal_Pink_Black.png#gh-light-mode-only" />
-  </a>
-  <a href="https://hardhat.org" target="_blank">
-    <img height="60px" alt="Hardhat Logo Light" src="https://hardhat.org/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhardhat-logo.5c5f687b.svg&w=384&q=75" />
-  </a>
-</div>
-
+  <div>
+    <a href="https://polkadot.com" target="_blank">
+      <img height="70px" alt="Polkadot Logo Light" src="https://github.com/paritytech/polkadot-sdk/raw/master/docs/images/Polkadot_Logo_Horizontal_Pink_Black.png#gh-light-mode-only" />
+    </a>
+  </div>
+  <div>
+    <a href="https://hardhat.org" target="_blank">
+      <img width="250" alt="Hardhat Logo Light" src="https://hardhat.org/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhardhat-logo.5c5f687b.svg&w=384&q=75" />
+    </a>
+  </div>
+  <br>
 </div>
 
 ## Compatibility
