@@ -58,7 +58,8 @@
         "enquirer": "2.3.0",
         "find-up": "5.0.0",
         "fs-extra": "^11.3.0",
-        "picocolors": "^1.1.1"
+        "picocolors": "^1.1.1",
+        "ts-morph": "^26.0.0"
     },
     "peerDependencies": {
         "hardhat": "^2.26.0"
