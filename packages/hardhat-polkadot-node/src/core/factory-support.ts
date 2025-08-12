@@ -7,15 +7,16 @@ import {
     HardhatNetworkConfig,
     HttpNetworkAccountsConfig,
 } from "hardhat/types"
-import { ApiPromise, WsProvider } from "@polkadot/api"
-import { toHex, fromHex } from "@polkadot-api/utils"
+import { createClient, Binary } from "polkadot-api"
+import { getWsProvider } from "polkadot-api/ws-provider/web"
 import path from "path"
 
 import { PolkadotNodePluginError } from "../errors"
 import { getPolkadotRpcUrl } from "../utils"
 
 const MAGIC_DEPLOY_ADDRESS = "0x6d6f646c70792f70616464720000000000000000"
-const DEFAULT_UPLOAD_CODE_GAS_LIMIT = 10_000_000_000
+const ALICE_ACCOUNT_SS58 = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
+const MAX_U_128 = BigInt("0xffffffffffffffffffffffffffffffff") // 2^128 - 1
 
 type Contracts = Record<
     string,
@@ -40,51 +41,56 @@ export async function handleFactoryDependencies(
     const lastBuildInfo = JSON.parse(fs.readFileSync(files[0], "utf8"))
 
     for (const [_, contracts] of Object.entries(lastBuildInfo.output.contracts)) {
-        for (const [_, artifact] of Object.entries(contracts as Contracts)) {
+        for (const [parentContractName, artifact] of Object.entries(contracts as Contracts)) {
             const factoryDependencies = artifact.factoryDependencies
             if (!factoryDependencies || Object.keys(factoryDependencies).length === 0) continue
 
-            const provider = new JsonRpcProvider(ethRpcUrl)
-            const wallet = new Wallet(getPrivateKey(accounts), provider)
-            const polkadotProviderUrl = getPolkadotRpcUrl(ethRpcUrl, polkadotRpcUrl)
-            const ws = new WsProvider(polkadotProviderUrl)
-            const api = await ApiPromise.create({
-                provider: ws,
-                noInitWarn: true,
-            })
-            await api.isReady
+            const ethProvider = new JsonRpcProvider(ethRpcUrl)
+            const wallet = new Wallet(getPrivateKey(accounts), ethProvider)
+            const dotProvider = getWsProvider(getPolkadotRpcUrl(ethRpcUrl, polkadotRpcUrl))
+            const client = createClient(dotProvider)
+            const api = client.getUnsafeApi()
+            const unsafeToken = await api.runtimeToken
 
             for (const [hash, identifier] of Object.entries(factoryDependencies)) {
-                // check if hash code already exists
-                const codeExists = await api.query.revive
-                    .pristineCode(fromHex(`0x${hash}`))
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    .then((code) => (code as any).isSome)
-                if (codeExists) continue
+                // check if code hash already exists
+                const code = await api.query.Revive.PristineCode.getValue(Binary.fromHex(hash))
+                if (code) continue
 
+                const [sourcePath, childContractName] = identifier.split(":")
                 console.info(
-                    chalk.yellow(
-                        `Factory dependency ${identifier} found but not uploaded yet. Uploading...`,
-                    ),
+                    chalk.yellow(`Uploading factory dependency in ${parentContractName}...`),
                 )
                 // get the bytecode from the artifact
-                const [sourcePath, contractName] = identifier.split(":")
-                const artifactPath = path.join(pathToArtifacts, sourcePath, `${contractName}.json`)
+                const artifactPath = path.join(
+                    pathToArtifacts,
+                    sourcePath,
+                    `${childContractName}.json`,
+                )
                 const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf8"))
                 const bytecode = artifact.bytecode?.object ?? artifact.bytecode
 
-                // upload the bytecode throught the ETH RPC
-                const storageLimit = api.createType("Compact<u128>", DEFAULT_UPLOAD_CODE_GAS_LIMIT)
-                const call = api.tx.revive.uploadCode(bytecode, storageLimit)
-                const payload = call.method.toU8a()
+                // estimate the storage deposit limit
+                const uploadCodeApi = await api.apis.ReviveApi.upload_code(
+                    ALICE_ACCOUNT_SS58, // not relevant
+                    Binary.fromHex(bytecode),
+                    MAX_U_128,
+                )
+
+                // upload the bytecode through the ETH RPC
+                const call = api.tx.Revive.upload_code({
+                    code: Binary.fromHex(bytecode),
+                    storage_deposit_limit: uploadCodeApi.value.deposit,
+                })
+                const payload = call.getEncodedData(unsafeToken)
                 const tx = await wallet.sendTransaction({
                     to: MAGIC_DEPLOY_ADDRESS,
-                    data: toHex(payload),
+                    data: payload.asHex(),
                 })
                 await tx.wait()
             }
 
-            await api.disconnect()
+            client.destroy()
         }
     }
 }
