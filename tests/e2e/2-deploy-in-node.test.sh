@@ -26,7 +26,6 @@ run_test() {
   echo "Deploys on $NETWORK_NAME network successfully in fixture-projects/${PROJECT_DIR} ✅"
 
   # Clean
-  stop_node
   npx hardhat ignition wipe chain-$CHAIN_ID "${CONTRACT_NAME}Module#${CONTRACT_NAME}"
 }
 
