@@ -1,18 +1,9 @@
 name: Compile Nodes
 
 on:
-  pull_request:
+  pull_request: # tmp
   workflow_dispatch:
     inputs:
-      node:
-        description: Which node to build
-        required: true
-        default: all
-        type: choice
-        options:
-          - all
-          - dev-node
-          - eth-rpc
       publish_release:
         description: Publish a GitHub Release with built binaries
         required: false
@@ -21,11 +12,6 @@ on:
 
   workflow_call:
     inputs:
-      node:
-        description: Which node to build
-        required: true
-        default: all
-        type: string
       publish_release:
         description: Publish a GitHub Release with built binaries
         required: false
@@ -40,29 +26,28 @@ env:
   POLKADOT_SDK_BRANCH: "anp-dirty-node"
 
 jobs:
-  
-
   compile:
     name: Build ${{ matrix.node }} for ${{ matrix.target }}
     strategy:
       fail-fast: false
       matrix:
         node: ["dev-node", "eth-rpc"]
+        target: [x86_64-unknown-linux-gnu, aarch64-apple-darwin, x86_64-apple-darwin]
         include:
           - target: x86_64-unknown-linux-gnu
             os_tag: linux
             arch_tag: x64
-            runner: ubuntu-24.04
+            runner: parity-default
             exe_ext: ''
           - target: aarch64-apple-darwin
             os_tag: darwin
             arch_tag: arm64
-            runner: macos-14
+            runner: parity-macos
             exe_ext: ''
           - target: x86_64-apple-darwin
             os_tag: darwin
             arch_tag: x64
-            runner: macos-13
+            runner: macos-13 # Intel, since parity-macos is arm64 only
             exe_ext: ''
           # Disabled for now
           # - target: x86_64-pc-windows-msvc
@@ -174,8 +159,18 @@ jobs:
   publish-release:
     name: Publish GitHub Release
     needs: compile
-    if: ${{ inputs.publish_release == true }}
+    # if: ${{ inputs.publish_release == true }}
     runs-on: ubuntu-latest
+    env:
+      RELEASE_BODY: |
+        ⚠️ Disclaimer: This is a temporary release for testing purposes, it may not be stable and not meant to be used in production.
+          
+        This release includes dev-node and eth-rpc binaries for the following platforms:
+          - Linux x86_64
+          - macOS x86_64
+          - macOS arm64
+
+        
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -195,6 +190,7 @@ jobs:
           draft: false
           prerelease: true # to prevent marking as latest, since it should be a main npm package
           generate_release_notes: true
+          body: ${{ env.RELEASE_BODY }}
           files: |
             dist/*
 
@@ -206,5 +202,6 @@ jobs:
           draft: false
           prerelease: true # to prevent marking as latest, since it should be a main npm package
           generate_release_notes: false
+          body: ${{ env.RELEASE_BODY }}
           files: |
             dist/*
