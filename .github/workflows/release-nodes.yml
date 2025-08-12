@@ -1,7 +1,7 @@
 name: Release Polkadot Development Runtime
 
 on:
-  pull_request: # tmp
+  pull_request: # tmp, todo: remove before merge
   # trigger manually from /actions
   workflow_dispatch:
     inputs:
@@ -136,7 +136,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.node }}-${{ matrix.os_tag }}-${{ matrix.arch_tag }}
+          name: nodes-${{ matrix.os_tag }}-${{ matrix.arch_tag }}
           path: out/*
           if-no-files-found: error
 
@@ -145,21 +145,6 @@ jobs:
     needs: compile
     # if: ${{ inputs.publish_release == true }}
     runs-on: ubuntu-latest
-    env:
-      RELEASE_BODY: |
-        Build date: $(date +'%Y-%m-%dT%H:%M:%S%z')
-
-        ⚠️ Disclaimer: This is a temporary release for testing purposes, it may not be stable and not meant to be used in production.
-
-        This release includes revive-dev-node and eth-rpc binaries for the following platforms:
-          - Linux x86_64
-          - macOS x86_64
-          - macOS arm64
-
-        Checksums:
-          ```
-            $(cat out/checksums.txt | sed 's/^/  /')
-          ```
 
     steps:
       - name: Download artifacts
@@ -172,17 +157,50 @@ jobs:
         run: |
           ls -la dist
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: nodes-${{ github.run_id }}
-          name: Nodes build ${{ github.run_id }}
-          draft: false
-          prerelease: true # to prevent marking as latest, since it should be a main npm package
-          generate_release_notes: true
-          body: ${{ env.RELEASE_BODY }}
-          files: |
-            dist/*
+      - name: Generate checksums and release body
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          DATE=$(date +'%Y-%m-%dT%H:%M:%S%z')
+
+          # Generate combined checksums for all downloaded artifacts
+          shasum -a 256 dist/* | grep -v 'checksums.txt' > dist/checksums.txt
+
+          # Build release notes with real date and checksums
+          {
+            echo "Build date: ${DATE}"
+            echo
+            echo "⚠️ Disclaimer: This is a temporary release for testing purposes, it may not be stable and not meant to be used in production."
+            echo
+            echo "This release includes revive-dev-node and eth-rpc binaries for the following platforms:"
+            echo
+            echo "  - Linux x86_64"
+            echo "  - macOS x86_64"
+            echo "  - macOS arm64"
+            echo
+            echo "Checksums:"
+            echo '```'
+            sed 's/^/  /' dist/checksums.txt
+            echo '```'
+          } > RELEASE_BODY.md
+
+          echo "Generated release notes:"
+          echo
+          cat RELEASE_BODY.md
+
+      # Todo: Enable when ready to merge
+      # - name: Create GitHub Release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     tag_name: nodes-${{ github.run_id }}
+      #     name: Nodes build ${{ github.run_id }}
+      #     draft: false
+      #     prerelease: true # to prevent marking as latest, since it should be a main npm package
+      #     generate_release_notes: false
+      #     body_path: RELEASE_BODY.md
+      #     files: |
+      #       dist/*
 
       - name: Create/Update Latest Tag (nodes-latest)
         uses: softprops/action-gh-release@v2
@@ -192,6 +210,6 @@ jobs:
           draft: false
           prerelease: true # to prevent marking as latest, since it should be a main npm package
           generate_release_notes: false
-          body: ${{ env.RELEASE_BODY }}
+          body_path: RELEASE_BODY.md
           files: |
             dist/*
