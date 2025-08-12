@@ -72,3 +72,19 @@ check_log_value() {
         exit 1
     fi
 }
+
+await_start_node() {
+  npx hardhat node > hardhat-node.log 2>&1 & # Start the Hardhat node in the background
+  HARDHAT_NODE_PID=$!
+  trap 'kill $HARDHAT_NODE_PID >/dev/null 2>&1 || true' EXIT
+
+  for i in $(seq 1 60); do
+    tail -n 10 hardhat-node.log
+
+    result=$(curl -sS -H "Content-Type: application/json" \
+      --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":2}' \
+      http://127.0.0.1:8545 | sed -nE 's/.*"result":"0x([0-9a-fA-F]+)".*/\1/p')
+
+    [ -n "$result" ] && [ $((16#$result)) -ge 5 ] && break || sleep 1
+  done
+}
