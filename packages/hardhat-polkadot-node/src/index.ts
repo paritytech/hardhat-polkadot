@@ -1,5 +1,5 @@
 import { spawn } from "child_process"
-import { task, subtask, types, extendConfig, scope } from "hardhat/config"
+import { task, subtask, types, scope } from "hardhat/config"
 import {
     TASK_COMPILE,
     TASK_NODE,
