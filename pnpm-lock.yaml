@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  micro-eth-signer: 0.16.0
+
 importers:
 
   .:
