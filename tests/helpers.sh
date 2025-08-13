@@ -74,43 +74,20 @@ check_log_value() {
 }
 
 await_start_node() {
-  echo "[pre] freeing ports 8000 & ${PORT} and docker mappings"
+  local UNIQUE_NODE_LOG="$1"
 
-  # stop previous processes
-  docker ps --format '{{.ID}} {{.Ports}}' \
-  | awk '/:8000->/ || /:8545->/ {print $1}' \
-  | xargs -r docker rm -f
+  # stop running processes
   lsof -ti tcp:8000 | xargs -r kill -9
   lsof -ti tcp:8545 | xargs -r kill -9
 
-  npx hardhat node > hardhat-node.log 2>&1 & # Start the Hardhat node in the background
+  # Start the Hardhat node in the background
+  npx hardhat node > hardhat-node.log 2>&1 & 
   HARDHAT_NODE_PID=$!
-  echo "[start] HARDHAT_NODE_PID=${HARDHAT_NODE_PID}"
 
-  for i in $(seq 1 60); do
+  # Wait until node is ready, depending on the node
+  while ! grep -q "$UNIQUE_NODE_LOG" hardhat-node.log; do  
     tail -n 10 hardhat-node.log
-
-    response=$(curl -sS -H "Content-Type: application/json" \
-      --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":2}' \
-      http://127.0.0.1:8545 | sed -nE 's/.*"result":"0x([0-9a-fA-F]+)".*/\1/p')
-
-    [[ -n "${response:-}" ]] && (( 16#$response >= 5 )) && break
     sleep 1
   done
-
-  echo "[mine] ensure block >= 5"
   trap "kill $HARDHAT_NODE_PID" EXIT
-}
-
-stop_node() {
-  [[ -n "${HARDHAT_NODE_PID:-}" ]] || return 0
-  echo "[stop] HARDHAT_NODE_PID=${HARDHAT_NODE_PID}"
-  kill -TERM -"$HARDHAT_NODE_PID" 2>/dev/null || kill -TERM "$HARDHAT_NODE_PID" 2>/dev/null || true
-  echo "[stop] waiting for HARDHAT_NODE_PID=${HARDHAT_NODE_PID} to exit"
-  for _ in $(seq 1 10); do kill -0 "$HARDHAT_NODE_PID" 2>/dev/null || break; sleep 0.2; done
-  echo "[stop] HARDHAT_NODE_PID=${HARDHAT_NODE_PID} stopped"
-  kill -KILL -"$HARDHAT_NODE_PID" 2>/dev/null || kill -KILL "$HARDHAT_NODE_PID" 2>/dev/null || true
-  echo "kill"
-  wait "$HARDHAT_NODE_PID" 2>/dev/null || true
-  echo "[stop] HARDHAT_NODE_PID=${HARDHAT_NODE_PID} exited"
 }

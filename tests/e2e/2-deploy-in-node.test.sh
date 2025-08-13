@@ -7,16 +7,15 @@ run_test() {
   # Given
   PROJECT_DIR=$1
   CONFIG_FILE=$2
-  CONTRACT_NAME=$3
-  NETWORK_NAME=$4
-  CHAIN_ID=$5
+  UNIQUE_NODE_LOG=$3
+  CONTRACT_NAME=$4
+  NETWORK_NAME=$5
+  CHAIN_ID=$6
   cd "$TMP_TESTS_DIR/$PROJECT_DIR"
   cp "../$CONFIG_FILE" ./hardhat.config.js
   npm add "$HARDHAT_POLKADOT_TGZ_PATH"
   npm install
-  echo "npm install"
-  await_start_node
-  echo "await_start_node"
+  await_start_node "$UNIQUE_NODE_LOG"
 
   # When
   DEPLOY_LOCAL_NODE_OUTPUT=$(yes | npx hardhat ignition deploy "./ignition/modules/${CONTRACT_NAME}.js" --network localNode)
@@ -32,5 +31,5 @@ run_test() {
   stop_node
 }
 
-run_test "lock" "basic-test-and-deploy.config.js" "Lock" "local-node" 420420420
-run_test "lock" "forking.config.js" "Lock" "forked-node" 420420422
+run_test "lock" "basic-test-and-deploy.config.js" "Imported #5" "Lock" "local-node" 420420420
+run_test "lock" "forking.config.js" "app: \"chopsticks\"" "Lock" "forked-node" 420420422
