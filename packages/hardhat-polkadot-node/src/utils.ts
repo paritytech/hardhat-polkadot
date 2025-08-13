@@ -14,7 +14,6 @@ import { PolkadotNodePluginError } from "./errors"
 import {
     BASE_URL,
     MAX_PORT_ATTEMPTS,
-    POLKADOT_NETWORK_ACCOUNTS,
     NETWORK_ETH,
     NETWORK_GAS,
     NETWORK_GAS_PRICE,
