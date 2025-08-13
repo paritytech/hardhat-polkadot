@@ -13,6 +13,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
   POLKADOT_SDK_REPO: 'https://github.com/paritytech/polkadot-sdk.git'
   POLKADOT_SDK_BRANCH: ${{ inputs.sdk-branch || 'anp-dirty-node' }}
@@ -143,7 +147,6 @@ jobs:
   publish-release:
     name: Publish GitHub Release
     needs: compile
-    # if: ${{ inputs.publish_release == true }}
     runs-on: ubuntu-latest
 
     steps:
@@ -164,8 +167,11 @@ jobs:
 
           DATE=$(date +'%Y-%m-%dT%H:%M:%S%z')
 
-          # Generate combined checksums for all downloaded artifacts
-          shasum -a 256 dist/* | grep -v 'checksums.txt' > dist/checksums.txt
+          # switch to dist folder, so that we can generate checksums for all downloaded artifacts
+          # relative to root folder
+          pushd dist >/dev/null
+          shasum -a 256 * | grep -v 'checksums.txt' > ../checksums.txt
+          popd >/dev/null # switch back to root folder
 
           # Build release notes with real date and checksums
           {
@@ -181,7 +187,7 @@ jobs:
             echo
             echo "Checksums:"
             echo '```'
-            sed 's/^/  /' dist/checksums.txt
+            sed 's/^/  /' checksums.txt
             echo '```'
           } > RELEASE_BODY.md
 
