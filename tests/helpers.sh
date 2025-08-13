@@ -101,3 +101,16 @@ await_start_node() {
   echo "[mine] ensure block >= 5"
   trap "kill $HARDHAT_NODE_PID" EXIT
 }
+
+stop_node() {
+  [[ -n "${HARDHAT_NODE_PID:-}" ]] || return 0
+  echo "[stop] HARDHAT_NODE_PID=${HARDHAT_NODE_PID}"
+  kill -TERM -"$HARDHAT_NODE_PID" 2>/dev/null || kill -TERM "$HARDHAT_NODE_PID" 2>/dev/null || true
+  echo "[stop] waiting for HARDHAT_NODE_PID=${HARDHAT_NODE_PID} to exit"
+  for _ in $(seq 1 10); do kill -0 "$HARDHAT_NODE_PID" 2>/dev/null || break; sleep 0.2; done
+  echo "[stop] HARDHAT_NODE_PID=${HARDHAT_NODE_PID} stopped"
+  kill -KILL -"$HARDHAT_NODE_PID" 2>/dev/null || kill -KILL "$HARDHAT_NODE_PID" 2>/dev/null || true
+  echo "kill"
+  wait "$HARDHAT_NODE_PID" 2>/dev/null || true
+  echo "[stop] HARDHAT_NODE_PID=${HARDHAT_NODE_PID} exited"
+}
