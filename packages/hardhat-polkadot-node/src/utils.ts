@@ -203,7 +203,7 @@ export function adjustTaskArgsForPort(taskArgs: string[], currentPort: number): 
 
 export function getNetworkConfig(url: string, chainId?: number) {
     return {
-        accounts: POLKADOT_NETWORK_ACCOUNTS,
+        accounts: "remote",
         gas: NETWORK_GAS.AUTO,
         gasPrice: NETWORK_GAS_PRICE.AUTO,
         gasMultiplier: 1,
