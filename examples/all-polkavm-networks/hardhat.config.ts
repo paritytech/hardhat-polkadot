@@ -11,7 +11,7 @@ const config: HardhatUserConfig = {
         hardhat: {
             polkavm: true,
             nodeConfig: {
-                nodeBinaryPath: "./bin/substrate-node",
+                nodeBinaryPath: "./bin/dev-node",
                 rpcPort: 8000,
                 dev: true,
             },

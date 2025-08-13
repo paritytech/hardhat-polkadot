@@ -228,7 +228,7 @@ module.exports = {
         hardhat: {
             polkavm: true,
             nodeConfig: {
-                nodeBinaryPath: './bin/substrate-node',
+                nodeBinaryPath: './bin/dev-node',
                 dev: true,
                 rpcPort: 8000
             },
