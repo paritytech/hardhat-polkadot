@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.8 (2025-08-13)
+### Bug Fixes
+
+- Enable polkavm when not set in default Hardhat network. ([#253](https://github.com/paritytech/hardhat-polkadot/pull/253)) ([0f33d17](https://github.com/paritytech/hardhat-polkadot/commit/0f33d171ff353d3aced247759853f8a5939678b2))
+- Flip default `resolc`check to check for `npm` instead of `binary`. ([#247](https://github.com/paritytech/hardhat-polkadot/pull/247)) ([30b441f](https://github.com/paritytech/hardhat-polkadot/commit/30b441f27ad14056dced88d038d5eaa016594de0))
+- Fix default `resolc` config to default to `binary` instead of `npm`. ([#246](https://github.com/paritytech/hardhat-polkadot/pull/246)) ([eed3acc](https://github.com/paritytech/hardhat-polkadot/commit/eed3accc25918a988845072a981f9a0c868e3324))
+
+### Chores
+
+- Bump `@parity/resolc` to 0.3.0. ([#216](https://github.com/paritytech/hardhat-polkadot/pull/216)) ([20cd285](https://github.com/paritytech/hardhat-polkadot/commit/20cd285a3d9d64356294038153e518e38a63f0d7))
+
 ## 0.1.7 (2025-07-22)
 ### Chores
 

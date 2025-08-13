@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.5 (2025-08-13)
+### Bug fixes
+
+- Rename node to `anvil` to work with network helpers. ([#273](https://github.com/paritytech/hardhat-polkadot/pull/273)) ([79d2504](https://github.com/paritytech/hardhat-polkadot/commit/79d2504a7aa77dca9985b22bb2e16b46317dfbd8))
+- Support deploying factory contracts. ([#256](https://github.com/paritytech/hardhat-polkadot/pull/256)) ([c995b32](https://github.com/paritytech/hardhat-polkadot/commit/c995b32784802c90fc4ce617854608bb6d224be5))
+- Enable polkavm when not set in default Hardhat network. ([#253](https://github.com/paritytech/hardhat-polkadot/pull/253)) ([0f33d17](https://github.com/paritytech/hardhat-polkadot/commit/0f33d171ff353d3aced247759853f8a5939678b2))
+- Create applications as a combination of services ([#248](https://github.com/paritytech/hardhat-polkadot/pull/248)) ([dea3516](https://github.com/paritytech/hardhat-polkadot/commit/dea351652dd9eeeed427dbf9ff4b74e815bdc315))
+
+
 ## 0.1.4 (2025-07-22)
 ### Bug fixes
 

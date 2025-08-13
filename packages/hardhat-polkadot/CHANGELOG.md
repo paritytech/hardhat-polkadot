@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.10 (2025-08-13)
+### Chores
+
+- Resolve micro-eth-signer to 0.16.0. ([#270](https://github.com/paritytech/hardhat-polkadot/pull/270)) ([9b97254](https://github.com/paritytech/hardhat-polkadot/commit/9b972541aff4fc51ae206d0754f9ffea8669077e))
+- Add a -y flag to the init process. Serve a hardhat config that has all the endpoints already configured. ([#262](https://github.com/paritytech/hardhat-polkadot/pull/262)) ([a8cad65](https://github.com/paritytech/hardhat-polkadot/commit/a8cad6506c1019759e7e5565cdb4b976d233d20c))
+
+### Internal
+
+- Bumped `@parity/hardhat-polkadot-resolc` to `0.1.8`.
+- Bumped `@parity/hardhat-polkadot-node` to `0.1.5`.
+
+
 ## 0.1.9 (2025-07-22)
 ### Internal
 
