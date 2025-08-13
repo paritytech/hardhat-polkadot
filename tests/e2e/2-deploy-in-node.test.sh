@@ -28,7 +28,6 @@ run_test() {
 
   # Clean
   npx hardhat ignition wipe chain-$CHAIN_ID "${CONTRACT_NAME}Module#${CONTRACT_NAME}"
-  stop_node
 }
 
 run_test "lock" "basic-test-and-deploy.config.js" "Imported #5" "Lock" "local-node" 420420420
