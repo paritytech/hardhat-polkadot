@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 set -e # Fail if any command fails
 . ./helpers.sh  # import helpers functions inside tmp folder

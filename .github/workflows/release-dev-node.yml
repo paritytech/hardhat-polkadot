@@ -1,7 +1,6 @@
 name: Release Polkadot Development Runtime
 
 on:
-  pull_request: # tmp, todo: remove before merge
   # trigger manually from /actions
   workflow_dispatch:
     inputs:
@@ -195,18 +194,17 @@ jobs:
           echo
           cat RELEASE_BODY.md
 
-      # Todo: Enable when ready to merge
-      # - name: Create GitHub Release
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     tag_name: nodes-${{ github.run_id }}
-      #     name: Nodes build ${{ github.run_id }}
-      #     draft: false
-      #     prerelease: true # to prevent marking as latest, since it should be a main npm package
-      #     generate_release_notes: false
-      #     body_path: RELEASE_BODY.md
-      #     files: |
-      #       dist/*
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nodes-${{ github.run_id }}
+          name: Nodes build ${{ github.run_id }}
+          draft: false
+          prerelease: true # to prevent marking as latest, since it should be a main npm package
+          generate_release_notes: false
+          body_path: RELEASE_BODY.md
+          files: |
+            dist/*
 
       - name: Create/Update Latest Tag (nodes-latest)
         uses: softprops/action-gh-release@v2
