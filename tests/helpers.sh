@@ -74,6 +74,8 @@ check_log_value() {
 }
 
 await_start_node() {
+  echo "[pre] freeing ports 8000 & ${PORT} and docker mappings"
+
   # stop previous processes
   docker ps --format '{{.ID}} {{.Ports}}' \
   | awk '/:8000->/ || /:8545->/ {print $1}' \
@@ -83,6 +85,7 @@ await_start_node() {
 
   npx hardhat node > hardhat-node.log 2>&1 & # Start the Hardhat node in the background
   HARDHAT_NODE_PID=$!
+  echo "[start] HARDHAT_NODE_PID=${HARDHAT_NODE_PID}"
 
   for i in $(seq 1 60); do
     tail -n 10 hardhat-node.log
@@ -95,5 +98,6 @@ await_start_node() {
     sleep 1
   done
 
+  echo "[mine] ensure block >= 5"
   trap "kill $HARDHAT_NODE_PID" EXIT
 }

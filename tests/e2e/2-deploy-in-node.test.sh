@@ -14,7 +14,9 @@ run_test() {
   cp "../$CONFIG_FILE" ./hardhat.config.js
   npm add "$HARDHAT_POLKADOT_TGZ_PATH"
   npm install
+  echo "npm install"
   await_start_node
+  echo "await_start_node"
 
   # When
   DEPLOY_LOCAL_NODE_OUTPUT=$(yes | npx hardhat ignition deploy "./ignition/modules/${CONTRACT_NAME}.js" --network localNode)
