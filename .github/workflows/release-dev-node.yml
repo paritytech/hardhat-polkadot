@@ -1,0 +1,219 @@
+name: Release Polkadot Development Runtime
+
+on:
+  # trigger manually from /actions
+  workflow_dispatch:
+    inputs:
+      sdk-branch:
+        description: Branch to use for polkadot-sdk
+        required: true
+        default: "anp-dirty-node"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  POLKADOT_SDK_REPO: 'https://github.com/paritytech/polkadot-sdk.git'
+  POLKADOT_SDK_BRANCH: ${{ inputs.sdk-branch || 'anp-dirty-node' }}
+
+jobs:
+  compile:
+    name: Build ${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [x86_64-unknown-linux-gnu, aarch64-apple-darwin, x86_64-apple-darwin]
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os_tag: linux
+            arch_tag: x64
+            runner: parity-default
+            exe_ext: ''
+          - target: aarch64-apple-darwin
+            os_tag: darwin
+            arch_tag: arm64
+            runner: parity-macos
+            exe_ext: ''
+          - target: x86_64-apple-darwin
+            os_tag: darwin
+            arch_tag: x64
+            runner: macos-13 # Intel, since parity-macos is arm64 only
+            exe_ext: ''
+          # Disabled for now
+          # - target: x86_64-pc-windows-msvc
+          #   os_tag: win32
+          #   arch_tag: x64
+          #   runner: windows-2022
+          #   exe_ext: '.exe'
+    runs-on: ${{ matrix.runner }}
+    steps:
+
+      # These are minimal dependencies for building the nodes.
+      # Some references:
+      # 1. https://github.com/paritytech/polkadot-sdk/blob/2db5e16bf2b497e8ef877d3d7e79b3fcdcab5f82/scripts/getting-started.sh#L59
+      # 2. https://github.com/paritytech/dockerfiles/blob/main/ci-unified/Dockerfile
+      - name: Install shared dependencies (Linux)
+        if: matrix.os_tag == 'linux'
+        run: |
+          sudo apt update
+          sudo apt install -y openssl pkg-config g++ git clang cmake curl libssl-dev llvm libudev-dev libclang-dev make protobuf-compiler jq
+
+      - name: Install brew
+        if: matrix.os_tag == 'darwin'
+        uses: Homebrew/actions/setup-homebrew@1ccc07ccd54b6048295516a3eb89b192c35057dc # master from 12.09.2024
+
+      - name: Install shared dependencies (macOS)
+        if: matrix.os_tag == 'darwin'
+        run: |
+          xcode-select --install || true
+          brew install openssl pkg-config git curl llvm protobuf jq cmake
+
+      - name: Checkout (repo context)
+        uses: actions/checkout@v4
+
+      - name: Clone polkadot-sdk
+        shell: bash
+        run: |
+          git clone --depth 1 --branch "$POLKADOT_SDK_BRANCH" "$POLKADOT_SDK_REPO" polkadot-sdk
+
+      # Polkadot-sdk doesn't have rust-toolchain.toml, so we need to read the rust version from the IMAGE env variable at a time of building.
+      # We don't use ci-unified image, because it's too big and won't work for mac builds anyways
+      - name: Read env variables from polkadot-sdk
+        shell: bash
+        run: |
+          source polkadot-sdk/.github/env
+
+          echo "Current IMAGE: $IMAGE"
+
+          # extract rust version (like 1.88.0) from "IMAGE=docker.io/paritytech/ci-unified:bullseye-1.88.0-2025-06-27-v202507221446"
+          RUST_VERSION=$(echo "$IMAGE" | grep -oE '[0-9][.]+[0-9.]+')
+          echo "RUST_VERSION=$RUST_VERSION" >> "$GITHUB_ENV"
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@v1
+        id: toolchain
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          targets: wasm32-unknown-unknown, ${{ matrix.target }}
+          components: rustfmt, clippy, rust-src
+
+      - name: Check environment
+        run: |
+          rustc --version
+          cargo --version
+          df -h
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            polkadot-sdk/target
+          key: ${{ runner.os }}-cargo-${{ matrix.target }}-${{ steps.toolchain.outputs.cachekey }}
+
+      - name: Build nodes
+        working-directory: polkadot-sdk
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cargo build --release --target ${{ matrix.target }} -p revive-dev-node -p pallet-revive-eth-rpc
+
+      - name: Stage artifact with OS/arch suffix
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+
+          cp "polkadot-sdk/target/${{ matrix.target }}/release/revive-dev-node${{ matrix.exe_ext }}" "out/revive-dev-node-${{ matrix.os_tag }}-${{ matrix.arch_tag }}${{ matrix.exe_ext }}"
+          cp "polkadot-sdk/target/${{ matrix.target }}/release/eth-rpc${{ matrix.exe_ext }}" "out/eth-rpc-${{ matrix.os_tag }}-${{ matrix.arch_tag }}${{ matrix.exe_ext }}"
+
+      - name: Create sha-256 checksum
+        run: |
+          shasum -a 256 out/* > out/checksums.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nodes-${{ matrix.os_tag }}-${{ matrix.arch_tag }}
+          path: out/*
+          if-no-files-found: error
+
+  publish-release:
+    name: Publish GitHub Release
+    needs: compile
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: List downloaded files
+        run: |
+          ls -la dist
+
+      - name: Generate checksums and release body
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          DATE=$(date +'%Y-%m-%dT%H:%M:%S%z')
+
+          # switch to dist folder, so that we can generate checksums for all downloaded artifacts
+          # relative to root folder
+          pushd dist >/dev/null
+          shasum -a 256 * | grep -v 'checksums.txt' > ../checksums.txt
+          popd >/dev/null # switch back to root folder
+
+          # Build release notes with real date and checksums
+          {
+            echo "Build date: ${DATE}"
+            echo
+            echo "⚠️ Disclaimer: This is a temporary release for testing purposes, it may not be stable and not meant to be used in production."
+            echo
+            echo "This release includes revive-dev-node and eth-rpc binaries for the following platforms:"
+            echo
+            echo "  - Linux x86_64"
+            echo "  - macOS x86_64"
+            echo "  - macOS arm64"
+            echo
+            echo "Checksums:"
+            echo '```'
+            sed 's/^/  /' checksums.txt
+            echo '```'
+          } > RELEASE_BODY.md
+
+          echo "Generated release notes:"
+          echo
+          cat RELEASE_BODY.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nodes-${{ github.run_id }}
+          name: Nodes build ${{ github.run_id }}
+          draft: false
+          prerelease: true # to prevent marking as latest, since it should be a main npm package
+          generate_release_notes: false
+          body_path: RELEASE_BODY.md
+          files: |
+            dist/*
+
+      - name: Create/Update Latest Tag (nodes-latest)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nodes-latest
+          name: Nodes latest
+          draft: false
+          prerelease: true # to prevent marking as latest, since it should be a main npm package
+          generate_release_notes: false
+          body_path: RELEASE_BODY.md
+          files: |
+            dist/*

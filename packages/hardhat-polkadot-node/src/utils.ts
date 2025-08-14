@@ -14,7 +14,6 @@ import { PolkadotNodePluginError } from "./errors"
 import {
     BASE_URL,
     MAX_PORT_ATTEMPTS,
-    POLKADOT_NETWORK_ACCOUNTS,
     NETWORK_ETH,
     NETWORK_GAS,
     NETWORK_GAS_PRICE,
@@ -203,7 +202,7 @@ export function adjustTaskArgsForPort(taskArgs: string[], currentPort: number): 
 
 export function getNetworkConfig(url: string, chainId?: number) {
     return {
-        accounts: POLKADOT_NETWORK_ACCOUNTS,
+        accounts: "remote",
         gas: NETWORK_GAS.AUTO,
         gasPrice: NETWORK_GAS_PRICE.AUTO,
         gasMultiplier: 1,

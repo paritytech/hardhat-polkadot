@@ -2,7 +2,7 @@
   "name": "@parity/hardhat-polkadot-resolc",
   "author": "Parity Technologies <admin@parity.io>",
   "license": "AGPL-3.0",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "bugs": "https://github.com/paritytech/hardhat-polkadot/issues",
   "homepage": "https://github.com/paritytech/hardhat-polkadot/tree/master/packages/hardhat-polkadot-resolc#readme",
   "repository": {
@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@ethereumjs/util": "^10.0.0",
-    "@parity/resolc": "0.2.0",
+    "@parity/resolc": "0.3.0",
     "axios": "1.9.0",
     "chalk": "4",
     "debug": "^4.4.0",

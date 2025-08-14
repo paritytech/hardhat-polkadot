@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  micro-eth-signer: 0.16.0
+
 importers:
 
   .:
@@ -173,8 +176,8 @@ importers:
         specifier: ^10.0.0
         version: 10.0.0
       '@parity/resolc':
-        specifier: 0.2.0
-        version: 0.2.0(debug@4.4.1)
+        specifier: 0.3.0
+        version: 0.3.0(debug@4.4.1)
       axios:
         specifier: 1.9.0
         version: 1.9.0(debug@4.4.1)
@@ -731,8 +734,8 @@ packages:
   '@openzeppelin/contracts@5.3.0':
     resolution: {integrity: sha512-zj/KGoW7zxWUE8qOI++rUM18v+VeLTTzKs/DJFkSzHpQFPD/jKKF0TrMxBfGLl3kpdELCNccvB3zmofSzm4nlA==}
 
-  '@parity/resolc@0.2.0':
-    resolution: {integrity: sha512-5IGnWNzLNj/5unM61aIFKUXbvveqMmhiz/tPX0W3w434flDDOwfU5ER8hls1F9o9I79l0N00D83ZTkcWjyJhUQ==}
+  '@parity/resolc@0.3.0':
+    resolution: {integrity: sha512-vWaKhqM89YH+Kn1y+0Kv92NG+0G7HktDhA3OdYvCoG320R4djpg/N/C9s90w/B0IWrRfaGR3Nk3R6O+VOBMjFA==}
     hasBin: true
 
   '@pkgjs/parseargs@0.11.0':
@@ -1840,6 +1843,15 @@ packages:
   flatted@3.3.3:
     resolution: {integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==}
 
+  follow-redirects@1.15.11:
+    resolution: {integrity: sha512-deG2P0JfjrTxl50XGCDyfI97ZGVCxIpfKYmfyrQ54n5FO/0gfIES8C/Psl6kWVDolizcaaxZJnTS0QSMxvnsBQ==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+
   follow-redirects@1.15.9:
     resolution: {integrity: sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==}
     engines: {node: '>=4.0'}
@@ -2311,8 +2323,8 @@ packages:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
 
-  ky@1.8.1:
-    resolution: {integrity: sha512-7Bp3TpsE+L+TARSnnDpk3xg8Idi8RwSLdj6CMbNWoOARIrGrbuLGusV0dYwbZOm4bB3jHNxSw8Wk/ByDqJEnDw==}
+  ky@1.8.2:
+    resolution: {integrity: sha512-XybQJ3d4Ea1kI27DoelE5ZCT3bSJlibYTtQuMsyzKox3TMyayw1asgQdl54WroAm+fIA3ZCr8zXW2RpR7qWVpA==}
     engines: {node: '>=18'}
 
   levn@0.4.1:
@@ -2912,9 +2924,9 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
 
-  solc@0.8.28:
-    resolution: {integrity: sha512-AFCiJ+b4RosyyNhnfdVH4ZR1+TxiL91iluPjw0EJslIu4LXGM9NYqi2z5y8TqochC4tcH9QsHfwWhOIC9jPDKA==}
-    engines: {node: '>=10.0.0'}
+  solc@0.8.30:
+    resolution: {integrity: sha512-9Srk/gndtBmoUbg4CE6ypAzPQlElv8ntbnl6SigUBAzgXKn35v87sj04uZeoZWjtDkdzT0qKFcIo/wl63UMxdw==}
+    engines: {node: '>=12.0.0'}
     hasBin: true
 
   sort-keys@5.1.0:
@@ -2931,6 +2943,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   spdx-correct@3.2.0:
     resolution: {integrity: sha512-kN9dJbvnySHULIluDHy32WHRUu3Og7B9sbY7tsFLctQkIqnMh3hErYgdMjTYuqmcXX+lK5T1lnUt3G7zNswmZA==}
@@ -3922,13 +3935,13 @@ snapshots:
 
   '@openzeppelin/contracts@5.3.0': {}
 
-  '@parity/resolc@0.2.0(debug@4.4.1)':
+  '@parity/resolc@0.3.0(debug@4.4.1)':
     dependencies:
-      '@types/node': 22.15.24
+      '@types/node': 22.17.0
       commander: 13.1.0
       package-json: 10.0.1
       resolve-pkg: 2.0.0
-      solc: 0.8.28(debug@4.4.1)
+      solc: 0.8.30(debug@4.4.1)
     transitivePeerDependencies:
       - debug
 
@@ -5294,6 +5307,10 @@ snapshots:
 
   flatted@3.3.3: {}
 
+  follow-redirects@1.15.11(debug@4.4.1):
+    optionalDependencies:
+      debug: 4.4.1(supports-color@8.1.1)
+
   follow-redirects@1.15.9(debug@4.4.1):
     optionalDependencies:
       debug: 4.4.1(supports-color@8.1.1)
@@ -5786,7 +5803,7 @@ snapshots:
 
   kleur@3.0.3: {}
 
-  ky@1.8.1: {}
+  ky@1.8.2: {}
 
   levn@0.4.1:
     dependencies:
@@ -6083,7 +6100,7 @@ snapshots:
 
   package-json@10.0.1:
     dependencies:
-      ky: 1.8.1
+      ky: 1.8.2
       registry-auth-token: 5.1.0
       registry-url: 6.0.1
       semver: 7.7.2
@@ -6470,7 +6487,7 @@ snapshots:
     dependencies:
       command-exists: 1.2.9
       commander: 8.3.0
-      follow-redirects: 1.15.9(debug@4.4.1)
+      follow-redirects: 1.15.11(debug@4.4.1)
       js-sha3: 0.8.0
       memorystream: 0.3.1
       semver: 5.7.2
@@ -6478,11 +6495,11 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  solc@0.8.28(debug@4.4.1):
+  solc@0.8.30(debug@4.4.1):
     dependencies:
       command-exists: 1.2.9
       commander: 8.3.0
-      follow-redirects: 1.15.9(debug@4.4.1)
+      follow-redirects: 1.15.11(debug@4.4.1)
       js-sha3: 0.8.0
       memorystream: 0.3.1
       semver: 5.7.2

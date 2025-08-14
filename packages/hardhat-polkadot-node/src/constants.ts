@@ -14,7 +14,7 @@ export const PORT_CHECK_DELAY = 500
 export const RPC_ENDPOINT_PATH = "eth_chainId"
 export const NODE_RPC_URL_BASE_URL = process.env.CI ? "0.0.0.0" : "host.docker.internal"
 
-export const POLKADOT_TEST_NODE_NETWORK_NAME = "Kitchensink"
+export const POLKADOT_TEST_NODE_NETWORK_NAME = "anvil"
 
 export const BASE_URL = "http://127.0.0.1"
 export const POLKADOT_NETWORK_ACCOUNTS = [
