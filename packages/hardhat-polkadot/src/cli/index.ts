@@ -2,7 +2,7 @@
 import picocolors from "picocolors"
 
 import { createProject } from "./project-creation"
-import { portProject } from "./port-project"
+import { updatePackageJSON, updateHHConfig } from "./port-project"
 
 async function main() {
     try {
@@ -29,7 +29,8 @@ async function main() {
             }
 
             // Port project in provided directory
-            return portProject(projectDir)
+            await updatePackageJSON(projectDir)
+            updateHHConfig(projectDir)
         }
     } catch (e) {
         console.log(e)

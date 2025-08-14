@@ -1,38 +1,49 @@
-// hardhat-patch-generic.ts
-import type { API, FileInfo, Transform } from "jscodeshift"
-import fs from "fs"
+import type { Collection, Program } from "jscodeshift"
+import jscodeshiftFactory from "jscodeshift"
 
-// Default patch (override via options.patch)
-const DEFAULT_PATCH = {
-    networks: {
-        hardhat: {
-            polkavm: true,
-            nodeConfig: {
-                nodeBinaryPath: "./bin/substrate-node",
-                rpcPort: 8000,
-                dev: true,
-            },
-            adapterConfig: {
-                adapterBinaryPath: "./bin/eth-rpc",
-                dev: true,
-            },
-            localNode: {
-                polkavm: true,
-                url: `http://127.0.0.1:8545`,
-            },
-        },
-    },
-} as const
+// Adds import of provided `module` into the source code given by `root`
+export function insertImport(
+    root: Collection<any>,
+    j: jscodeshiftFactory.JSCodeshift,
+    module: string,
+) {
+    const program: Program = root.get().node.program
+    const isESM = root.find(j.ImportDeclaration).size() > 0
 
-const t: Transform = (file: FileInfo, api: API, options: any) => {
-    const j = api.jscodeshift
-    const root = j(file.source)
-    const PATCH = options?.patch ? JSON.parse(String(options.patch)) : DEFAULT_PATCH
+    const esmImport = { source: { value: module } }
+    const cjsImport = {
+        callee: { type: "Identifier" as const, name: "require" as const },
+        arguments: [{ type: "StringLiteral" as const, value: module }],
+    }
 
-    // --- utils ---
+    if (
+        root.find(j.ImportDeclaration, esmImport).length +
+            root.find(j.CallExpression, cjsImport).length ==
+        0
+    ) {
+        const stmt = isESM
+            ? j.importDeclaration([], j.stringLiteral(module))
+            : j.expressionStatement(
+                  j.callExpression(j.identifier("require"), [j.stringLiteral(module)]),
+              )
+        program.body.splice(0, 0, stmt)
+    } else {
+        console.log("some found")
+    }
+
+    root.find(j.ExportDefaultDeclaration, { declaration: { type: "ObjectExpression" } }).forEach(
+        (p) => console.log(p),
+    )
+}
+
+// Merges provided `patch` into the default export of source code given by `root`
+export function patchExportConfig(
+    root: Collection<any>,
+    j: jscodeshiftFactory.JSCodeshift,
+    patch: object,
+) {
     const isObj = (n: any) => n && n.type === "ObjectExpression"
-
-    const lit = (v: any): any => {
+    function lit(v: any): any {
         if (v === null) return j.nullLiteral()
         if (Array.isArray(v)) return j.arrayExpression(v.map(lit))
         switch (typeof v) {
@@ -57,8 +68,8 @@ const t: Transform = (file: FileInfo, api: API, options: any) => {
         }
     }
 
-    const getProp = (obj: any, name: string) =>
-        obj.properties.find((p: any) => {
+    function getProp(obj: any, name: string) {
+        return obj.properties.find((p: any) => {
             if (p.type !== "Property" && p.type !== "ObjectProperty") return false
             const k = p.key
             return (
@@ -66,29 +77,32 @@ const t: Transform = (file: FileInfo, api: API, options: any) => {
                 ((k.type === "StringLiteral" || k.type === "Literal") && k.value === name)
             )
         })
-
-    const unwrapObjInit = (node: any): any => {
-        let n = node
-        for (;;) {
-            if (!n) break
-            if (isObj(n)) break
-            if (
-                n.type === "TSAsExpression" ||
-                n.type === "TSTypeAssertion" ||
-                n.type === "TSNonNullExpression" ||
-                n.type === "ParenthesizedExpression"
-            ) {
-                n = n.expression || n.operand || n.expression
-                continue
-            }
-            break
-        }
-        return isObj(n) ? n : null
     }
 
-    const resolveIdentToObj = (name: string): any => {
-        const vd = root.find(j.VariableDeclarator, { id: { type: "Identifier", name } }).paths()[0]
-        return vd ? unwrapObjInit(vd.value.init) : null
+    function unwrapObj(expr: any): any | null {
+        while (
+            expr &&
+            (expr.type === "TSAsExpression" ||
+                expr.type === "TSSatisfiesExpression" ||
+                expr.type === "ParenthesizedExpression")
+        )
+            expr = expr.expression
+        if (
+            expr &&
+            expr.type === "CallExpression" &&
+            expr.callee.type === "Identifier" &&
+            expr.callee.name === "defineConfig" &&
+            expr.arguments[0]
+        ) {
+            return unwrapObj(expr.arguments[0])
+        }
+
+        return expr && expr.type === "ObjectExpression" ? expr : null
+    }
+
+    function resolveIdentToObj(name: string) {
+        const vd = root.find(j.VariableDeclarator, { id: { name } }).paths()[0]
+        return vd ? unwrapObj((vd.value as any).init) : null
     }
 
     const isSamePrimitive = (node: any, v: any) => {
@@ -137,8 +151,7 @@ const t: Transform = (file: FileInfo, api: API, options: any) => {
         return { node: prop.value, changed: true }
     }
 
-    /** Deep-merge plain object `patch` into ObjectExpression `objExpr`. */
-    function deepMergeObjExpr(objExpr: any, patch: Record<string, any>): boolean {
+    function deepMerge(objExpr: any, patch: Record<string, any>): boolean {
         let changed = false
 
         for (const [k, v] of Object.entries(patch)) {
@@ -147,7 +160,7 @@ const t: Transform = (file: FileInfo, api: API, options: any) => {
             if (v && typeof v === "object" && !Array.isArray(v)) {
                 const { node: container, changed: c } = ensureContainer(objExpr, k)
                 if (c) changed = true
-                if (deepMergeObjExpr(container, v)) changed = true
+                if (deepMerge(container, v)) changed = true
                 continue
             }
 
@@ -169,20 +182,16 @@ const t: Transform = (file: FileInfo, api: API, options: any) => {
         return changed
     }
 
-    // ---- locate exported config object(s) ----
     const targets: any[] = []
 
-    root.find(j.ExportDefaultDeclaration, { declaration: { type: "ObjectExpression" } }).forEach(
-        (p) => targets.push(p.value.declaration),
-    )
-
-    root.find(j.ExportDefaultDeclaration, { declaration: { type: "Identifier" } }).forEach((p) => {
-        const name = (p.value.declaration as any).name
-        const vd = root.find(j.VariableDeclarator, { id: { name } }).paths()[0]
-        const obj = vd && unwrapObjInit(vd.value.init)
+    // Handles [ESM] `export default cfg` or `export default { ... }`
+    root.find(j.ExportDefaultDeclaration).forEach((p) => {
+        const decl: any = (p.value as any).declaration
+        const obj = decl.type === "Identifier" ? resolveIdentToObj(decl.name) : unwrapObj(decl)
         if (obj) targets.push(obj)
     })
 
+    // Handles [CJS] `module.exports = cfg` or `module.exports = { ... }`
     root.find(j.AssignmentExpression, {
         operator: "=",
         left: {
@@ -190,40 +199,20 @@ const t: Transform = (file: FileInfo, api: API, options: any) => {
             object: { name: "module" },
             property: { name: "exports" },
         },
-        right: { type: "ObjectExpression" },
-    }).forEach((p) => targets.push((p.value as any).right))
-
-    root.find(j.AssignmentExpression, {
-        operator: "=",
-        left: {
-            type: "MemberExpression",
-            object: { name: "module" },
-            property: { name: "exports" },
-        },
-        right: { type: "Identifier" },
     }).forEach((p) => {
-        const name = (p.value.right as any).name
-        const vd = root.find(j.VariableDeclarator, { id: { name } }).paths()[0]
-        const obj = vd && unwrapObjInit(vd.value.init)
+        const rhs: any = (p.value as any).right
+        const obj = rhs.type === "Identifier" ? resolveIdentToObj(rhs.name) : unwrapObj(rhs)
         if (obj) targets.push(obj)
     })
 
-    root.find(j.TSExportAssignment, { expression: { type: "Identifier" } }).forEach((p) => {
-        const name = (p.value.expression as any).name
-        const vd = root.find(j.VariableDeclarator, { id: { name } }).paths()[0]
-        const obj = vd && unwrapObjInit(vd.value.init)
+    // Handles [TS CJS] `export = <expr>`
+    root.find(j.TSExportAssignment).forEach((p) => {
+        const rhs: any = (p.value as any).expression
+        const obj = rhs.type === "Identifier" ? resolveIdentToObj(rhs.name) : unwrapObj(rhs)
         if (obj) targets.push(obj)
     })
 
-    if (targets.length === 0) return null
-
-    // ---- apply PATCH at arbitrary depth ----
-    let mutated = false
     for (const cfgObj of targets) {
-        if (deepMergeObjExpr(cfgObj, PATCH)) mutated = true
+        deepMerge(cfgObj, patch)
     }
-
-    fs.writeFileSync(file.path, root.toSource(), "utf8")
 }
-
-export default t

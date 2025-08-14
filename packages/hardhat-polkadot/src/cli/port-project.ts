@@ -1,10 +1,29 @@
 import fs from "fs"
 import path from "path"
-import type { API, FileInfo, Program } from "jscodeshift"
 import jscodeshiftFactory from "jscodeshift"
+import { patchExportConfig, insertImport } from "./hh-config-transform"
 
-import t from "./hh-config-transform"
 const MODULE = "@parity/hardhat-polkadot"
+const PATCH = {
+    networks: {
+        hardhat: {
+            polkavm: true,
+            nodeConfig: {
+                nodeBinaryPath: "./bin/substrate-node",
+                rpcPort: 8000,
+                dev: true,
+            },
+            adapterConfig: {
+                adapterBinaryPath: "./bin/eth-rpc",
+                dev: true,
+            },
+            localNode: {
+                polkavm: true,
+                url: `http://127.0.0.1:8545`,
+            },
+        },
+    },
+} as const
 
 // Detect indentation format of a file
 function detectIndent(src: string) {
@@ -14,14 +33,14 @@ function detectIndent(src: string) {
     return ws.includes("\t") ? "\t" : ws.length
 }
 
-export async function portProject(projectPath: string) {
-    // Fetch `package.json` object & formatting metadata
+export async function updatePackageJSON(projectPath: string) {
+    // Read `package.json` object & formatting metadata
     const pkgPath = path.join(projectPath, "package.json")
     const raw = fs.readFileSync(pkgPath, "utf8")
     const pkg = JSON.parse(raw) as any
     const indent = detectIndent(raw)
 
-    // Fetch latest `@parity/hardhat-polkadot` module metadata
+    // Fetch latest `@parity/hardhat-polkadot` module metadata from npm registry
     const m = (await (await fetch(`https://registry.npmjs.org/${MODULE}/latest`)).json()) as any
     const polkadotHHVersion: string = m.version
     const requiredHHVersion: string = m.peerDependencies?.hardhat!.match(/(\d+)\.(\d+)\.(\d+)/)[0]
@@ -36,70 +55,21 @@ export async function portProject(projectPath: string) {
 
     // Add `@parity/hardhat-polkadot` dev-dependency
     pkg.devDependencies["@parity/hardhat-polkadot"] = `^${polkadotHHVersion}`
+
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, indent) + "\n", "utf8")
-
-    // Find hardhat.config.* file
-    const files = fs.readdirSync(projectPath)
-    const configFile = files.find((file) => file.startsWith("hardhat.config."))
-    if (!configFile) {
-        console.log("No hardhat.config.* file found in the project")
-        return
-    }
-    const configFilePath = path.join(projectPath, configFile)
-    const fileInfo: FileInfo = {
-        path: configFilePath,
-        source: fs.readFileSync(configFilePath, "utf8"),
-    }
-
-    const j = (jscodeshiftFactory as any).withParser("tsx")
-    const jscodeshiftAPI: API = {
-        jscodeshift: j,
-        j,
-        stats: () => {},
-        report: () => {},
-        printOptions: { quote: "single" },
-    } as unknown as API
-    transformHHConfig(fileInfo, jscodeshiftAPI, {})
-
-    const fileInfo2: FileInfo = {
-        path: configFilePath,
-        source: fs.readFileSync(configFilePath, "utf8"),
-    }
-    t(fileInfo2, jscodeshiftAPI, {})
 }
 
-function transformHHConfig(file: FileInfo, api: API, options: any) {
-    const j = api.jscodeshift
-    const root = j(file.source)
-    const program: Program = root.get().node.program
-    const isESM = root.find(j.ImportDeclaration).size() > 0
+export function updateHHConfig(projectPath: string) {
+    // Read hardhat.config.* from disk
+    const files = fs.readdirSync(projectPath)
+    const configFile = files.find((file) => file.startsWith("hardhat.config."))!
+    const HHCJsonFile = path.join(projectPath, configFile)
 
-    const esmImport = { source: { value: MODULE } }
-    const cjsImport = {
-        callee: { type: "Identifier" as const, name: "require" as const },
-        arguments: [{ type: "StringLiteral" as const, value: MODULE }],
-    }
+    // Apply transformations
+    const j = jscodeshiftFactory.withParser("tsx")
+    const root = j(fs.readFileSync(HHCJsonFile, "utf8"))
+    insertImport(root, j, MODULE)
+    patchExportConfig(root, j, PATCH)
 
-    if (
-        root.find(j.ImportDeclaration, esmImport).length +
-            root.find(j.CallExpression, cjsImport).length ==
-        0
-    ) {
-        const stmt = isESM
-            ? j.importDeclaration([], j.stringLiteral(MODULE))
-            : j.expressionStatement(
-                  j.callExpression(j.identifier("require"), [j.stringLiteral(MODULE)]),
-              )
-        program.body.splice(0, 0, stmt)
-    } else {
-        console.log("some found")
-    }
-
-    root.find(j.ExportDefaultDeclaration, { declaration: { type: "ObjectExpression" } }).forEach(
-        (p) => console.log(p),
-    )
-
-    fs.writeFileSync(file.path, root.toSource(), "utf8")
-
-    return root.toSource() // recast preserves style/comments
+    fs.writeFileSync(HHCJsonFile, root.toSource(), "utf8")
 }
