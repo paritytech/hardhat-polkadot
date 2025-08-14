@@ -11,6 +11,7 @@ run_test() {
   CONTRACT_NAME=$4
   NETWORK_NAME=$5
   CHAIN_ID=$6
+  stop_node
   cd "$TMP_TESTS_DIR/$PROJECT_DIR"
   cp "../$CONFIG_FILE" ./hardhat.config.js
   npm add "$HARDHAT_POLKADOT_TGZ_PATH"
