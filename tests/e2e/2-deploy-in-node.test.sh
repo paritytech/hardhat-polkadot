@@ -32,4 +32,4 @@ run_test() {
 }
 
 run_test "lock" "basic-test-and-deploy.config.js" "Imported #5" "Lock" "local-node" 420420420
-run_test "lock" "forking.config.js" "app: \"chopsticks\"" "Lock" "forked-node" 420420422
+run_test "lock" "forking.config.js" 'app: "chopsticks"' "Lock" "forked-node" 420420422
