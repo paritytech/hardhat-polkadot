@@ -15,7 +15,7 @@ run_test() {
   cp "../$CONFIG_FILE" ./hardhat.config.js
   npm add "$HARDHAT_POLKADOT_TGZ_PATH"
   npm install
-  await_start_node "$UNIQUE_NODE_LOG"
+  await_start_node "$UNIQUE_NODE_LOG" # careful chopsticks uses ANSI color codes
 
   # When
   DEPLOY_LOCAL_NODE_OUTPUT=$(yes | npx hardhat ignition deploy "./ignition/modules/${CONTRACT_NAME}.js" --network localNode)
@@ -31,5 +31,5 @@ run_test() {
   stop_node
 }
 
-# run_test "lock" "basic-test-and-deploy.config.js" "Imported #5" "Lock" "local-node" 420420420
+run_test "lock" "basic-test-and-deploy.config.js" "Imported #5" "Lock" "local-node" 420420420
 run_test "lock" "forking.config.js" '"chopsticks"' "Lock" "forked-node" 420420422

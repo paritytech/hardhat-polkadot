@@ -80,24 +80,11 @@ await_start_node() {
   npx hardhat node > hardhat-node.log 2>&1 & 
   HARDHAT_NODE_PID=$!
 
-  echo "Waiting for node log: [$UNIQUE_NODE_LOG]"
+  # Wait until node is ready, depending on the node
   tail -n 0 -F hardhat-node.log | while read -r line; do
-    echo "[DEBUG] Raw line: [$line]"
-    echo "[DEBUG] UNIQUE_NODE_LOG: [$UNIQUE_NODE_LOG]"
-    echo "[DEBUG] line length: ${#line}, log length: ${#UNIQUE_NODE_LOG}"
-
-    # Show escaped representations so we see spaces, tabs, quotes
-    printf '[DEBUG] Escaped line: %q\n' "$line"
-    printf '[DEBUG] Escaped UNIQUE_NODE_LOG: %q\n' "$UNIQUE_NODE_LOG"
-
-    # Case-insensitive debug match check
     if [[ "$line" == *"$UNIQUE_NODE_LOG"* ]]; then
-      echo "[DEBUG] Match found!"
-      echo "Node ready (PID: $HARDHAT_NODE_PID)"
-      pkill -P $$ tail
+      pkill -P $$ tail # kill the tail from this subshell
       break
-    else
-      echo "[DEBUG] No match in this line"
     fi
   done
 
