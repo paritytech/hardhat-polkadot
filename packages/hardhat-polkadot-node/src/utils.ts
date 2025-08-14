@@ -149,6 +149,8 @@ export function constructCommandArgs(
         }
     }
 
+    nodeCommands.push(`--pruning=archive`)
+
     return {
         nodeCommands,
         adapterCommands,
