@@ -2,8 +2,6 @@
 import type { API, FileInfo, Transform } from "jscodeshift"
 import fs from "fs"
 
-export const parser = "tsx"
-
 // Default patch (override via options.patch)
 const DEFAULT_PATCH = {
     networks: {
