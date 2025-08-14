@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e # Fail if any command fails
-. ./helpers.sh  # import helpers functions inside tmp folder# 
+. ./helpers.sh  # import helpers functions inside tmp folder
 
 run_test() {
   # Given
