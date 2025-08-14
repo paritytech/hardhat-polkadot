@@ -82,9 +82,13 @@ await_start_node() {
 
   # Wait until node is ready, depending on the node
   echo "Waiting for node log: $UNIQUE_NODE_LOG"
-  while ! grep -Fq "$UNIQUE_NODE_LOG" <(sed 's/^[[:space:]]*//' hardhat-node.log); do
-    tail -n 10 hardhat-node.log
-    sleep 2
+  tail -n 0 -F hardhat-node.log | while read -r line; do
+    echo "$line"
+    if [[ "$line" == *"$UNIQUE_NODE_LOG"* ]]; then
+      echo "Node ready (PID: $HARDHAT_NODE_PID)"
+      pkill -P $$ tail # kill the tail from this subshell
+      break
+    fi
   done
 
   # Wait until eth-rpc is ready
