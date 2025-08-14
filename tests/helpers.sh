@@ -82,6 +82,7 @@ await_start_node() {
 
   # Wait until node is ready, depending on the node
   tail -n 0 -F hardhat-node.log | while read -r line; do
+    echo "$line"
     if [[ "$line" == *"$UNIQUE_NODE_LOG"* ]]; then
       pkill -P $$ tail # kill the tail from this subshell
       break
