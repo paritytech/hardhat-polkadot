@@ -81,9 +81,17 @@ await_start_node() {
   HARDHAT_NODE_PID=$!
 
   # Wait until node is ready, depending on the node
+  echo "Waiting for node log: $UNIQUE_NODE_LOG"
   while ! grep -q "$UNIQUE_NODE_LOG" hardhat-node.log; do  
     tail -n 10 hardhat-node.log
-    sleep 1
+    if grep -q "$UNIQUE_NODE_LOG" hardhat-node.log; then
+      echo "MATCH FOUND: $UNIQUE_NODE_LOG"
+      break
+    else
+      echo "NO MATCH YET: $UNIQUE_NODE_LOG"
+    fi
+
+    sleep 2
   done
 
   # Wait until eth-rpc is ready
