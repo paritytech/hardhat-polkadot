@@ -2,35 +2,9 @@ import fs from "fs"
 import path from "path"
 import type { API, FileInfo, Program } from "jscodeshift"
 import jscodeshiftFactory from "jscodeshift"
-import https from "node:https"
 
 import t from "./hh-config-transform"
-const j = (jscodeshiftFactory as any).withParser("tsx") // parse JS/TS/TSX
-
-function get(url: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-        const req = https.get(url, { timeout: 8000 }, (res) => {
-            if (res.statusCode !== 200) {
-                res.resume()
-                return reject(new Error(`HTTP ${res.statusCode} ${url}`))
-            }
-            let data = ""
-            res.setEncoding("utf8")
-            res.on("data", (c) => (data += c))
-            res.on("end", () => {
-                try {
-                    resolve(JSON.parse(data))
-                } catch (e) {
-                    reject(e)
-                }
-            })
-        })
-        req.on("timeout", () => {
-            req.destroy(new Error("timeout"))
-        })
-        req.on("error", reject)
-    })
-}
+const MODULE = "@parity/hardhat-polkadot"
 
 // Detect indentation format of a file
 function detectIndent(src: string) {
@@ -47,23 +21,20 @@ export async function portProject(projectPath: string) {
     const pkg = JSON.parse(raw) as any
     const indent = detectIndent(raw)
 
-    // Ensure compatible `hardhat` version
-    const base = "https://registry.npmjs.org"
-    const enc = encodeURIComponent(MODULE)
-    const m = await get(`${base}/${enc}/latest`)
+    // Fetch latest `@parity/hardhat-polkadot` module metadata
+    const m = (await (await fetch(`https://registry.npmjs.org/${MODULE}/latest`)).json()) as any
     const polkadotHHVersion: string = m.version
     const requiredHHVersion: string = m.peerDependencies?.hardhat!.match(/(\d+)\.(\d+)\.(\d+)/)[0]
-    const currentHHVersion = pkg.devDependencies.hardhat.match(/(\d+)\.(\d+)\.(\d+)/)[0]
 
-    console.log("VERSION:", polkadotHHVersion)
-    console.log("HARDHAT VERSION:", requiredHHVersion)
-
+    // Update `hardhat` version if needed
+    const HHLocation = pkg.dependencies.hardhat ? "dependencies" : "devDependencies"
+    const currentHHVersion = pkg[HHLocation]?.hardhat?.match(/(\d+)\.(\d+)\.(\d+)/)?.[0] || "0.0.0"
     if (currentHHVersion < requiredHHVersion) {
         console.log("updating `hardhat` version to comply with `@parity/hardhat-polkadot`")
-        pkg.devDependencies.hardhat = `^${requiredHHVersion}`
+        pkg[HHLocation].hardhat = `^${requiredHHVersion}`
     }
 
-    // Add `@parity/hardhat-polkadot` dependency
+    // Add `@parity/hardhat-polkadot` dev-dependency
     pkg.devDependencies["@parity/hardhat-polkadot"] = `^${polkadotHHVersion}`
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, indent) + "\n", "utf8")
 
@@ -79,12 +50,14 @@ export async function portProject(projectPath: string) {
         path: configFilePath,
         source: fs.readFileSync(configFilePath, "utf8"),
     }
+
+    const j = (jscodeshiftFactory as any).withParser("tsx")
     const jscodeshiftAPI: API = {
         jscodeshift: j,
         j,
-        stats: () => {}, // no-op counters
-        report: () => {}, // no-op logger
-        printOptions: { quote: "single" }, // passed to recast
+        stats: () => {},
+        report: () => {},
+        printOptions: { quote: "single" },
     } as unknown as API
     transformHHConfig(fileInfo, jscodeshiftAPI, {})
 
@@ -95,7 +68,6 @@ export async function portProject(projectPath: string) {
     t(fileInfo2, jscodeshiftAPI, {})
 }
 
-const MODULE = "@parity/hardhat-polkadot"
 function transformHHConfig(file: FileInfo, api: API, options: any) {
     const j = api.jscodeshift
     const root = j(file.source)
