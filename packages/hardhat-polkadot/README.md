@@ -1,6 +1,6 @@
 <div align="center">
   
-  # Use Hardhat on Polkadot
+  # Build on Polkadot with Hardhat Plugin
 
   <div>
     <a href="https://polkadot.com" target="_blank">

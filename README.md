@@ -1,6 +1,6 @@
 <div align="center">
 
-# Build on Polkadot with Hardhat
+# Build on Polkadot with Hardhat Plugin
 <!-- markdownlint-disable-next-line MD013 -->
 ![CICD](https://github.com/paritytech/hardhat-polkadot/actions/workflows/tests.yml/badge.svg)
 
