@@ -82,7 +82,7 @@ await_start_node() {
 
   # Wait until node is ready, depending on the node
   echo "Waiting for node log: $UNIQUE_NODE_LOG"
-  while ! grep -q "$UNIQUE_NODE_LOG" hardhat-node.log; do  
+  while ! grep -Fq "$UNIQUE_NODE_LOG" hardhat-node.log; do  
     tail -n 10 hardhat-node.log
     if grep -q "$UNIQUE_NODE_LOG" hardhat-node.log; then
       echo "MATCH FOUND: $UNIQUE_NODE_LOG"
