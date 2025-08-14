@@ -75,11 +75,7 @@ check_log_value() {
 
 await_start_node() {
   local UNIQUE_NODE_LOG="$1"
-
-  # stop running processes
-  lsof -ti tcp:8000 | xargs -r kill -9
-  lsof -ti tcp:8545 | xargs -r kill -9
-
+  
   # Start the Hardhat node in the background
   npx hardhat node > hardhat-node.log 2>&1 & 
   HARDHAT_NODE_PID=$!
@@ -89,5 +85,22 @@ await_start_node() {
     tail -n 10 hardhat-node.log
     sleep 1
   done
-  trap "kill $HARDHAT_NODE_PID" EXIT
+
+  # Wait until eth-rpc is ready
+  for i in $(seq 1 60); do
+    result=$(curl -sS -H "Content-Type: application/json" \
+      --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":2}' \
+      http://127.0.0.1:8545 | sed -nE 's/.*"result":"0x([0-9a-fA-F]+)".*/\1/p')
+    [ -n "$result" ] && [ $((16#$result)) -ge 5 ] && break || sleep 1
+  done
+}
+
+stop_node() {
+  # if docker process
+  docker ps --format '{{.ID}} {{.Ports}}' \
+  | awk '/:8000->/ {print $1}' \
+  | xargs -r docker rm -f
+
+  # if node process
+  lsof -nP -iTCP:8000 -sTCP:LISTEN -t 2>/dev/null | xargs -r kill -INT
 }
