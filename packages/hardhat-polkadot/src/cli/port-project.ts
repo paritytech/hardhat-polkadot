@@ -2,6 +2,10 @@ import fs from "fs"
 import path from "path"
 import jscodeshiftFactory from "jscodeshift"
 import { patchExportConfig, insertImport } from "./hh-config-transform"
+import chalk from "chalk"
+import os from "os"
+import { spawnSync } from "child_process"
+import { confirmDiff } from "./prompt"
 
 const MODULE = "@parity/hardhat-polkadot"
 const PATCH = {
@@ -33,7 +37,22 @@ function detectIndent(src: string) {
     return ws.includes("\t") ? "\t" : ws.length
 }
 
-export async function updatePackageJSON(projectPath: string) {
+export async function portProject(projectPath: string, yesFlag: boolean) {
+    try {
+        const [pkgPath, packageJSONChanges, pkgChanged] = await updatePackageJSON(projectPath)
+        const [HHConfigPath, HHConfigChanges, HHConfigChanged] = updateHHConfig(projectPath)
+        if ((HHConfigChanged || pkgChanged) && (yesFlag || (await confirmDiff()))) {
+            fs.writeFileSync(pkgPath, packageJSONChanges, "utf8")
+            fs.writeFileSync(HHConfigPath, HHConfigChanges, "utf8")
+        }
+    } catch (e) {
+        console.error(chalk.red("Error") + ": Failed to port project")
+        console.error(e)
+        process.exit(1)
+    }
+}
+
+export async function updatePackageJSON(projectPath: string): Promise<[string, string, boolean]> {
     // Read `package.json` object & formatting metadata
     const pkgPath = path.join(projectPath, "package.json")
     const raw = fs.readFileSync(pkgPath, "utf8")
@@ -49,17 +68,18 @@ export async function updatePackageJSON(projectPath: string) {
     const HHLocation = pkg.dependencies.hardhat ? "dependencies" : "devDependencies"
     const currentHHVersion = pkg[HHLocation]?.hardhat?.match(/(\d+)\.(\d+)\.(\d+)/)?.[0] || "0.0.0"
     if (currentHHVersion < requiredHHVersion) {
-        console.log("updating `hardhat` version to comply with `@parity/hardhat-polkadot`")
         pkg[HHLocation].hardhat = `^${requiredHHVersion}`
     }
 
     // Add `@parity/hardhat-polkadot` dev-dependency
     pkg.devDependencies["@parity/hardhat-polkadot"] = `^${polkadotHHVersion}`
 
-    fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, indent) + "\n", "utf8")
+    const newPkg = JSON.stringify(pkg, null, indent) + "\n"
+    printDiff(pkgPath, raw, newPkg)
+    return [pkgPath, newPkg, raw !== newPkg]
 }
 
-export function updateHHConfig(projectPath: string) {
+export function updateHHConfig(projectPath: string): [string, string, boolean] {
     // Read hardhat.config.* from disk
     const files = fs.readdirSync(projectPath)
     const configFile = files.find((file) => file.startsWith("hardhat.config."))!
@@ -71,5 +91,39 @@ export function updateHHConfig(projectPath: string) {
     insertImport(root, j, MODULE)
     patchExportConfig(root, j, PATCH)
 
-    fs.writeFileSync(HHCJsonFile, root.toSource(), "utf8")
+    const prevHHConfig = fs.readFileSync(HHCJsonFile, "utf8")
+    const newHHConfig = root.toSource()
+    printDiff(HHCJsonFile, prevHHConfig, newHHConfig)
+    return [HHCJsonFile, newHHConfig, prevHHConfig !== newHHConfig]
+}
+
+function printDiff(filePath: string, before: string, after: string) {
+    if (before === after) {
+        console.log(chalk.bold.yellow(`No changes in ${filePath}`))
+        return
+    }
+    console.log(chalk.bold.hex("#ED3194")("Changes in"), chalk.bold(filePath))
+
+    const tmpA = fs.mkdtempSync(path.join(os.tmpdir(), "jsc-a-"))
+    const tmpB = fs.mkdtempSync(path.join(os.tmpdir(), "jsc-b-"))
+    const A = path.join(tmpA, path.basename(filePath))
+    const B = path.join(tmpB, path.basename(filePath))
+    fs.writeFileSync(A, before)
+    fs.writeFileSync(B, after)
+
+    const { stdout } = spawnSync(
+        "git",
+        ["--no-pager", "diff", "--no-prefix", "--no-index", "--unified=0", "--color", "--", A, B],
+        { encoding: "utf8" },
+    )
+    const lines = stdout.split(/\r?\n/)
+    const start = lines.findIndex((l) => l.startsWith("@@"))
+
+    for (const l of lines.slice(4)) {
+        if (l.startsWith("\\ No newline at end of file")) continue
+        console.log(l)
+    }
+
+    fs.rmSync(tmpA, { recursive: true, force: true })
+    fs.rmSync(tmpB, { recursive: true, force: true })
 }

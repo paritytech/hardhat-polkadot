@@ -83,6 +83,14 @@ export async function confirmProjectCreation(): Promise<{
     ])
 }
 
+export async function confirmDiff() {
+    const { default: enquirer } = await import("enquirer")
+    let response = await enquirer.prompt<{ shouldApplyDiff: boolean }>([
+        createConfirmationPrompt("shouldApplyDiff", "Proceed with applying these changes?"),
+    ])
+    return response.shouldApplyDiff
+}
+
 export async function confirmTelemetryConsent(): Promise<boolean | undefined> {
     return confirmationPromptWithTimeout(
         "telemetryConsent",

@@ -16,21 +16,17 @@ export function insertImport(
         arguments: [{ type: "StringLiteral" as const, value: module }],
     }
 
-    if (
+    const existingImports =
         root.find(j.ImportDeclaration, esmImport).length +
-            root.find(j.CallExpression, cjsImport).length ==
-        0
-    ) {
+        root.find(j.CallExpression, cjsImport).length
+    if (!existingImports) {
         const stmt = isESM
             ? j.importDeclaration([], j.stringLiteral(module))
             : j.expressionStatement(
                   j.callExpression(j.identifier("require"), [j.stringLiteral(module)]),
               )
         program.body.splice(0, 0, stmt)
-    } else {
-        console.log("some found")
     }
-
     root.find(j.ExportDefaultDeclaration, { declaration: { type: "ObjectExpression" } }).forEach(
         (p) => console.log(p),
     )
@@ -151,6 +147,7 @@ export function patchExportConfig(
         return { node: prop.value, changed: true }
     }
 
+    // Deeply merge some arbitrary `patch` into some `objExpr`
     function deepMerge(objExpr: any, patch: Record<string, any>): boolean {
         let changed = false
 
