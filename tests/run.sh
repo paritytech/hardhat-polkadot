@@ -2,7 +2,8 @@
 
 # fail if any commands fails
 set -e
-TESTS_TYPE=${1:-e2e} # default to flag 'e2e' if not provided
+TESTS_TYPE="$1"
+TEST_NAME="$2"
 
 # 1) run tests in {DIR} according to flag passed
 case "$TESTS_TYPE" in
@@ -34,6 +35,8 @@ printf "Running tests in $TMP_TESTS_DIR\n\n"
 
 for file in ./$DIR/*; do
     FILE_NAME=$(basename "$file")
+    # check if running for example ./run.sh e2e deploy
+    [ -n "$TEST_NAME" ] && [[ "$FILE_NAME" != *"$TEST_NAME"* ]] && continue
     printf 'Running test: %s\n' "$FILE_NAME" >&2
 
     cp "$file" "$TMP_TESTS_DIR/$FILE_NAME"

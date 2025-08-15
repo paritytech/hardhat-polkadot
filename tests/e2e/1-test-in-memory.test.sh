@@ -10,9 +10,9 @@ run_test() {
   EXPECTED_PASSING=$3
   NETWORK_NAME=$4
   cd "$TMP_TESTS_DIR/$PROJECT_DIR"
+  cp "../$CONFIG_FILE" ./hardhat.config.js
   npm add "$HARDHAT_POLKADOT_TGZ_PATH"
   npm install
-  cp "../$CONFIG_FILE" ./hardhat.config.js
 
   # When
   RUN_TESTS_OUTPUT=$(npx hardhat test)
