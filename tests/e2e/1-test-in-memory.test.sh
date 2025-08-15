@@ -10,6 +10,8 @@ run_test() {
   EXPECTED_PASSING=$3
   NETWORK_NAME=$4
   cd "$TMP_TESTS_DIR/$PROJECT_DIR"
+  npm add "$HARDHAT_POLKADOT_NODE_TGZ_PATH"
+  npm add "$HARDHAT_POLKADOT_RESOLC_TGZ_PATH"
   npm add "$HARDHAT_POLKADOT_TGZ_PATH"
   npm install
   cp "../$CONFIG_FILE" ./hardhat.config.js

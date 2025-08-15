@@ -11,12 +11,23 @@ case "$TESTS_TYPE" in
   *) echo "Unknown test type: $TESTS_TYPE" >&2; exit 1 ;;
 esac
 
-# 2) build and export packages/hardhat-polkadot
+# 2) build and export packages/hardhat-polkadot, packages/hardhat-polkadot-node and packages/hardhat-polkadot-resolc
 cd ..
 pnpm install
-pnpm run build
-cd ./packages/hardhat-polkadot
-./prepack.sh # run prepack script
+pnpm run -r build
+
+cd ./packages/hardhat-polkadot-node
+HARDHAT_POLKADOT_NODE_TGZ=$(pnpm pack --silent | grep "parity-hardhat-polkadot-node-*.*.*.tgz")
+export HARDHAT_POLKADOT_NODE_TGZ_PATH="$(pwd)/$HARDHAT_POLKADOT_NODE_TGZ"
+cd ../../tests >/dev/null
+
+cd ../packages/hardhat-polkadot-resolc
+HARDHAT_POLKADOT_RESOLC_TGZ=$(pnpm pack --silent | grep "parity-hardhat-polkadot-resolc-*.*.*.tgz")
+export HARDHAT_POLKADOT_RESOLC_TGZ_PATH="$(pwd)/$HARDHAT_POLKADOT_RESOLC_TGZ"
+cd ../../tests >/dev/null
+
+cd ../packages/hardhat-polkadot
+#./prepack.sh # run prepack script
 HARDHAT_POLKADOT_TGZ=$(pnpm pack --silent | grep "parity-hardhat-polkadot-*.*.*.tgz")
 export HARDHAT_POLKADOT_TGZ_PATH="$(pwd)/$HARDHAT_POLKADOT_TGZ"
 cd ../../tests >/dev/null
@@ -28,9 +39,12 @@ cp -r fixture-projects $TMP_TESTS_DIR
 cp helpers.sh $TMP_TESTS_DIR/helpers.sh  # copy the helper script
 
 # 4) print relevant info
-printf "Package manager version: npm version $(npm --version)\n"
-printf "@parity/hardhat-polkadot package in $HARDHAT_POLKADOT_TGZ_PATH\n"
-printf "Running tests in $TMP_TESTS_DIR\n\n"
+echo "Package manager version: npm version $(npm --version)"
+echo "@parity/hardhat-polkadot-node package in $HARDHAT_POLKADOT_NODE_TGZ_PATH"
+echo "@parity/hardhat-polkadot-resolc package in $HARDHAT_POLKADOT_HARDHAT_POLKADOT_RESOLC_TGZ_PATH"
+echo "@parity/hardhat-polkadot package in $HARDHAT_POLKADOT_TGZ_PATH"
+echo "Running tests in $TMP_TESTS_DIR"
+echo
 
 for file in ./$DIR/*; do
     FILE_NAME=$(basename "$file")
