@@ -1,4 +1,9 @@
 # Changelog
+## 0.1.11-pre0 (2025-08-18)
+
+### Bug Fixes
+
+- removing `bundledDependencies` ([#284](https://github.com/paritytech/hardhat-polkadot/pull/284)) ([558707fd](https://github.com/paritytech/hardhat-polkadot/commit/558707fde47e99123ec7f4946b735c49102b1d39))
 
 ## 0.1.10 (2025-08-13)
 ### Chores
