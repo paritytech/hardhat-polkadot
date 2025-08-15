@@ -1,10 +1,10 @@
+import { spawnSync } from "child_process"
+import os from "os"
 import fs from "fs"
+import chalk from "chalk"
 import path from "path"
 import jscodeshiftFactory from "jscodeshift"
 import { patchExportConfig, insertImport } from "./hh-config-transform"
-import chalk from "chalk"
-import os from "os"
-import { spawnSync } from "child_process"
 import { confirmDiff } from "./prompt"
 
 const MODULE = "@parity/hardhat-polkadot"
@@ -56,13 +56,16 @@ export async function updatePackageJSON(projectPath: string): Promise<[string, s
     // Read `package.json` object & formatting metadata
     const pkgPath = path.join(projectPath, "package.json")
     const raw = fs.readFileSync(pkgPath, "utf8")
-    const pkg = JSON.parse(raw) as any
+    const pkg = JSON.parse(raw)
     const indent = detectIndent(raw)
 
     // Fetch latest `@parity/hardhat-polkadot` module metadata from npm registry
-    const m = (await (await fetch(`https://registry.npmjs.org/${MODULE}/latest`)).json()) as any
+    const m = (await (await fetch(`https://registry.npmjs.org/${MODULE}/latest`)).json()) as {
+        version: string
+        peerDependencies: { hardhat: string }
+    }
     const polkadotHHVersion: string = m.version
-    const requiredHHVersion: string = m.peerDependencies?.hardhat!.match(/(\d+)\.(\d+)\.(\d+)/)[0]
+    const requiredHHVersion: string = m.peerDependencies.hardhat.match(/(\d+)\.(\d+)\.(\d+)/)![0]
 
     // Update `hardhat` version if needed
     const HHLocation = pkg.dependencies.hardhat ? "dependencies" : "devDependencies"
@@ -117,7 +120,6 @@ function printDiff(filePath: string, before: string, after: string) {
         { encoding: "utf8" },
     )
     const lines = stdout.split(/\r?\n/)
-    const start = lines.findIndex((l) => l.startsWith("@@"))
 
     for (const l of lines.slice(4)) {
         if (l.startsWith("\\ No newline at end of file")) continue
