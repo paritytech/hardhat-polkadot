@@ -2,7 +2,7 @@
 import picocolors from "picocolors"
 
 import { createProject } from "./project-creation"
-import { updatePackageJSON, updateHHConfig } from "./port-project"
+import { portProject } from "./port-project"
 
 async function main() {
     try {
@@ -27,10 +27,7 @@ async function main() {
                 console.error("Expected " + picocolors.bold("hardhat-polkadot port <dir>"))
                 process.exit(1)
             }
-
-            // Port project in provided directory
-            await updatePackageJSON(projectDir)
-            updateHHConfig(projectDir)
+            await portProject(projectDir, hasYesFlag)
         }
     } catch (e) {
         console.log(e)
