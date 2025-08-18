@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.9-pre0 (2025-08-18)
+### Bug Fixes
+
+- removing `bundledDependencies` ([#284](https://github.com/paritytech/hardhat-polkadot/pull/284)) ([558707fd](https://github.com/paritytech/hardhat-polkadot/commit/558707fde47e99123ec7f4946b735c49102b1d39))
+
+### Chores
+
+- Bump `@parity/resolc` to 0.3.0. ([#216](https://github.com/paritytech/hardhat-polkadot/pull/216)) ([20cd285](https://github.com/paritytech/hardhat-polkadot/commit/20cd285a3d9d64356294038153e518e38a63f0d7))
+
 ## 0.1.8 (2025-08-13)
 ### Bug Fixes
 
