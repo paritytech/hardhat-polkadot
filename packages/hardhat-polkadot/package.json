@@ -55,12 +55,12 @@
         "@openzeppelin/contracts": "^5.3.0",
         "@parity/hardhat-polkadot-node": "workspace:*",
         "@parity/hardhat-polkadot-resolc": "workspace:*",
+        "chalk": "4",
         "enquirer": "2.3.0",
         "find-up": "5.0.0",
         "fs-extra": "^11.3.0",
         "jscodeshift": "^17.3.0",
-        "picocolors": "^1.1.1",
-        "chalk": "4"
+        "picocolors": "^1.1.1"
     },
     "peerDependencies": {
         "hardhat": "^2.26.0"

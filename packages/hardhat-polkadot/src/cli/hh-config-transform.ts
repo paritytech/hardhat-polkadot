@@ -1,9 +1,20 @@
-import type { Collection, Program } from "jscodeshift"
-import jscodeshiftFactory from "jscodeshift"
+import jscodeshiftFactory, {
+    Collection,
+    Node,
+    Program,
+    Expression,
+    ArrayExpression,
+    ObjectExpression,
+    Literal,
+    ObjectProperty,
+} from "jscodeshift"
+
+type JSONPrimitive = string | number | boolean | null
+type JSONValue = JSONPrimitive | JSONValue[] | { [k: string]: JSONValue }
 
 // Adds import of provided `module` into the source code given by `root`
 export function insertImport(
-    root: Collection<any>,
+    root: Collection<ReturnType<typeof jscodeshiftFactory>>,
     j: jscodeshiftFactory.JSCodeshift,
     module: string,
 ) {
@@ -34,38 +45,38 @@ export function insertImport(
 
 // Merges provided `patch` into the default export of source code given by `root`
 export function patchExportConfig(
-    root: Collection<any>,
+    root: Collection<ReturnType<typeof jscodeshiftFactory>>,
     j: jscodeshiftFactory.JSCodeshift,
-    patch: object,
+    patch: { [k: string]: JSONValue },
 ) {
-    const isObj = (n: any) => n && n.type === "ObjectExpression"
-    function lit(v: any): any {
+    // const isObj = (n: Node) => n && n.type === "ObjectExpression"
+    function lit(v: JSONValue): Expression | ArrayExpression | ObjectExpression {
         if (v === null) return j.nullLiteral()
-        if (Array.isArray(v)) return j.arrayExpression(v.map(lit))
+        if (Array.isArray(v)) return j.arrayExpression(v.map(lit) as Literal[]) // TODO! check correct typing here
         switch (typeof v) {
             case "boolean":
                 return j.booleanLiteral(v)
             case "number":
-                return j.literal(v)
+                return j.numericLiteral(v)
             case "string":
-                return (j as any).stringLiteral ? (j as any).stringLiteral(v) : j.literal(v)
+                return j.stringLiteral(v)
             case "object":
                 return j.objectExpression(
                     Object.entries(v).map(([k, val]) =>
                         j.property(
                             "init",
                             /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(k) ? j.identifier(k) : j.literal(k),
-                            lit(val),
+                            lit(val) as Literal, // TODO! check correct typing here
                         ),
                     ),
                 )
             default:
-                return j.literal(null)
+                return j.nullLiteral()
         }
     }
 
-    function getProp(obj: any, name: string) {
-        return obj.properties.find((p: any) => {
+    function getProp(obj: ObjectExpression, name: string): ObjectProperty | undefined {
+        return obj.properties.find((p): p is ObjectProperty => {
             if (p.type !== "Property" && p.type !== "ObjectProperty") return false
             const k = p.key
             return (
@@ -75,17 +86,17 @@ export function patchExportConfig(
         })
     }
 
-    function unwrapObj(expr: any): any | null {
+    function unwrapObj(expr: Expression | null | undefined): ObjectExpression | null {
         while (
             expr &&
-            (expr.type === "TSAsExpression" ||
-                expr.type === "TSSatisfiesExpression" ||
-                expr.type === "ParenthesizedExpression")
+            (j.TSAsExpression.check(expr) ||
+                j.TSSatisfiesExpression.check(expr) ||
+                j.ParenthesizedExpression.check(expr))
         )
             expr = expr.expression
         if (
             expr &&
-            expr.type === "CallExpression" &&
+            j.CallExpression.check(expr) &&
             expr.callee.type === "Identifier" &&
             expr.callee.name === "defineConfig" &&
             expr.arguments[0]
@@ -93,21 +104,17 @@ export function patchExportConfig(
             return unwrapObj(expr.arguments[0])
         }
 
-        return expr && expr.type === "ObjectExpression" ? expr : null
+        return expr && j.ObjectExpression.check(expr) ? expr : null
     }
 
     function resolveIdentToObj(name: string) {
         const vd = root.find(j.VariableDeclarator, { id: { name } }).paths()[0]
-        return vd ? unwrapObj((vd.value as any).init) : null
+        return vd ? unwrapObj(vd.value.init) : null
     }
 
-    const isSamePrimitive = (node: any, v: any) => {
+    function isSamePrimitive(node: Literal, v: JSONValue) {
         if (!node) return false
-        if (node.type === "Literal") return node.value === v
-        if (node.type === "StringLiteral") return node.value === v
-        if (node.type === "BooleanLiteral") return node.value === v
-        if (node.type === "NumericLiteral") return node.value === v
-        return false
+        return node.value === v
     }
 
     /** Ensure objExpr[name] is an ObjectExpression:
@@ -116,13 +123,15 @@ export function patchExportConfig(
      *  - if value is Identifier and resolves to object, return resolved
      *  - else wrap with `{ ...old }` to preserve data
      */
-    function ensureContainer(objExpr: any, name: string): { node: any; changed: boolean } {
+    function ensureContainer(
+        objExpr: ObjectExpression,
+        name: string,
+    ): { node: Node; changed: boolean } {
         let changed = false
         let prop = getProp(objExpr, name)
 
         if (!prop) {
-            prop = j.property(
-                "init",
+            prop = j.objectProperty(
                 /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name) ? j.identifier(name) : j.literal(name),
                 j.objectExpression([]),
             )
@@ -130,34 +139,44 @@ export function patchExportConfig(
             return { node: prop.value, changed: true }
         }
 
-        if ((prop as any).shorthand) {
-            ;(prop as any).shorthand = false
+        if (j.ObjectProperty.check(prop) && prop.shorthand) {
+            prop.shorthand = false
             changed = true
         }
 
-        if (isObj(prop.value)) return { node: prop.value, changed }
+        if (j.ObjectExpression.check(prop.value)) return { node: prop.value, changed }
 
         if (prop.value?.type === "Identifier") {
             const resolved = resolveIdentToObj(prop.value.name)
             if (resolved) return { node: resolved, changed }
         }
 
-        // replace with { ...old }
-        prop.value = j.objectExpression([j.spreadElement(prop.value as any)])
+        if (
+            !j.RestElement.check(prop.value) &&
+            !j.SpreadElementPattern.check(prop.value) &&
+            !j.PropertyPattern.check(prop.value) &&
+            !j.ObjectPattern.check(prop.value) &&
+            !j.ArrayPattern.check(prop.value) &&
+            !j.SpreadPropertyPattern.check(prop.value) &&
+            !j.TSParameterProperty.check(prop.value) &&
+            !j.AssignmentPattern.check(prop.value)
+        ) {
+            const expr = prop.value // ExpressionKind now
+            prop.value = j.objectExpression([j.spreadElement(expr)])
+            changed = true
+        }
+
         return { node: prop.value, changed: true }
     }
 
     // Deeply merge some arbitrary `patch` into some `objExpr`
-    function deepMerge(objExpr: any, patch: Record<string, any>): boolean {
-        let changed = false
-
+    function deepMerge(objExpr: ObjectExpression, patch: { [k: string]: JSONValue }) {
         for (const [k, v] of Object.entries(patch)) {
             const prop = getProp(objExpr, k)
 
             if (v && typeof v === "object" && !Array.isArray(v)) {
-                const { node: container, changed: c } = ensureContainer(objExpr, k)
-                if (c) changed = true
-                if (deepMerge(container, v)) changed = true
+                const { node: container, changed: _ } = ensureContainer(objExpr, k)
+                deepMerge(container as ObjectExpression, v)
                 continue
             }
 
@@ -166,24 +185,20 @@ export function patchExportConfig(
                     j.property(
                         "init",
                         /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(k) ? j.identifier(k) : j.literal(k),
-                        lit(v),
+                        lit(v) as Literal, // TODO! check correct typing here
                     ),
                 )
-                changed = true
-            } else if (!isSamePrimitive(prop.value, v)) {
-                prop.value = lit(v)
-                changed = true
+            } else if (!isSamePrimitive(prop.value as Literal, v)) {
+                prop.value = lit(v) as Literal // TODO! check correct typing here
             }
         }
-
-        return changed
     }
 
-    const targets: any[] = []
+    const targets: ObjectExpression[] = []
 
     // Handles [ESM] `export default cfg` or `export default { ... }`
     root.find(j.ExportDefaultDeclaration).forEach((p) => {
-        const decl: any = (p.value as any).declaration
+        const decl = p.value.declaration
         const obj = decl.type === "Identifier" ? resolveIdentToObj(decl.name) : unwrapObj(decl)
         if (obj) targets.push(obj)
     })
@@ -197,14 +212,14 @@ export function patchExportConfig(
             property: { name: "exports" },
         },
     }).forEach((p) => {
-        const rhs: any = (p.value as any).right
+        const rhs = p.value.right
         const obj = rhs.type === "Identifier" ? resolveIdentToObj(rhs.name) : unwrapObj(rhs)
         if (obj) targets.push(obj)
     })
 
     // Handles [TS CJS] `export = <expr>`
     root.find(j.TSExportAssignment).forEach((p) => {
-        const rhs: any = (p.value as any).expression
+        const rhs = p.value.expression
         const obj = rhs.type === "Identifier" ? resolveIdentToObj(rhs.name) : unwrapObj(rhs)
         if (obj) targets.push(obj)
     })
