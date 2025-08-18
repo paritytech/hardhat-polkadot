@@ -35,6 +35,9 @@ importers:
       '@parity/hardhat-polkadot-resolc':
         specifier: workspace:*
         version: link:../hardhat-polkadot-resolc
+      chalk:
+        specifier: '4'
+        version: 4.1.2
       enquirer:
         specifier: 2.3.0
         version: 2.3.0
