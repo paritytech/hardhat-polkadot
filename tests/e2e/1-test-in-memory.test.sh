@@ -9,13 +9,17 @@ run_test() {
   CONFIG_FILE=$2
   EXPECTED_PASSING=$3
   NETWORK_NAME=$4
+  echo "Running test in fixture-projects/$PROJECT_DIR for ${CONFIG_FILE}; network ${NETWORK_NAME}"
+
   cd "$TMP_TESTS_DIR/$PROJECT_DIR"
+  npm add "$HARDHAT_POLKADOT_NODE_TGZ_PATH"
+  npm add "$HARDHAT_POLKADOT_RESOLC_TGZ_PATH"
   npm add "$HARDHAT_POLKADOT_TGZ_PATH"
   npm install
   cp "../$CONFIG_FILE" ./hardhat.config.js
 
   # When
-  RUN_TESTS_OUTPUT=$(npx hardhat test)
+  RUN_TESTS_OUTPUT="$(npx hardhat test --show-stack-traces)"
 
   # Then
   assert_directory_not_empty "artifacts-pvm"

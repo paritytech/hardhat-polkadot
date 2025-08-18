@@ -26,6 +26,7 @@ export class ChopsticksService extends Service {
 
             let stdioConfig: StdioOptions = "inherit"
             if (!this.blockProcess) {
+                // FIXME: this leads to silent failures
                 stdioConfig = ["ignore", "ignore", "ignore"]
             }
 

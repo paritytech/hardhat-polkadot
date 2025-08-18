@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.6-pre0 (2025-08-18)
+### Bug Fixes
+
+- removing `bundledDependencies` ([#284](https://github.com/paritytech/hardhat-polkadot/pull/284)) ([558707fd](https://github.com/paritytech/hardhat-polkadot/commit/558707fde47e99123ec7f4946b735c49102b1d39))
+- fix(hardhat-polkadot-node): spin up an archive node ([#286](https://github.com/paritytech/hardhat-polkadot/pull/286)) ([ba1bc28](https://github.com/paritytech/hardhat-polkadot/commit/ba1bc28af3bd84b43d0e946b6876f03b027ea0bc))
+- Fixing tests; adding verbosity: ([#290](https://github.com/paritytech/hardhat-polkadot/pull/290)) ([2b8e0fc](https://github.com/paritytech/hardhat-polkadot/commit/2b8e0fc8cd659e42b6efb2b93295d5842d26bd36))
+
 ## 0.1.5 (2025-08-13)
 ### Bug fixes
 

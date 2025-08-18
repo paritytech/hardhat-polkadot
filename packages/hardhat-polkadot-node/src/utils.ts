@@ -149,6 +149,11 @@ export function constructCommandArgs(
         }
     }
 
+    // TODO: revisit this condition, possibly merge with something from above
+    if (!args?.forking) {
+        nodeCommands.push(`--pruning=archive`)
+    }
+
     return {
         nodeCommands,
         adapterCommands,
@@ -358,7 +363,9 @@ export async function waitForServiceToBeReady(
         waitTime = Math.min(waitTime * backoffFactor, maxWaitTime)
     }
 
-    throw new PolkadotNodePluginError("Server didn't respond after multiple attempts")
+    throw new PolkadotNodePluginError(
+        `Server at port ${port} didn't respond after multiple attempts`,
+    )
 }
 
 export function getPolkadotRpcUrl(
