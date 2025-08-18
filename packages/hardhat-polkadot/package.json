@@ -59,7 +59,8 @@
         "find-up": "5.0.0",
         "fs-extra": "^11.3.0",
         "jscodeshift": "^17.3.0",
-        "picocolors": "^1.1.1"
+        "picocolors": "^1.1.1",
+        "chalk": "4"
     },
     "peerDependencies": {
         "hardhat": "^2.26.0"
