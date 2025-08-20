@@ -27,7 +27,7 @@ const PATCH = {
             },
         },
     },
-} as const
+}
 
 // Detect indentation format of a file
 function detectIndent(src: string) {
