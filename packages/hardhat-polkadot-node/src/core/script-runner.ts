@@ -4,7 +4,6 @@ import { getEnvVariablesMap } from "hardhat/internal/core/params/env-variables"
 import path from "path"
 
 import { CommandArguments } from "../types"
-import { SubstrateNodeService } from "../services"
 import { startServer } from "../utils"
 
 export async function runScript(
@@ -25,7 +24,7 @@ export async function runScript(
 
     const { commandArgs, server, port } = await startServer(config)
     await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false)
-    await SubstrateNodeService.waitForNodeToBeReady(port)
+    await server.services().substrateNodeService?.waitForNodeToBeReady()
 
     const envVars = { ...process.env, ...extraEnvVars, polkadotNodePort: port.toString() }
 

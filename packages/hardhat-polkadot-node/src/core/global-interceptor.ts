@@ -3,7 +3,6 @@ import { GlobalWithHardhatContext } from "hardhat/src/internal/context"
 import { HARDHAT_NETWORK_NAME } from "hardhat/plugins"
 import { Environment } from "hardhat/internal/core/runtime-environment"
 
-import { SubstrateNodeService } from "../services"
 import { configureNetwork, startServer } from "../utils"
 import { PolkadotTasksWithWrappedNode } from "./global-task"
 
@@ -56,7 +55,7 @@ async function wrapTaskWithNode(
     })
     try {
         await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false)
-        await SubstrateNodeService.waitForNodeToBeReady(port)
+        await server.services().substrateNodeService?.waitForNodeToBeReady()
         const oldNetwork = env.network
         await configureNetwork(env.config, env.network, port)
         ;(env as unknown as Environment).injectToGlobal()
