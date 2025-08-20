@@ -7,12 +7,25 @@ import jscodeshiftFactory, {
     ObjectExpression,
     Literal,
     ObjectProperty,
+    NullLiteral,
+    BooleanLiteral,
+    NumericLiteral,
+    StringLiteral,
 } from "jscodeshift"
 
-type JSONPrimitive = string | number | boolean | null
+type JSONPrimitive = null | boolean | number | string
 type JSONValue = JSONPrimitive | JSONValue[] | { [k: string]: JSONValue }
+type ASTValue =
+    | NullLiteral
+    | BooleanLiteral
+    | NumericLiteral
+    | StringLiteral
+    | ArrayExpression
+    | ObjectExpression
 
-// Adds import of provided `module` into the source code given by `root`
+/**
+ * Adds import of provided `module` into the source code given by `root`
+ */
 export function insertImport(
     root: Collection<ReturnType<typeof jscodeshiftFactory>>,
     j: jscodeshiftFactory.JSCodeshift,
@@ -43,45 +56,46 @@ export function insertImport(
     )
 }
 
-// Merges provided `patch` into the default export of source code given by `root`
+/**
+ * Merges provided `patch` into the default export of source code given by `root`
+ */
 export function patchExportConfig(
     root: Collection<ReturnType<typeof jscodeshiftFactory>>,
     j: jscodeshiftFactory.JSCodeshift,
     patch: { [k: string]: JSONValue },
 ) {
-    // const isObj = (n: Node) => n && n.type === "ObjectExpression"
-    function lit(v: JSONValue): Expression | ArrayExpression | ObjectExpression {
+    /**
+     * Convert js/ts primitives into AST nodes
+     */
+    function toAST(v: JSONValue): ASTValue {
         if (v === null) return j.nullLiteral()
-        if (Array.isArray(v)) return j.arrayExpression(v.map(lit) as Literal[]) // TODO! check correct typing here
-        switch (typeof v) {
-            case "boolean":
-                return j.booleanLiteral(v)
-            case "number":
-                return j.numericLiteral(v)
-            case "string":
-                return j.stringLiteral(v)
-            case "object":
-                return j.objectExpression(
-                    Object.entries(v).map(([k, val]) =>
-                        j.property(
-                            "init",
-                            /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(k) ? j.identifier(k) : j.literal(k),
-                            lit(val) as Literal, // TODO! check correct typing here
-                        ),
+        if (typeof v === "boolean") return j.booleanLiteral(v)
+        if (typeof v === "number") return j.numericLiteral(v)
+        if (typeof v === "string") return j.stringLiteral(v)
+        if (Array.isArray(v)) return j.arrayExpression(v.map(toAST))
+        if (typeof v === "object") {
+            return j.objectExpression(
+                Object.entries(v).map(([k, val]) =>
+                    j.property(
+                        "init",
+                        /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(k) ? j.identifier(k) : j.literal(k),
+                        toAST(val),
                     ),
-                )
-            default:
-                return j.nullLiteral()
+                ),
+            )
         }
+        throw new Error(`Unsupported primitive: ${JSON.stringify(v)}`)
     }
 
+    /**
+     * Extract a property from an ObjectExpression by name
+     */
     function getProp(obj: ObjectExpression, name: string): ObjectProperty | undefined {
         return obj.properties.find((p): p is ObjectProperty => {
-            if (p.type !== "Property" && p.type !== "ObjectProperty") return false
-            const k = p.key
             return (
-                (k.type === "Identifier" && k.name === name) ||
-                ((k.type === "StringLiteral" || k.type === "Literal") && k.value === name)
+                j.ObjectProperty.check(p) &&
+                ((j.Identifier.check(p.key) && p.key.name === name) ||
+                    (j.StringLiteral.check(p.key) && p.key.value === name))
             )
         })
     }
@@ -92,12 +106,13 @@ export function patchExportConfig(
             (j.TSAsExpression.check(expr) ||
                 j.TSSatisfiesExpression.check(expr) ||
                 j.ParenthesizedExpression.check(expr))
-        )
+        ) {
             expr = expr.expression
+        }
         if (
             expr &&
             j.CallExpression.check(expr) &&
-            expr.callee.type === "Identifier" &&
+            j.Identifier.check(expr.callee) &&
             expr.callee.name === "defineConfig" &&
             expr.arguments[0]
         ) {
@@ -185,11 +200,11 @@ export function patchExportConfig(
                     j.property(
                         "init",
                         /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(k) ? j.identifier(k) : j.literal(k),
-                        lit(v) as Literal, // TODO! check correct typing here
+                        toAST(v),
                     ),
                 )
             } else if (!isSamePrimitive(prop.value as Literal, v)) {
-                prop.value = lit(v) as Literal // TODO! check correct typing here
+                prop.value = toAST(v)
             }
         }
     }
