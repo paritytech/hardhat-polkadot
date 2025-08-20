@@ -23,7 +23,7 @@ export class EthRpcService extends Service {
             let stdioConfig: StdioOptions = "inherit"
 
             if (!this.blockProcess) {
-                stdioConfig = ["ignore", "ignore", "ignore"]
+                stdioConfig = ["ignore", "pipe", "pipe"]
             }
 
             if (this.blockProcess) {
@@ -109,13 +109,26 @@ export class EthRpcService extends Service {
         }
     }
 
-    static async waitForEthRpcToBeReady(port: number, maxAttempts = 20): Promise<void> {
+    async waitForEthRpcToBeReady(maxAttempts = 20): Promise<void> {
         const payload = {
             jsonrpc: "2.0",
             method: RPC_ENDPOINT_PATH,
             params: [],
             id: 1,
         }
-        await waitForServiceToBeReady(port, payload, maxAttempts)
+        try {
+            await waitForServiceToBeReady(this.port, payload, maxAttempts)
+        } catch (e: unknown) {
+            const output = await this.getOutput()
+            console.error("ETH RPC failed to lauch")
+            if (output.stdout) {
+                console.error("ETH RPC stdout:", output.stdout)
+            }
+            if (output.stderr) {
+                console.error("ETH RPC stderr:", output.stderr)
+            }
+
+            throw e
+        }
     }
 }

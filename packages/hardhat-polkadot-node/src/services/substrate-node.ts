@@ -30,13 +30,13 @@ export class SubstrateNodeService extends Service {
 
             let stdioConfig: StdioOptions = "inherit"
             if (!this.blockProcess) {
-                stdioConfig = ["ignore", "ignore", "ignore"]
+                stdioConfig = ["ignore", "pipe", "pipe"]
             }
 
             this.process = spawn(pathToBinary, this.commandArgs, { stdio: stdioConfig })
 
-            this.process.on("error", this._handleOnError("server", reject))
-            this.process.on("exit", this._handleOnExit("server"))
+            this.process.on("error", this._handleOnError("substrate node", reject))
+            this.process.on("exit", this._handleOnExit("substrate node"))
 
             if (!this.blockProcess) {
                 resolve()
@@ -99,13 +99,27 @@ export class SubstrateNodeService extends Service {
         }
     }
 
-    public static async waitForNodeToBeReady(port: number, maxAttempts = 20): Promise<void> {
+    public async waitForNodeToBeReady(maxAttempts = 20): Promise<void> {
         const payload = {
             jsonrpc: "2.0",
             method: "state_getRuntimeVersion",
             params: [],
             id: 1,
         }
-        await waitForServiceToBeReady(port, payload, maxAttempts)
+
+        try {
+            await waitForServiceToBeReady(this.port, payload, maxAttempts)
+        } catch (e: unknown) {
+            const output = await this.getOutput()
+            console.error("substrate node failed to lauch")
+            if (output.stdout) {
+                console.error("substrate node stdout:", output.stdout)
+            }
+            if (output.stderr) {
+                console.error("substrate node stderr:", output.stderr)
+            }
+
+            throw e
+        }
     }
 }
