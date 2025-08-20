@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.6-pre1 (2025-08-20)
+### Bug Fixes
+
+- displaying node output if node fails to start ([#291](https://github.com/paritytech/hardhat-polkadot/pull/291)) ([91c91f9](https://github.com/paritytech/hardhat-polkadot/commit/91c91f93fcc0e6a023fb55188ac6179d7c3315e9))
+
 ## 0.1.6-pre0 (2025-08-18)
 ### Bug Fixes
 

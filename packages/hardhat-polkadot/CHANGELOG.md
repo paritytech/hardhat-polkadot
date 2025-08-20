@@ -1,4 +1,10 @@
 # Changelog
+## 0.1.11-pre1 (2025-08-20)
+
+### Bug Fixes
+
+- Bumped `@parity/hardhat-polkadot-node` to `0.1.6-pre1`.
+
 ## 0.1.11-pre0 (2025-08-18)
 
 ### Bug Fixes
