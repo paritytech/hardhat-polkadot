@@ -68,7 +68,7 @@ export async function updatePackageJSON(projectPath: string): Promise<[string, s
     const requiredHHVersion: string = m.peerDependencies.hardhat.match(/(\d+)\.(\d+)\.(\d+)/)![0]
 
     // Update `hardhat` version if needed
-    const HHLocation = pkg.dependencies.hardhat ? "dependencies" : "devDependencies"
+    const HHLocation = pkg.dependencies?.hardhat ? "dependencies" : "devDependencies"
     const currentHHVersion = pkg[HHLocation]?.hardhat?.match(/(\d+)\.(\d+)\.(\d+)/)?.[0] || "0.0.0"
     if (currentHHVersion < requiredHHVersion) {
         pkg[HHLocation].hardhat = `^${requiredHHVersion}`
