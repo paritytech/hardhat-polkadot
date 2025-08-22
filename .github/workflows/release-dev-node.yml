@@ -1,7 +1,6 @@
 name: Release Polkadot Development Runtime
 
 on:
-  pull_request:
   # trigger manually from /actions
   workflow_dispatch:
     inputs:
