@@ -167,9 +167,8 @@ jobs:
           DATE=$(date +'%Y-%m-%dT%H:%M:%S%z')
 
           # switch to dist folder, so that we can generate checksums for all downloaded artifacts
-          # relative to root folder
           pushd dist >/dev/null
-          shasum -a 256 * | grep -v 'checksums.txt' > ../checksums.txt
+          shasum -a 256 * > checksums.txt
           popd >/dev/null # switch back to root folder
 
           # Build release notes with real date and checksums
@@ -187,7 +186,7 @@ jobs:
             echo
             echo "Checksums:"
             echo '```'
-            sed 's/^/  /' checksums.txt
+            sed 's/^/  /' dist/checksums.txt
             echo '```'
           } > RELEASE_BODY.md
 
