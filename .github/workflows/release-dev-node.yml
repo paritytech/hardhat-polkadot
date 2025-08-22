@@ -163,7 +163,7 @@ jobs:
 
       - name: Save latest commit hash to env
         run: |
-          echo "LATEST_COMMIT_HASH=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "LATEST_COMMIT_HASH=$(git ls-remote ${{ env.POLKADOT_SDK_REPO }} refs/heads/${{ env.POLKADOT_SDK_BRANCH }} | awk '{ print $1 }')" >> "$GITHUB_ENV"
 
       - name: Generate checksums and release body
         shell: bash
