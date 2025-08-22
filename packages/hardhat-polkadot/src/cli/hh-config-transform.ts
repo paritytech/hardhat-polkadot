@@ -1,6 +1,5 @@
 import jscodeshiftFactory, {
     Collection,
-    Node,
     Program,
     Expression,
     ArrayExpression,
@@ -34,15 +33,17 @@ export function insertImport(
     const program: Program = root.get().node.program
     const isESM = root.find(j.ImportDeclaration).size() > 0
 
+    // Check if import already exists
     const esmImport = { source: { value: module } }
     const cjsImport = {
         callee: { type: "Identifier" as const, name: "require" as const },
         arguments: [{ type: "StringLiteral" as const, value: module }],
     }
-
     const existingImports =
         root.find(j.ImportDeclaration, esmImport).length +
         root.find(j.CallExpression, cjsImport).length
+
+    // Insert import if missing
     if (!existingImports) {
         const stmt = isESM
             ? j.importDeclaration([], j.stringLiteral(module))
@@ -51,9 +52,6 @@ export function insertImport(
               )
         program.body.splice(0, 0, stmt)
     }
-    root.find(j.ExportDefaultDeclaration, { declaration: { type: "ObjectExpression" } }).forEach(
-        (p) => console.log(p),
-    )
 }
 
 /**
@@ -88,7 +86,7 @@ export function patchExportConfig(
     }
 
     /**
-     * Extract a property from an ObjectExpression by name
+     * Extract an `ObjectProperty` from an `ObjectExpression` by name
      */
     function getProp(obj: ObjectExpression, name: string): ObjectProperty | undefined {
         return obj.properties.find((p): p is ObjectProperty => {
@@ -100,7 +98,17 @@ export function patchExportConfig(
         })
     }
 
-    function unwrapObj(expr: Expression | null | undefined): ObjectExpression | null {
+    /**
+     * Extract an `ObjectExpression` from some generic `Expression` by
+     * deeply unwrapping
+     *
+     * returns null if no there is no `ObjectExpression`
+     */
+    function extractObject(expr: Expression | null | undefined): ObjectExpression | null {
+        if (j.Identifier.check(expr)) {
+            const varDecl = root.find(j.VariableDeclarator, { id: { name: expr.name } }).paths()[0]
+            if (varDecl) expr = varDecl.value.init
+        }
         while (
             expr &&
             (j.TSAsExpression.check(expr) ||
@@ -116,56 +124,45 @@ export function patchExportConfig(
             expr.callee.name === "defineConfig" &&
             expr.arguments[0]
         ) {
-            return unwrapObj(expr.arguments[0])
+            return extractObject(expr.arguments[0])
         }
 
         return expr && j.ObjectExpression.check(expr) ? expr : null
     }
 
-    function resolveIdentToObj(name: string) {
-        const vd = root.find(j.VariableDeclarator, { id: { name } }).paths()[0]
-        return vd ? unwrapObj(vd.value.init) : null
-    }
-
+    /**
+     * Check if an existing value matches some JSONValue
+     */
     function isSamePrimitive(node: Literal, v: JSONValue) {
         if (!node) return false
         return node.value === v
     }
 
-    /** Ensure objExpr[name] is an ObjectExpression:
-     *  - create if missing
-     *  - clear shorthand
-     *  - if value is Identifier and resolves to object, return resolved
-     *  - else wrap with `{ ...old }` to preserve data
+    /**
+     * Ensures a property of some `ObjectExpression` to
+     * be an `ObjectExpression` itself
      */
-    function ensureContainer(
-        objExpr: ObjectExpression,
-        name: string,
-    ): { node: Node; changed: boolean } {
-        let changed = false
-        let prop = getProp(objExpr, name)
+    function ensureObjectProperty(obj: ObjectExpression, name: string): ObjectExpression {
+        let prop = getProp(obj, name)
 
+        // If missing, set `name: {}`
         if (!prop) {
             prop = j.objectProperty(
                 /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name) ? j.identifier(name) : j.literal(name),
                 j.objectExpression([]),
             )
-            objExpr.properties.push(prop)
-            return { node: prop.value, changed: true }
+            obj.properties.push(prop)
+            return prop.value as ObjectExpression
         }
 
-        if (j.ObjectProperty.check(prop) && prop.shorthand) {
-            prop.shorthand = false
-            changed = true
-        }
+        // Clear shorthand: `{ name }` --> `{ name: name }`
+        prop.shorthand = false
+        if (j.ObjectExpression.check(prop.value)) return prop.value
+        const resolved = extractObject(prop.value)
+        if (resolved) return resolved
 
-        if (j.ObjectExpression.check(prop.value)) return { node: prop.value, changed }
-
-        if (prop.value?.type === "Identifier") {
-            const resolved = resolveIdentToObj(prop.value.name)
-            if (resolved) return { node: resolved, changed }
-        }
-
+        // Coerce type & handle
+        // `propName: variable` --> `propName: { ...variable }`
         if (
             !j.RestElement.check(prop.value) &&
             !j.SpreadElementPattern.check(prop.value) &&
@@ -176,70 +173,79 @@ export function patchExportConfig(
             !j.TSParameterProperty.check(prop.value) &&
             !j.AssignmentPattern.check(prop.value)
         ) {
-            const expr = prop.value // ExpressionKind now
+            const expr = prop.value
             prop.value = j.objectExpression([j.spreadElement(expr)])
-            changed = true
         }
 
-        return { node: prop.value, changed: true }
+        return prop.value as ObjectExpression
     }
 
-    // Deeply merge some arbitrary `patch` into some `objExpr`
-    function deepMerge(objExpr: ObjectExpression, patch: { [k: string]: JSONValue }) {
+    /**
+     * Deeply merge some arbitrary `patch` into some `ObjectExpression`
+     */
+    function deepMerge(obj: ObjectExpression, patch: { [k: string]: JSONValue }) {
         for (const [k, v] of Object.entries(patch)) {
-            const prop = getProp(objExpr, k)
+            const prop = getProp(obj, k)
 
+            // Recursively merge deeper objects
             if (v && typeof v === "object" && !Array.isArray(v)) {
-                const { node: container, changed: _ } = ensureContainer(objExpr, k)
+                const container = ensureObjectProperty(obj, k)
                 deepMerge(container as ObjectExpression, v)
                 continue
             }
 
+            // Assign value to new property
             if (!prop) {
-                objExpr.properties.push(
+                obj.properties.push(
                     j.property(
                         "init",
                         /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(k) ? j.identifier(k) : j.literal(k),
                         toAST(v),
                     ),
                 )
-            } else if (!isSamePrimitive(prop.value as Literal, v)) {
+            }
+            // Overwrite value of existing property
+            else if (!isSamePrimitive(prop.value as Literal, v)) {
                 prop.value = toAST(v)
             }
         }
     }
 
-    const targets: ObjectExpression[] = []
+    /**
+     * Find the default export object in source code
+     */
+    function getDefaultExport() {
+        const targets: ObjectExpression[] = []
 
-    // Handles [ESM] `export default cfg` or `export default { ... }`
-    root.find(j.ExportDefaultDeclaration).forEach((p) => {
-        const decl = p.value.declaration
-        const obj = decl.type === "Identifier" ? resolveIdentToObj(decl.name) : unwrapObj(decl)
-        if (obj) targets.push(obj)
-    })
+        // Handles [ESM] `export default cfg` or `export default { ... }`
+        root.find(j.ExportDefaultDeclaration).forEach((p) => {
+            const obj = extractObject(p.value.declaration)
+            if (obj) targets.push(obj)
+        })
 
-    // Handles [CJS] `module.exports = cfg` or `module.exports = { ... }`
-    root.find(j.AssignmentExpression, {
-        operator: "=",
-        left: {
-            type: "MemberExpression",
-            object: { name: "module" },
-            property: { name: "exports" },
-        },
-    }).forEach((p) => {
-        const rhs = p.value.right
-        const obj = rhs.type === "Identifier" ? resolveIdentToObj(rhs.name) : unwrapObj(rhs)
-        if (obj) targets.push(obj)
-    })
+        // Handles [CJS] `module.exports = cfg` or `module.exports = { ... }`
+        root.find(j.AssignmentExpression, {
+            operator: "=",
+            left: {
+                type: "MemberExpression",
+                object: { name: "module" },
+                property: { name: "exports" },
+            },
+        }).forEach((p) => {
+            const obj = extractObject(p.value.right)
+            if (obj) targets.push(obj)
+        })
 
-    // Handles [TS CJS] `export = <expr>`
-    root.find(j.TSExportAssignment).forEach((p) => {
-        const rhs = p.value.expression
-        const obj = rhs.type === "Identifier" ? resolveIdentToObj(rhs.name) : unwrapObj(rhs)
-        if (obj) targets.push(obj)
-    })
+        // Handles [TS CJS] `export = <expr>`
+        root.find(j.TSExportAssignment).forEach((p) => {
+            const obj = extractObject(p.value.expression)
+            if (obj) targets.push(obj)
+        })
 
-    for (const cfgObj of targets) {
-        deepMerge(cfgObj, patch)
+        return targets.at(-1)
     }
+
+    // Apply patch to the default export
+    const target = getDefaultExport()
+    if (target) deepMerge(target, patch)
 }
