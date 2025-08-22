@@ -8,6 +8,11 @@ on:
         description: Branch to use for polkadot-sdk
         required: true
         default: "anp-dirty-node"
+      mark-as-latest:
+        type: boolean
+        required: false
+        default: true
+        description: Mark as latest
 
 permissions:
   contents: write
@@ -207,6 +212,7 @@ jobs:
             dist/*
 
       - name: Create/Update Latest Tag (nodes-latest)
+        if: inputs.mark-as-latest
         uses: softprops/action-gh-release@v2
         with:
           tag_name: nodes-latest
