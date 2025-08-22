@@ -23,7 +23,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  POLKADOT_SDK_REPO: 'https://github.com/paritytech/polkadot-sdk.git'
+  POLKADOT_SDK_REPO: 'https://github.com/paritytech/polkadot-sdk'
   POLKADOT_SDK_BRANCH: ${{ inputs.sdk-branch || 'anp-dirty-node' }}
 
 jobs:
