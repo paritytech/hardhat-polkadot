@@ -175,7 +175,7 @@ jobs:
           # Build release notes with real date and checksums
           {
             echo "Build date: ${DATE}"
-            echo "Latest commit hash: ${{ env.LATEST_COMMIT_HASH }}"
+            echo "Based on [${{ env.POLKADOT_SDK_BRANCH }}](https://github.com/paritytech/polkadot-sdk/tree/${{ env.POLKADOT_SDK_BRANCH }})#[${{ env.LATEST_COMMIT_HASH }}](${{ env.POLKADOT_SDK_REPO }}/commit/${{ env.LATEST_COMMIT_HASH }})"
             echo
             echo "⚠️ Disclaimer: This is a temporary release for testing purposes, it may not be stable and not meant to be used in production."
             echo
