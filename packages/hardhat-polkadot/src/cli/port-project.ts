@@ -104,7 +104,10 @@ export async function updatePackageJSON(projectPath: string): Promise<[string, s
 export function updateHHConfig(projectPath: string): [string, string, boolean] {
     // Read hardhat.config.* from disk
     const files = fs.readdirSync(projectPath)
-    const configFile = files.find((file) => file.startsWith("hardhat.config."))!
+    const configFile = files.find((file) => file.startsWith("hardhat.config."))
+    if (!configFile) {
+        throw new Error(`No hardhat.config.* file found in ${projectPath}`)
+    }
     const HHCJsonFile = path.join(projectPath, configFile)
 
     // Apply transformations
