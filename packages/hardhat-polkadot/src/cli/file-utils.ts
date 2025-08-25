@@ -6,6 +6,7 @@ import fsPromises from "fs/promises"
 import path from "path"
 
 import { getRecommendedGitIgnore } from "../project-structure"
+
 /**
  * Returns an array of files (not dirs) that match a condition.
  *
@@ -68,7 +69,7 @@ export async function addOrMergeGitIgnore(projectRoot: string): Promise<[string,
     const originalGitIgnore = fs.existsSync(gitIgnorePath)
         ? fs.readFileSync(gitIgnorePath, "utf8")
         : ""
-    const newContent = await getRecommendedGitIgnore()
+    let newContent = await getRecommendedGitIgnore()
 
     // Filter out duplicate .gitignore entries
     const existingLines = originalGitIgnore.split(/\r?\n/)
@@ -84,19 +85,21 @@ export async function addOrMergeGitIgnore(projectRoot: string): Promise<[string,
                         existingLines.includes(v.slice(1) + "/")))
             ),
     )
-    // Remove comments for completely removed sections
+    // Remove comments for completely removed sections & format whitespace
     keepLines = keepLines.filter((v, i) => !(v.startsWith("#") && keepLines[i + 1] === ""))
+    newContent = keepLines
+        .join("\n")
+        .replace(/\n{2,}/g, "\n\n")
+        .trim()
 
-    // Format whitespace & append to existing .gitignore
-    const newGitIgnore =
-        keepLines.length == 0
-            ? originalGitIgnore
-            : originalGitIgnore.trimEnd() +
-              "\n\n" +
-              keepLines
-                  .join("\n")
-                  .replace(/\n{2,}/g, "\n\n")
-                  .trim()
+    // Merge old & new content
+    let newGitIgnore = originalGitIgnore
+    if (originalGitIgnore != "") {
+        newGitIgnore = newGitIgnore.trimEnd() + "\n\n"
+    }
+    if (keepLines.length > 0) {
+        newGitIgnore += newContent + "\n"
+    }
 
     return [gitIgnorePath, originalGitIgnore, newGitIgnore]
 }
