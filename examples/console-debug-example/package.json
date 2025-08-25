@@ -1,0 +1,29 @@
+{
+  "name": "console-debug-example",
+  "version": "1.0.0",
+  "description": "Example project demonstrating console.sol usage with Substrate",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "hardhat run scripts/deploy.js --network substrate",
+    "interact": "hardhat run scripts/interact.js --network substrate",
+    "test": "hardhat test --network substrate",
+    "compile": "hardhat compile"
+  },
+  "keywords": [
+    "substrate",
+    "polkadot",
+    "hardhat",
+    "console.sol",
+    "debugging"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "hardhat": "^2.19.0",
+    "hardhat-polkadot": "^0.1.11"
+  },
+  "dependencies": {
+    "ethers": "^6.9.0"
+  }
+}
