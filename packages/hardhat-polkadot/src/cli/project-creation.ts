@@ -3,7 +3,7 @@ import fsExtra from "fs-extra"
 import path from "path"
 
 import { HARDHAT_POLKADOT_NAME } from "../constants"
-import { addOrMergeGitIgnore, getAllFilesMatching } from "./fs-utils"
+import { addOrMergeGitIgnore, getAllFilesMatching } from "./file-utils"
 import { fromEntries } from "./lang"
 import { getPackageJson, getPackageRoot, PackageJson } from "./packageInfo"
 import { pluralize } from "./strings"

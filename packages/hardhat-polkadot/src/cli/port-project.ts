@@ -5,7 +5,7 @@ import jscodeshiftFactory from "jscodeshift"
 
 import { patchExportConfig, insertImport } from "./hh-config-transform"
 import { confirmDiff } from "./prompt"
-import { addOrMergeGitIgnore, printDiff } from "./fs-utils"
+import { addOrMergeGitIgnore, printDiff } from "./file-utils"
 
 const MODULE = "@parity/hardhat-polkadot"
 const PATCH = {
