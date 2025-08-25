@@ -1,11 +1,11 @@
-import { spawnSync } from "child_process"
-import os from "os"
 import fs from "fs"
 import chalk from "chalk"
 import path from "path"
 import jscodeshiftFactory from "jscodeshift"
+
 import { patchExportConfig, insertImport } from "./hh-config-transform"
 import { confirmDiff } from "./prompt"
+import { addOrMergeGitIgnore, printDiff } from "./fs-utils"
 
 const MODULE = "@parity/hardhat-polkadot"
 const PATCH = {
@@ -29,7 +29,9 @@ const PATCH = {
     },
 }
 
-// Detect indentation format of a file
+/**
+ * Detect indentation format of a file
+ */
 function detectIndent(src: string) {
     const m = src.match(/\n([ \t]+)"/)
     if (!m) return 2
@@ -39,11 +41,22 @@ function detectIndent(src: string) {
 
 export async function portProject(projectPath: string, yesFlag: boolean) {
     try {
+        // Generate migration changes across files
         const [pkgPath, packageJSONChanges, pkgChanged] = await updatePackageJSON(projectPath)
         const [HHConfigPath, HHConfigChanges, HHConfigChanged] = updateHHConfig(projectPath)
-        if ((HHConfigChanged || pkgChanged) && (yesFlag || (await confirmDiff()))) {
+        const [gitignorePath, originalContent, gitignoreChanges] =
+            await addOrMergeGitIgnore(projectPath)
+        const gitignoreChanged = originalContent !== gitignoreChanges
+        printDiff(gitignorePath, originalContent, gitignoreChanges)
+
+        // Write changes to disk if any & user consents
+        if (
+            (HHConfigChanged || pkgChanged || gitignoreChanged) &&
+            (yesFlag || (await confirmDiff()))
+        ) {
             fs.writeFileSync(pkgPath, packageJSONChanges, "utf8")
             fs.writeFileSync(HHConfigPath, HHConfigChanges, "utf8")
+            fs.writeFileSync(gitignorePath, gitignoreChanges, "utf8")
         }
     } catch (e) {
         console.error(chalk.red("Error") + ": Failed to port project")
@@ -52,6 +65,9 @@ export async function portProject(projectPath: string, yesFlag: boolean) {
     }
 }
 
+/**
+ * Generates `package.json` migration changes for PVM compatibility
+ */
 export async function updatePackageJSON(projectPath: string): Promise<[string, string, boolean]> {
     // Read `package.json` object & formatting metadata
     const pkgPath = path.join(projectPath, "package.json")
@@ -82,6 +98,9 @@ export async function updatePackageJSON(projectPath: string): Promise<[string, s
     return [pkgPath, newPkg, raw !== newPkg]
 }
 
+/**
+ * Generates `hardhat.config.*` migration changes for PVM compatibility
+ */
 export function updateHHConfig(projectPath: string): [string, string, boolean] {
     // Read hardhat.config.* from disk
     const files = fs.readdirSync(projectPath)
@@ -98,34 +117,4 @@ export function updateHHConfig(projectPath: string): [string, string, boolean] {
     const newHHConfig = root.toSource()
     printDiff(HHCJsonFile, prevHHConfig, newHHConfig)
     return [HHCJsonFile, newHHConfig, prevHHConfig !== newHHConfig]
-}
-
-function printDiff(filePath: string, before: string, after: string) {
-    if (before === after) {
-        console.log(chalk.bold.yellow(`No changes in ${filePath}`))
-        return
-    }
-    console.log(chalk.bold.hex("#ED3194")("Changes in"), chalk.bold(filePath))
-
-    const tmpA = fs.mkdtempSync(path.join(os.tmpdir(), "jsc-a-"))
-    const tmpB = fs.mkdtempSync(path.join(os.tmpdir(), "jsc-b-"))
-    const A = path.join(tmpA, path.basename(filePath))
-    const B = path.join(tmpB, path.basename(filePath))
-    fs.writeFileSync(A, before)
-    fs.writeFileSync(B, after)
-
-    const { stdout } = spawnSync(
-        "git",
-        ["--no-pager", "diff", "--no-prefix", "--no-index", "--unified=0", "--color", "--", A, B],
-        { encoding: "utf8" },
-    )
-    const lines = stdout.split(/\r?\n/)
-
-    for (const l of lines.slice(4)) {
-        if (l.startsWith("\\ No newline at end of file")) continue
-        console.log(l)
-    }
-
-    fs.rmSync(tmpA, { recursive: true, force: true })
-    fs.rmSync(tmpB, { recursive: true, force: true })
 }
