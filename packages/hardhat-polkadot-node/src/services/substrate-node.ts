@@ -1,9 +1,10 @@
 import { spawn, StdioOptions } from "child_process"
 import chalk from "chalk"
 import { runSimple } from "run-container"
+import Docker from "dockerode"
 
 import { NODE_START_PORT } from "../constants"
-import { getLatestImageName, waitForServiceToBeReady } from "../utils"
+import { waitForServiceToBeReady } from "../utils"
 import { Service } from "./index"
 
 const SUBSTRATE_NODE_CONTAINER_NAME = "substrate"
@@ -29,13 +30,13 @@ export class SubstrateNodeService extends Service {
 
             let stdioConfig: StdioOptions = "inherit"
             if (!this.blockProcess) {
-                stdioConfig = ["ignore", "ignore", "ignore"]
+                stdioConfig = ["ignore", "pipe", "pipe"]
             }
 
             this.process = spawn(pathToBinary, this.commandArgs, { stdio: stdioConfig })
 
-            this.process.on("error", this._handleOnError("server", reject))
-            this.process.on("exit", this._handleOnExit("server"))
+            this.process.on("error", this._handleOnError("substrate node", reject))
+            this.process.on("exit", this._handleOnExit("substrate node"))
 
             if (!this.blockProcess) {
                 resolve()
@@ -43,8 +44,16 @@ export class SubstrateNodeService extends Service {
         })
     }
 
-    public async from_docker(): Promise<void> {
-        const imageTag = await getLatestImageName(SUBSTRATE_NODE_CONTAINER_NAME)
+    public async from_docker(docker: Docker): Promise<void> {
+        // TODO: use latestImage once it is more stable
+        // const imageTag = await getLatestImageName(SUBSTRATE_NODE_CONTAINER_NAME)
+        const imageTag = "master-a209e590"
+
+        const container = docker.getContainer(SUBSTRATE_NODE_CONTAINER_NAME)
+        await container
+            .inspect()
+            .then(() => container.remove({ force: true }))
+            .catch(() => {})
 
         this.container = await runSimple({
             name: SUBSTRATE_NODE_CONTAINER_NAME,
@@ -90,13 +99,27 @@ export class SubstrateNodeService extends Service {
         }
     }
 
-    public static async waitForNodeToBeReady(port: number, maxAttempts = 20): Promise<void> {
+    public async waitForNodeToBeReady(maxAttempts = 20): Promise<void> {
         const payload = {
             jsonrpc: "2.0",
             method: "state_getRuntimeVersion",
             params: [],
             id: 1,
         }
-        await waitForServiceToBeReady(port, payload, maxAttempts)
+
+        try {
+            await waitForServiceToBeReady(this.port, payload, maxAttempts)
+        } catch (e: unknown) {
+            const output = await this.getOutput()
+            console.error("substrate node failed to lauch")
+            if (output.stdout) {
+                console.error("substrate node stdout:", output.stdout)
+            }
+            if (output.stderr) {
+                console.error("substrate node stderr:", output.stderr)
+            }
+
+            throw e
+        }
     }
 }

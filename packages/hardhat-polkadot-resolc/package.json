@@ -2,7 +2,7 @@
   "name": "@parity/hardhat-polkadot-resolc",
   "author": "Parity Technologies <admin@parity.io>",
   "license": "AGPL-3.0",
-  "version": "0.1.7",
+  "version": "0.1.9-pre0",
   "bugs": "https://github.com/paritytech/hardhat-polkadot/issues",
   "homepage": "https://github.com/paritytech/hardhat-polkadot/tree/master/packages/hardhat-polkadot-resolc#readme",
   "repository": {
@@ -37,9 +37,7 @@
   },
   "dependencies": {
     "@ethereumjs/util": "^10.0.0",
-    "@parity/resolc": "0.2.0",
-    "@types/debug": "^4",
-    "@types/node": "^22.15.3",
+    "@parity/resolc": "0.3.0",
     "axios": "1.9.0",
     "chalk": "4",
     "debug": "^4.4.0",
@@ -47,16 +45,18 @@
     "fs-extra": "^11.3.0",
     "fs-xattr": "^0.4.0",
     "semver": "^7.7.2",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.30.1",
+    "@eslint/js": "^9.34.0",
+    "@types/debug": "^4.1.12",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.15.24",
     "@types/semver": "^7.7.0",
     "eslint": "^9.25.1",
-    "@types/fs-extra": "^11.0.4",
     "globals": "^16.0.0",
     "rimraf": "^3.0.2",
+    "typescript": "^5.8.3",
     "typescript-eslint": "^8.31.0"
   },
   "peerDependencies": {

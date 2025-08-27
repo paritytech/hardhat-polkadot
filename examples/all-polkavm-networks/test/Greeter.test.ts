@@ -5,7 +5,7 @@ import { expect } from "chai"
 describe("Greeter", function () {
     // We define a fixture to reuse the same deployment across tests.
     //
-    // ⚠️ Note: `loadFixture` does not currently work with PolkaVM-compatible networks.
+    // ⚠️ Note: `loadFixture` does not currently work with Polkadot.
     async function deployGreeterFixture() {
         const [deployer] = await hre.ethers.getSigners()
 

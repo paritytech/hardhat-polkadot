@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.1.6-pre1 (2025-08-20)
+### Bug Fixes
+
+- displaying node output if node fails to start ([#291](https://github.com/paritytech/hardhat-polkadot/pull/291)) ([91c91f9](https://github.com/paritytech/hardhat-polkadot/commit/91c91f93fcc0e6a023fb55188ac6179d7c3315e9))
+
+## 0.1.6-pre0 (2025-08-18)
+### Bug Fixes
+
+- removing `bundledDependencies` ([#284](https://github.com/paritytech/hardhat-polkadot/pull/284)) ([558707fd](https://github.com/paritytech/hardhat-polkadot/commit/558707fde47e99123ec7f4946b735c49102b1d39))
+- fix(hardhat-polkadot-node): spin up an archive node ([#286](https://github.com/paritytech/hardhat-polkadot/pull/286)) ([ba1bc28](https://github.com/paritytech/hardhat-polkadot/commit/ba1bc28af3bd84b43d0e946b6876f03b027ea0bc))
+- Fixing tests; adding verbosity: ([#290](https://github.com/paritytech/hardhat-polkadot/pull/290)) ([2b8e0fc](https://github.com/paritytech/hardhat-polkadot/commit/2b8e0fc8cd659e42b6efb2b93295d5842d26bd36))
+
+## 0.1.5 (2025-08-13)
+### Bug fixes
+
+- Rename node to `anvil` to work with network helpers. ([#273](https://github.com/paritytech/hardhat-polkadot/pull/273)) ([79d2504](https://github.com/paritytech/hardhat-polkadot/commit/79d2504a7aa77dca9985b22bb2e16b46317dfbd8))
+- Support deploying factory contracts. ([#256](https://github.com/paritytech/hardhat-polkadot/pull/256)) ([c995b32](https://github.com/paritytech/hardhat-polkadot/commit/c995b32784802c90fc4ce617854608bb6d224be5))
+- Enable polkavm when not set in default Hardhat network. ([#253](https://github.com/paritytech/hardhat-polkadot/pull/253)) ([0f33d17](https://github.com/paritytech/hardhat-polkadot/commit/0f33d171ff353d3aced247759853f8a5939678b2))
+- Create applications as a combination of services ([#248](https://github.com/paritytech/hardhat-polkadot/pull/248)) ([dea3516](https://github.com/paritytech/hardhat-polkadot/commit/dea351652dd9eeeed427dbf9ff4b74e815bdc315))
+
+
 ## 0.1.4 (2025-07-22)
 ### Bug fixes
 

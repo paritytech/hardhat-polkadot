@@ -5,6 +5,7 @@ dummy-project
 node_modules/
 pnpm-lock.json
 .pnpm-store
+examples/**/package-lock.json
 
 # Build files
 dist

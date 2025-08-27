@@ -6,7 +6,7 @@ import { LRUCache } from "lru-cache"
 import fs from "fs"
 import os from "os"
 import path from "path"
-import type { HardhatNetworkUserConfig } from "hardhat/types/config"
+import type { HardhatNetworkConfig, HardhatNetworkUserConfig } from "hardhat/types/config"
 
 import { createRpcServer } from "./rpc-server"
 import type { CliCommands, CommandArguments, SplitCommands } from "./types"
@@ -14,7 +14,6 @@ import { PolkadotNodePluginError } from "./errors"
 import {
     BASE_URL,
     MAX_PORT_ATTEMPTS,
-    NETWORK_ACCOUNTS,
     NETWORK_ETH,
     NETWORK_GAS,
     NETWORK_GAS_PRICE,
@@ -22,6 +21,7 @@ import {
     ETH_RPC_ADAPTER_START_PORT,
     POLKADOT_TEST_NODE_NETWORK_NAME,
     RPC_ENDPOINT_PATH,
+    ETH_RPC_TO_SUBSTRATE_RPC,
 } from "./constants"
 
 export const PARITYPR_DOCKER_REGISTRY = "https://registry.hub.docker.com/v2/repositories/paritypr/"
@@ -149,6 +149,11 @@ export function constructCommandArgs(
         }
     }
 
+    // TODO: revisit this condition, possibly merge with something from above
+    if (!args?.forking) {
+        nodeCommands.push(`--pruning=archive`)
+    }
+
     return {
         nodeCommands,
         adapterCommands,
@@ -202,7 +207,7 @@ export function adjustTaskArgsForPort(taskArgs: string[], currentPort: number): 
 
 export function getNetworkConfig(url: string, chainId?: number) {
     return {
-        accounts: NETWORK_ACCOUNTS.POLKADOT,
+        accounts: "remote",
         gas: NETWORK_GAS.AUTO,
         gasPrice: NETWORK_GAS_PRICE.AUTO,
         gasMultiplier: 1,
@@ -263,10 +268,10 @@ export async function startServer(
         adapterCommands: { adapterPort: currentAdapterPort },
     })
     const commandArgs = constructCommandArgs(updatedCommands)
-
     return {
         commandArgs,
         server: createRpcServer({
+            docker: commands.docker,
             nodePath,
             adapterPath: adapterPath || commands.adapterCommands?.adapterBinaryPath,
             isForking: commands.forking?.enabled,
@@ -358,5 +363,27 @@ export async function waitForServiceToBeReady(
         waitTime = Math.min(waitTime * backoffFactor, maxWaitTime)
     }
 
-    throw new PolkadotNodePluginError("Server didn't respond after multiple attempts")
+    throw new PolkadotNodePluginError(
+        `Server at port ${port} didn't respond after multiple attempts`,
+    )
+}
+
+export function getPolkadotRpcUrl(
+    ethRpcUrl: HardhatNetworkConfig["url"],
+    polkadotRpcUrl: HardhatNetworkConfig["polkadotUrl"],
+): string {
+    // Case 1: Explicit config
+    if (polkadotRpcUrl) return polkadotRpcUrl
+
+    // Case 2: Infer from ETH RPC URL
+    if (ethRpcUrl) {
+        const url = ethRpcUrl.replace(/^https?:\/\//, "")
+        if (url in ETH_RPC_TO_SUBSTRATE_RPC) {
+            return ETH_RPC_TO_SUBSTRATE_RPC[url]
+        }
+    }
+
+    throw new PolkadotNodePluginError(
+        "Factory dependencies found. Please configure `polkadotUrl` in hardhat.config. See example https://github.com/paritytech/hardhat-polkadot/blob/79f3398708eab4f8b27e9ba087d7f2e59d83e796/examples/all-polkavm-networks/hardhat.config.ts#L53",
+    )
 }

@@ -26,15 +26,15 @@ export class ChopsticksService extends Service {
 
             let stdioConfig: StdioOptions = "inherit"
             if (!this.blockProcess) {
-                stdioConfig = ["ignore", "ignore", "ignore"]
+                stdioConfig = ["ignore", "pipe", "pipe"]
             }
 
             this.process = spawn(this.commandArgs[0], this.commandArgs.slice(1), {
                 stdio: stdioConfig,
             })
 
-            this.process.on("error", this._handleOnError("server", reject))
-            this.process.on("exit", this._handleOnExit("server"))
+            this.process.on("error", this._handleOnError("chopsticks server", reject))
+            this.process.on("exit", this._handleOnExit("chopsticks server"))
 
             if (!this.blockProcess) {
                 resolve()

@@ -1,9 +1,9 @@
 import { spawn, StdioOptions } from "child_process"
 import chalk from "chalk"
 import { run } from "run-container"
-
+import Docker from "dockerode"
 import { ETH_RPC_ADAPTER_START_PORT, RPC_ENDPOINT_PATH, NODE_RPC_URL_BASE_URL } from "../constants"
-import { getLatestImageName, waitForServiceToBeReady } from "../utils"
+import { waitForServiceToBeReady } from "../utils"
 import { Service } from "./index"
 
 const ADAPTER_CONTAINER_NAME = "eth-rpc"
@@ -23,7 +23,7 @@ export class EthRpcService extends Service {
             let stdioConfig: StdioOptions = "inherit"
 
             if (!this.blockProcess) {
-                stdioConfig = ["ignore", "ignore", "ignore"]
+                stdioConfig = ["ignore", "pipe", "pipe"]
             }
 
             if (this.blockProcess) {
@@ -44,8 +44,16 @@ export class EthRpcService extends Service {
         })
     }
 
-    public async from_docker(nodePort: number): Promise<void> {
-        const imageTag = await getLatestImageName(ADAPTER_CONTAINER_NAME)
+    public async from_docker(docker: Docker, nodePort: number): Promise<void> {
+        // TODO: use latestImage once it is more stable
+        // const imageTag = await getLatestImageName(ADAPTER_CONTAINER_NAME)
+        const imageTag = "master-87a8fb03"
+
+        const container = docker.getContainer(ADAPTER_CONTAINER_NAME)
+        await container
+            .inspect()
+            .then(() => container.remove({ force: true }))
+            .catch(() => {})
 
         this.container = await run({
             Image: `paritypr/eth-rpc:${imageTag}`,
@@ -101,13 +109,26 @@ export class EthRpcService extends Service {
         }
     }
 
-    static async waitForEthRpcToBeReady(port: number, maxAttempts = 20): Promise<void> {
+    async waitForEthRpcToBeReady(maxAttempts = 20): Promise<void> {
         const payload = {
             jsonrpc: "2.0",
             method: RPC_ENDPOINT_PATH,
             params: [],
             id: 1,
         }
-        await waitForServiceToBeReady(port, payload, maxAttempts)
+        try {
+            await waitForServiceToBeReady(this.port, payload, maxAttempts)
+        } catch (e: unknown) {
+            const output = await this.getOutput()
+            console.error("ETH RPC failed to lauch")
+            if (output.stdout) {
+                console.error("ETH RPC stdout:", output.stdout)
+            }
+            if (output.stderr) {
+                console.error("ETH RPC stderr:", output.stderr)
+            }
+
+            throw e
+        }
     }
 }

@@ -21,6 +21,7 @@ import {
     TASK_NODE_POLKADOT,
     TASK_NODE_POLKADOT_CREATE_SERVER,
     TASK_RUN_POLKADOT_NODE_IN_SEPARATE_PROCESS,
+    POLKADOT_NETWORK_ACCOUNTS,
 } from "./constants"
 import { createRpcServer } from "./rpc-server"
 import {
@@ -31,9 +32,9 @@ import {
 } from "./utils"
 import { PolkadotNodePluginError } from "./errors"
 import { interceptAndWrapTasksWithNode } from "./core/global-interceptor"
+import { handleFactoryDependencies } from "./core/factory-support"
 import { runScriptWithHardhat } from "./core/script-runner"
 import { RpcServer } from "./types"
-import { EthRpcService, SubstrateNodeService } from "./services"
 import "./type-extensions"
 
 task(TASK_RUN).setAction(async (args, hre, runSuper) => {
@@ -48,6 +49,7 @@ task(TASK_RUN).setAction(async (args, hre, runSuper) => {
             forkBlockNumber: hre.config.networks.hardhat.forking?.blockNumber,
             nodeCommands: hre.userConfig.networks?.hardhat?.nodeConfig,
             adapterCommands: hre.userConfig.networks?.hardhat?.adapterConfig,
+            docker: hre.userConfig.networks?.hardhat?.docker,
         },
         hre.hardhatArguments,
         path.resolve(args.script),
@@ -245,12 +247,17 @@ task(
         { run, network, userConfig, config },
         runSuper,
     ) => {
+        if (!noCompile) await run(TASK_COMPILE, { quiet: true })
         if (network.config.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
+            // If remote polkavm network
+            if (network.config.polkavm)
+                await handleFactoryDependencies(
+                    config.paths.artifacts,
+                    network.config.url,
+                    network.config.polkadotUrl,
+                    network.config.accounts,
+                )
             return await runSuper()
-        }
-
-        if (!noCompile) {
-            await run(TASK_COMPILE, { quiet: true })
         }
 
         const files = await run(TASK_TEST_GET_TEST_FILES, { testFiles })
@@ -296,12 +303,18 @@ task(
 
         try {
             await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false)
-            await SubstrateNodeService.waitForNodeToBeReady(nodePort)
-            await EthRpcService.waitForEthRpcToBeReady(adapterPort)
+            await server.services().substrateNodeService?.waitForNodeToBeReady()
+            await server.services().ethRpcService?.waitForEthRpcToBeReady()
             await configureNetwork(config, network, adapterPort || nodePort)
 
             let testFailures = 0
             try {
+                await handleFactoryDependencies(
+                    config.paths.artifacts,
+                    `http://localhost:${adapterPort}`,
+                    `ws://localhost:${nodePort}`,
+                    POLKADOT_NETWORK_ACCOUNTS,
+                )
                 testFailures = await run(TASK_TEST_RUN_MOCHA_TESTS, {
                     testFiles: files,
                     parallel,

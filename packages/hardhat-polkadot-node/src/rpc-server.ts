@@ -19,6 +19,14 @@ export function createRpcServer(opts: {
     let chopsticksService: ChopsticksService
 
     return {
+        services() {
+            return {
+                substrateNodeService: substrateNodeService ?? null,
+                ethRpcService: ethRpcService ?? null,
+                chopsticksService: chopsticksService ?? null,
+            }
+        },
+
         listen(
             nodeArgs: string[] = [],
             adapterArgs: string[] = [],
@@ -36,11 +44,11 @@ export function createRpcServer(opts: {
             }
 
             if (opts.docker && !opts.isForking) {
-                new Docker({ socketPath: getDockerSocketPath(opts.docker) })
+                const docker = new Docker({ socketPath: getDockerSocketPath(opts.docker) })
 
                 return Promise.all([
-                    substrateNodeService.from_docker(),
-                    ethRpcService.from_docker(substrateNodeService.port),
+                    substrateNodeService.from_docker(docker),
+                    ethRpcService.from_docker(docker, substrateNodeService.port),
                 ]).then(() => {})
             }
 
@@ -52,10 +60,10 @@ export function createRpcServer(opts: {
             }
 
             if (opts.docker && opts.isForking) {
-                new Docker({ socketPath: getDockerSocketPath(opts.docker) })
+                const docker = new Docker({ socketPath: getDockerSocketPath(opts.docker) })
 
                 chopsticksService.from_binary("")
-                return ethRpcService.from_docker(chopsticksService.port)
+                return ethRpcService.from_docker(docker, chopsticksService.port)
             }
 
             throw new PolkadotNodePluginError(
