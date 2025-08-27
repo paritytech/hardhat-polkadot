@@ -30,11 +30,11 @@ importers:
         specifier: ^5.3.0
         version: 5.3.0
       '@parity/hardhat-polkadot-node':
-        specifier: workspace:*
-        version: link:../hardhat-polkadot-node
+        specifier: '*'
+        version: 0.1.6-pre1(@types/node@22.15.24)(hardhat@2.26.0(ts-node@10.9.2(@types/node@22.15.24)(typescript@5.8.3))(typescript@5.8.3))(rxjs@7.8.2)(typescript@5.8.3)
       '@parity/hardhat-polkadot-resolc':
-        specifier: workspace:*
-        version: link:../hardhat-polkadot-resolc
+        specifier: '*'
+        version: 0.1.9-pre0(@types/node@22.15.24)(hardhat@2.26.0(ts-node@10.9.2(@types/node@22.15.24)(typescript@5.8.3))(typescript@5.8.3))(typescript@5.8.3)
       enquirer:
         specifier: 2.3.0
         version: 2.3.0
@@ -733,6 +733,16 @@ packages:
 
   '@openzeppelin/contracts@5.3.0':
     resolution: {integrity: sha512-zj/KGoW7zxWUE8qOI++rUM18v+VeLTTzKs/DJFkSzHpQFPD/jKKF0TrMxBfGLl3kpdELCNccvB3zmofSzm4nlA==}
+
+  '@parity/hardhat-polkadot-node@0.1.6-pre1':
+    resolution: {integrity: sha512-Wy45cEAvZI+kdKqCKnpBVJaG79S14BVh9/lkehW06o5yX94gc2osIDpb1lwB7tVsDTONiqj/UEjehBUya/5mDQ==}
+    peerDependencies:
+      hardhat: ^2.26.0
+
+  '@parity/hardhat-polkadot-resolc@0.1.9-pre0':
+    resolution: {integrity: sha512-Wm3VQ9g4pa14zHqADEuoOjUub8p/Hy8FG23+PHUccWfg4aBB2ZwEWEcc30+e6q6dDZoYs9bNdcXYjQwBliPxow==}
+    peerDependencies:
+      hardhat: ^2.26.0
 
   '@parity/resolc@0.3.0':
     resolution: {integrity: sha512-vWaKhqM89YH+Kn1y+0Kv92NG+0G7HktDhA3OdYvCoG320R4djpg/N/C9s90w/B0IWrRfaGR3Nk3R6O+VOBMjFA==}
@@ -3934,6 +3944,55 @@ snapshots:
       '@nomicfoundation/solidity-analyzer-win32-x64-msvc': 0.1.2
 
   '@openzeppelin/contracts@5.3.0': {}
+
+  '@parity/hardhat-polkadot-node@0.1.6-pre1(@types/node@22.15.24)(hardhat@2.26.0(ts-node@10.9.2(@types/node@22.15.24)(typescript@5.8.3))(typescript@5.8.3))(rxjs@7.8.2)(typescript@5.8.3)':
+    dependencies:
+      axios: 1.9.0(debug@4.4.1)
+      chalk: 4.1.2
+      debug: 4.4.1(supports-color@8.1.1)
+      dockerode: 4.0.6
+      ethers: 6.15.0
+      fast-glob: 3.3.3
+      hardhat: 2.26.0(ts-node@10.9.2(@types/node@22.15.24)(typescript@5.8.3))(typescript@5.8.3)
+      lru-cache: 11.1.0
+      polkadot-api: 1.15.2(rxjs@7.8.2)
+      run-container: 2.0.12
+      source-map-support: 0.5.21
+      ts-node: 10.9.2(@types/node@22.15.24)(typescript@5.8.3)
+    transitivePeerDependencies:
+      - '@microsoft/api-extractor'
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - bufferutil
+      - jiti
+      - postcss
+      - rxjs
+      - supports-color
+      - tsx
+      - typescript
+      - utf-8-validate
+      - yaml
+
+  '@parity/hardhat-polkadot-resolc@0.1.9-pre0(@types/node@22.15.24)(hardhat@2.26.0(ts-node@10.9.2(@types/node@22.15.24)(typescript@5.8.3))(typescript@5.8.3))(typescript@5.8.3)':
+    dependencies:
+      '@ethereumjs/util': 10.0.0
+      '@parity/resolc': 0.3.0(debug@4.4.1)
+      axios: 1.9.0(debug@4.4.1)
+      chalk: 4.1.2
+      debug: 4.4.1(supports-color@8.1.1)
+      find-up: 5.0.0
+      fs-extra: 11.3.0
+      fs-xattr: 0.4.0
+      hardhat: 2.26.0(ts-node@10.9.2(@types/node@22.15.24)(typescript@5.8.3))(typescript@5.8.3)
+      semver: 7.7.2
+      ts-node: 10.9.2(@types/node@22.15.24)(typescript@5.8.3)
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - supports-color
+      - typescript
 
   '@parity/resolc@0.3.0(debug@4.4.1)':
     dependencies:
