@@ -1,0 +1,92 @@
+[package]
+name = "pallet-evm-precompile-console"
+version = "1.0.0"
+authors = ["Parity Technologies <admin@parity.io>"]
+edition = "2021"
+license = "Apache-2.0"
+description = "Console.sol precompile for Substrate EVM"
+
+[dependencies]
+# Substrate - Core components (latest stable)
+sp-core = { version = "38.0.0", default-features = false }
+sp-std = { version = "14.0.0", default-features = false }
+sp-io = { version = "42.0.0", default-features = false }
+
+# Frontier - EVM compatibility layer (latest stable)
+fp-evm = { version = "2.0.0", default-features = false }
+pallet-evm = { version = "5.0.0", default-features = false }
+
+# Modern Ethereum libraries - Alloy (latest stable)
+# Alloy is the successor to ethers-rs, used by Reth, Foundry, SP1 zkVM
+alloy-primitives = { version = "1.3.1", default-features = false, features = ["rlp"] }
+alloy-sol-types = { version = "1.3.1", default-features = false }
+
+# Logging
+log = { version = "0.4.22", default-features = false }
+
+# Error handling - no_std compatible
+thiserror-no-std = { version = "2.0.2", default-features = false }
+
+# Optional: For hex encoding in no_std
+hex = { version = "0.4.3", default-features = false, features = ["alloc"] }
+
+[dev-dependencies]
+# Substrate test dependencies (latest stable)
+sp-runtime = { version = "43.0.0" }
+frame-support = { version = "42.0.0" }
+frame-system = { version = "42.0.0" }
+
+# Property-based testing (latest stable)
+proptest = "1.5.0"
+quickcheck = "1.0.3"
+quickcheck_macros = "1.0.0"
+
+# Standard testing utilities
+hex-literal = "0.4.1"
+pretty_assertions = "1.4.1"
+
+# For benchmarking
+criterion = { version = "0.5.1", features = ["html_reports"] }
+
+[features]
+default = ["std"]
+std = [
+    "sp-core/std",
+    "sp-std/std",
+    "sp-io/std",
+    "fp-evm/std",
+    "pallet-evm/std",
+    "alloy-primitives/std",
+    "alloy-sol-types/std",
+    "log/std",
+    "thiserror-no-std/std",
+    "hex/std",
+]
+
+# Enable for production deployment (excludes debug features)
+production = ["std"]
+
+# Enable for enhanced testing
+testing = ["std"]
+
+# Enable benchmarks
+benchmarks = ["std", "criterion"]
+
+[profile.release]
+# Optimize for small binary size and performance
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
+
+[profile.production]
+inherits = "release"
+# Even more aggressive optimizations for production
+lto = "fat"
+strip = "symbols"
+
+[[bench]]
+name = "console_benchmark"
+harness = false
+required-features = ["benchmarks"]
