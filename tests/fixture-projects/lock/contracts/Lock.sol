@@ -29,6 +29,7 @@ contract Lock {
 
         emit Withdrawal(address(this).balance, block.timestamp);
 
-        owner.transfer(address(this).balance);
+        (bool sent, ) = owner.call{value: address(this).balance}("");
+        require(sent, "Failed to send Ether");
     }
 }
