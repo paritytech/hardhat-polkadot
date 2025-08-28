@@ -54,7 +54,7 @@ export function updateSolc(version: string) {
 
     if (!currentVersion || !semver.satisfies(currentVersion, version)) {
         try {
-            execSync(`npm install --save-dev --save-exact solc@${version} --quiet`, {
+            execSync(`pnpm install --save-dev --save-exact solc@${version} --quiet`, {
                 stdio: "inherit",
             })
         } catch (error) {
