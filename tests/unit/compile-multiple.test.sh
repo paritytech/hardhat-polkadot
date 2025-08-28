@@ -6,6 +6,7 @@ set -e # Fail if any command fails
 # Given
 cp ./multiple-compile.config.js ./foo/hardhat.config.js # relative to tmp folder
 cd ./foo # relative to tmp folder
+pnpm add hardhat@2.26.0
 pnpm add "$HARDHAT_POLKADOT_NODE_TGZ_PATH"
 pnpm add "$HARDHAT_POLKADOT_RESOLC_TGZ_PATH"
 pnpm add "$HARDHAT_POLKADOT_TGZ_PATH"
