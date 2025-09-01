@@ -1,4 +1,3 @@
-import { SolcOutput } from "@parity/resolc"
 import type { CompilerInput, SolcConfig } from "hardhat/types"
 import { CompilerPlatform } from "hardhat/internal/solidity/compiler/downloader"
 
@@ -73,7 +72,7 @@ export interface ResolcBuild {
 }
 
 export interface ICompiler {
-    compile(input: CompilerInput, config: ResolcConfig): Promise<SolcOutput>
+    compile(input: CompilerInput, config: ResolcConfig): Promise<any>
 }
 
 export enum CompilerName {

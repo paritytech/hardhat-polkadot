@@ -61,8 +61,15 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
         optimizer: { ...optimizer },
         outputSelection: {
             "*": {
-                "*": ["abi"],
-            },
+                "*": [
+                    "abi",
+                    "metadata",
+                    "evm.bytecode",
+                    "evm.deployedBytecode",
+                    "evm.methodIdentifiers",
+                ],
+                "": ["ast"]
+            }
         },
         evmVersion: compiler.settings.evmVersion,
         resolc: resolc,

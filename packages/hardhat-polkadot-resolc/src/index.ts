@@ -99,8 +99,8 @@ extendEnvironment((hre) => {
 
     hre.config.paths.artifacts = artifactsPath
     hre.config.paths.cache = cachePath
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(hre as any).artifacts = new Artifacts(artifactsPath)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ; (hre as any).artifacts = new Artifacts(artifactsPath)
 
     if (
         (hre.config.solidity.compilers.length > 1 && hre.config.resolc.compilerSource === "npm") ||
@@ -219,8 +219,23 @@ subtask(
                 ...hre.config.resolc.settings,
             },
         }
+        const compOut = await compile(config, args.input);
 
-        return await compile(config, args.input)
+        // This is made to be compatible with @openzeppelin/hardhat-upgrades
+        Object.keys(compOut.contracts).map((file) => {
+            Object.keys(compOut.contracts[file]).map((contract) => {
+                const bytecode = compOut.contracts[file][contract].evm.bytecode ? compOut.contracts[file][contract].evm.bytecode.object : '';
+                compOut.contracts[file][contract].evm.bytecode = {
+                    "functionDebugData": {},
+                    "generatedSources": [],
+                    "linkReferences": {},
+                    "object": bytecode,
+                    "opcodes": '',
+                    "sourceMap": ''
+                }
+            })
+        })
+        return compOut
     },
 )
 

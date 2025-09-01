@@ -1,6 +1,5 @@
 import { spawn } from "child_process"
 import type { CompilerInput } from "hardhat/types"
-import { type SolcOutput } from "@parity/resolc"
 import type { ResolcConfig } from "../types"
 import { extractCommands } from "../utils"
 import { ResolcPluginError } from "../errors"
@@ -8,7 +7,7 @@ import { ResolcPluginError } from "../errors"
 export async function compileWithBinary(
     input: CompilerInput,
     config: ResolcConfig,
-): Promise<SolcOutput> {
+): Promise<any> {
     const { resolcPath, optimizer } = config.settings!
 
     const commands = extractCommands(config)
@@ -33,11 +32,7 @@ export async function compileWithBinary(
         sources: input.sources,
         settings: {
             optimizer: optimizerSettings,
-            outputSelection: {
-                "*": {
-                    "*": ["abi"],
-                },
-            },
+            outputSelection: input.settings.outputSelection
         },
     })
 
