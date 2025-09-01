@@ -7,6 +7,7 @@ import { ResolcPluginError } from "../errors"
 export async function compileWithBinary(
     input: CompilerInput,
     config: ResolcConfig,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
     const { resolcPath, optimizer } = config.settings!
 
@@ -32,7 +33,7 @@ export async function compileWithBinary(
         sources: input.sources,
         settings: {
             optimizer: optimizerSettings,
-            outputSelection: input.settings.outputSelection
+            outputSelection: input.settings.outputSelection,
         },
     })
 

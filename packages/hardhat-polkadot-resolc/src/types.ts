@@ -72,6 +72,7 @@ export interface ResolcBuild {
 }
 
 export interface ICompiler {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     compile(input: CompilerInput, config: ResolcConfig): Promise<any>
 }
 

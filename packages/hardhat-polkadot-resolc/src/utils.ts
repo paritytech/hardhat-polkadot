@@ -68,8 +68,8 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
                     "evm.deployedBytecode",
                     "evm.methodIdentifiers",
                 ],
-                "": ["ast"]
-            }
+                "": ["ast"],
+            },
         },
         evmVersion: compiler.settings.evmVersion,
         resolc: resolc,
