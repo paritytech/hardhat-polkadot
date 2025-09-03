@@ -36,7 +36,6 @@ import { interceptAndWrapTasksWithNode } from "./core/global-interceptor"
 import { handleFactoryDependencies } from "./core/factory-support"
 import { runScriptWithHardhat } from "./core/script-runner"
 import { RpcServer } from "./types"
-import { EthRpcService, SubstrateNodeService } from "./services"
 import "./type-extensions"
 
 task(TASK_RUN).setAction(async (args, hre, runSuper) => {
@@ -305,8 +304,8 @@ task(
 
         try {
             await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false)
-            await SubstrateNodeService.waitForNodeToBeReady(nodePort)
-            await EthRpcService.waitForEthRpcToBeReady(adapterPort)
+            await server.services().substrateNodeService?.waitForNodeToBeReady()
+            await server.services().ethRpcService?.waitForEthRpcToBeReady()
             await configureNetwork(config, network, adapterPort || nodePort)
 
             let testFailures = 0

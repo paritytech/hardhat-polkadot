@@ -8,6 +8,11 @@ on:
         description: Branch to use for polkadot-sdk
         required: true
         default: "anp-dirty-node"
+      mark-as-latest:
+        type: boolean
+        required: false
+        default: true
+        description: Mark as latest
 
 permissions:
   contents: write
@@ -17,7 +22,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  POLKADOT_SDK_REPO: 'https://github.com/paritytech/polkadot-sdk.git'
+  POLKADOT_SDK_REPO: 'https://github.com/paritytech/polkadot-sdk'
   POLKADOT_SDK_BRANCH: ${{ inputs.sdk-branch || 'anp-dirty-node' }}
 
 jobs:
@@ -70,6 +75,7 @@ jobs:
         if: matrix.os_tag == 'darwin'
         run: |
           xcode-select --install || true
+          brew uninstall cmake
           brew install openssl pkg-config git curl llvm protobuf jq cmake
 
       - name: Checkout (repo context)
@@ -132,10 +138,6 @@ jobs:
           cp "polkadot-sdk/target/${{ matrix.target }}/release/revive-dev-node${{ matrix.exe_ext }}" "out/revive-dev-node-${{ matrix.os_tag }}-${{ matrix.arch_tag }}${{ matrix.exe_ext }}"
           cp "polkadot-sdk/target/${{ matrix.target }}/release/eth-rpc${{ matrix.exe_ext }}" "out/eth-rpc-${{ matrix.os_tag }}-${{ matrix.arch_tag }}${{ matrix.exe_ext }}"
 
-      - name: Create sha-256 checksum
-        run: |
-          shasum -a 256 out/* > out/checksums.txt
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -159,6 +161,10 @@ jobs:
         run: |
           ls -la dist
 
+      - name: Save latest commit hash to env
+        run: |
+          echo "LATEST_COMMIT_HASH=$(git ls-remote ${{ env.POLKADOT_SDK_REPO }} refs/heads/${{ env.POLKADOT_SDK_BRANCH }} | awk '{ print $1 }')" >> "$GITHUB_ENV"
+
       - name: Generate checksums and release body
         shell: bash
         run: |
@@ -167,14 +173,14 @@ jobs:
           DATE=$(date +'%Y-%m-%dT%H:%M:%S%z')
 
           # switch to dist folder, so that we can generate checksums for all downloaded artifacts
-          # relative to root folder
           pushd dist >/dev/null
-          shasum -a 256 * | grep -v 'checksums.txt' > ../checksums.txt
+          shasum -a 256 * > checksums.txt
           popd >/dev/null # switch back to root folder
 
           # Build release notes with real date and checksums
           {
             echo "Build date: ${DATE}"
+            echo "Based on [${{ env.POLKADOT_SDK_BRANCH }}](https://github.com/paritytech/polkadot-sdk/tree/${{ env.POLKADOT_SDK_BRANCH }})#[${{ env.LATEST_COMMIT_HASH }}](${{ env.POLKADOT_SDK_REPO }}/commit/${{ env.LATEST_COMMIT_HASH }})"
             echo
             echo "⚠️ Disclaimer: This is a temporary release for testing purposes, it may not be stable and not meant to be used in production."
             echo
@@ -186,7 +192,7 @@ jobs:
             echo
             echo "Checksums:"
             echo '```'
-            sed 's/^/  /' checksums.txt
+            sed 's/^/  /' dist/checksums.txt
             echo '```'
           } > RELEASE_BODY.md
 
@@ -207,6 +213,7 @@ jobs:
             dist/*
 
       - name: Create/Update Latest Tag (nodes-latest)
+        if: inputs.mark-as-latest
         uses: softprops/action-gh-release@v2
         with:
           tag_name: nodes-latest

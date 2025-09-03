@@ -19,6 +19,14 @@ export function createRpcServer(opts: {
     let chopsticksService: ChopsticksService
 
     return {
+        services() {
+            return {
+                substrateNodeService: substrateNodeService ?? null,
+                ethRpcService: ethRpcService ?? null,
+                chopsticksService: chopsticksService ?? null,
+            }
+        },
+
         listen(
             nodeArgs: string[] = [],
             adapterArgs: string[] = [],
