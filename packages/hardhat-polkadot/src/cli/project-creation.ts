@@ -3,8 +3,7 @@ import fsExtra from "fs-extra"
 import path from "path"
 
 import { HARDHAT_POLKADOT_NAME } from "../constants"
-import { getRecommendedGitIgnore } from "../project-structure"
-import { getAllFilesMatching } from "./fs-utils"
+import { addOrMergeGitIgnore, getAllFilesMatching } from "./file-utils"
 import { fromEntries } from "./lang"
 import { getPackageJson, getPackageRoot, PackageJson } from "./packageInfo"
 import { pluralize } from "./strings"
@@ -187,20 +186,6 @@ Please delete or rename ${pluralize(existingFiles.length, "it", "them")} and try
 
         fsExtra.copySync(sampleProjectFile, targetProjectFile)
     }
-}
-
-async function addGitIgnore(projectRoot: string) {
-    const gitIgnorePath = path.join(projectRoot, ".gitignore")
-
-    let content = await getRecommendedGitIgnore()
-
-    if (await fsExtra.pathExists(gitIgnorePath)) {
-        const existingContent = await fsExtra.readFile(gitIgnorePath, "utf-8")
-        content = `${existingContent}
-${content}`
-    }
-
-    await fsExtra.writeFile(gitIgnorePath, content)
 }
 
 async function printRecommendedDepsInstallationInstructions(
@@ -402,7 +387,8 @@ export async function createProject() {
     const { projectRoot, shouldAddGitIgnore } = responses
 
     if (shouldAddGitIgnore) {
-        await addGitIgnore(projectRoot)
+        const [gitIgnorePath, , content] = await addOrMergeGitIgnore(projectRoot)
+        await fsExtra.writeFile(gitIgnorePath, content)
     }
 
     await copySampleProject(projectRoot, action, isEsm)
