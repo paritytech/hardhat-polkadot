@@ -11,5 +11,9 @@ module.exports = {
                 url: "https://testnet-passet-hub.polkadot.io",
             },
         },
+        localNode: {
+            polkavm: true,
+            url: `http://127.0.0.1:8545`,
+        },
     },
 }
