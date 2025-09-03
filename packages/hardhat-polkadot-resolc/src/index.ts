@@ -219,8 +219,25 @@ subtask(
                 ...hre.config.resolc.settings,
             },
         }
+        const compOut = await compile(config, args.input)
 
-        return await compile(config, args.input)
+        // This is made to be compatible with @openzeppelin/hardhat-upgrades
+        Object.keys(compOut.contracts).map((file) => {
+            Object.keys(compOut.contracts[file]).map((contract) => {
+                const bytecode = compOut.contracts[file][contract].evm.bytecode
+                    ? compOut.contracts[file][contract].evm.bytecode.object
+                    : ""
+                compOut.contracts[file][contract].evm.bytecode = {
+                    functionDebugData: {},
+                    generatedSources: [],
+                    linkReferences: {},
+                    object: bytecode,
+                    opcodes: "",
+                    sourceMap: "",
+                }
+            })
+        })
+        return compOut
     },
 )
 
