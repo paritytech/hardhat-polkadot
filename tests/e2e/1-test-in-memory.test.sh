@@ -12,11 +12,12 @@ run_test() {
   echo "Running test in fixture-projects/$PROJECT_DIR for ${CONFIG_FILE}; network ${NETWORK_NAME}"
 
   cd "$TMP_TESTS_DIR/$PROJECT_DIR"
+  pnpm add "$HARDHAT_POLKADOT_NODE_TGZ_PATH"
+  pnpm add "$HARDHAT_POLKADOT_RESOLC_TGZ_PATH"
+  pnpm add "$HARDHAT_POLKADOT_TGZ_PATH"
+  pnpm install
   cp "../$CONFIG_FILE" ./hardhat.config.js
-  npm add "$HARDHAT_POLKADOT_NODE_TGZ_PATH"
-  npm add "$HARDHAT_POLKADOT_RESOLC_TGZ_PATH"
-  npm add "$HARDHAT_POLKADOT_TGZ_PATH"
-  npm install
+
 
   # When
   RUN_TESTS_OUTPUT="$(npx hardhat test --show-stack-traces)"
