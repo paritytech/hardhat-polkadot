@@ -1,6 +1,16 @@
 ## Release guide
 
-### NPM packages (Hardhat Polkadot)
+This repository releases 5 artifacts:
+
+A) [@parity/hardhat-polkadot](https://www.npmjs.com/package/@parity/hardhat-polkadot)
+B) [@parity/hardhat-polkadot-node](https://www.npmjs.com/package/@parity/hardhat-polkadot-node) (included in A)
+C) [@parity/hardhat-polkadot-resolc](https://www.npmjs.com/package/@parity/hardhat-polkadot-resolc) (included in A)
+D) *Prebuilt [revive-dev-node](https://github.com/paritytech/polkadot-sdk/tree/master/substrate/frame/revive/dev-node) binary
+E) *Prebuilt [eth-rpc](https://github.com/paritytech/polkadot-sdk/tree/master/substrate/frame/revive/rpc) binary
+
+
+
+### Release A, B and C
 
 - Go to the [Releases page](https://github.com/paritytech/hardhat-polkadot/releases) and click “Draft new release”.
 - Set tag (vX.Y.Z), title, and notes; click “Publish release”.
@@ -9,7 +19,7 @@
 - Verify the downstream publish in [`paritytech/npm_publish_automation` Actions](https://github.com/paritytech/npm_publish_automation/actions).
 - Confirm new versions appear on NPM.
 
-### Dev Nodes binaries (revive-dev-node, eth-rpc)
+### Release D and E
 
 - Open [Actions → Release Polkadot Development Runtime](https://github.com/paritytech/hardhat-polkadot/actions/workflows/release-dev-node.yml).
 - Click “Run workflow”, set `sdk-branch` if needed, then “Run”.

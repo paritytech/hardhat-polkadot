@@ -18,6 +18,7 @@ run_test() {
   pnpm install
   cp "../$CONFIG_FILE" ./hardhat.config.js
 
+
   # When
   RUN_TESTS_OUTPUT="$(npx hardhat test --show-stack-traces)"
 
