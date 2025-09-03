@@ -75,6 +75,7 @@ jobs:
         if: matrix.os_tag == 'darwin'
         run: |
           xcode-select --install || true
+          brew uninstall cmake
           brew install openssl pkg-config git curl llvm protobuf jq cmake
 
       - name: Checkout (repo context)

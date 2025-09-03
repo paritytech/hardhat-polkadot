@@ -13,6 +13,7 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@parity/hardhat-polkadot": "^0.1.8",
+    "@polkadot/util-crypto": "^13.5.4",
     "polkadot-api": "^1.14.1"
   },
   "dependencies": {
