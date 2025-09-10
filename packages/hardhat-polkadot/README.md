@@ -69,9 +69,6 @@ const config: HardhatUserConfig = {
       },
     },
   },
-  resolc: {
-    compilerSource: "npm",
-  },
 };
 ```
 
