@@ -30,7 +30,7 @@ export class SubstrateNodeService extends Service {
 
             let stdioConfig: StdioOptions = "inherit"
             if (!this.blockProcess) {
-                stdioConfig = ["ignore", "pipe", "pipe"]
+                stdioConfig = ["ignore", "ignore", "ignore"]
             }
 
             this.process = spawn(pathToBinary, this.commandArgs, { stdio: stdioConfig })
