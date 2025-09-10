@@ -22,6 +22,8 @@ export class EthRpcService extends Service {
         return new Promise((resolve, reject) => {
             let stdioConfig: StdioOptions = "inherit"
             if (!this.blockProcess) {
+                // Use "ignore" to prevent stdout/stderr from being piped into an in-memory buffer,
+                // which could fill up and block the child process.
                 stdioConfig = ["ignore", "ignore", "ignore"]
             }
 
