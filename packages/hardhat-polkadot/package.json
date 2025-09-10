@@ -41,7 +41,8 @@
         "prettier:fix": "prettier --write '**/*.{md,yml,ts,js,json}'",
         "eslint:check": "eslint 'src/**/*.ts'",
         "eslint:fix": "eslint 'src/**/*.ts' --fix",
-        "pack": "./prepack.sh && npm pack --silent"
+        "pack": "npm pack --silent",
+        "pack:dev": "./prepack.sh && npm pack --silent && ./postpack.sh"
     },
     "files": [
         "dist/",

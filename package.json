@@ -12,7 +12,7 @@
   "scripts": {
     "build": "pnpm run clean && pnpm --recursive run build",
     "build:dev": "pnpm --recursive run build:dev",
-    "reset:pack": "pnpm run build && pnpm --filter ./packages/hardhat-polkadot run pack",
+    "reset:pack": "pnpm run build && pnpm --filter ./packages/hardhat-polkadot run pack:dev",
     "clean": "pnpm --recursive run clean",
     "prettier:check": "pnpm --recursive run prettier:check && npx prettier --check 'examples/**/*.{md,yml,ts,js,json}'",
     "prettier:fix": "pnpm --recursive run prettier:fix && npx prettier --check 'examples/**/*.{md,yml,ts,js,json}'",

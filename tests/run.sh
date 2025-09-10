@@ -17,8 +17,7 @@ cd ..
 pnpm install
 pnpm run build
 cd ./packages/hardhat-polkadot
-./prepack.sh # run prepack script
-HARDHAT_POLKADOT_TGZ=$(pnpm pack --silent | grep "parity-hardhat-polkadot-*.*.*.tgz")
+HARDHAT_POLKADOT_TGZ=$(pnpm pack:dev --silent | grep "parity-hardhat-polkadot-*.*.*.tgz")
 export HARDHAT_POLKADOT_TGZ_PATH="$(pwd)/$HARDHAT_POLKADOT_TGZ"
 cd ../../tests >/dev/null
 
