@@ -58,7 +58,9 @@ extendConfig((config, userConfig) => {
     const hasPolkavm = Object.values(config.networks).some(
         (network: NetworkConfig) => network && network.polkavm,
     )
-    if (!hasPolkavm) return
+    const targetEvm = config.resolc?.target == "evm" ? true : false
+
+    if (!hasPolkavm || targetEvm) return
 
     // We check for `npm` as `compilerSource`, because for every other case
     // we prefer using the binary.
@@ -86,6 +88,7 @@ extendEnvironment((hre) => {
     if (!hre.network.config.polkavm) return
 
     hre.network.polkavm = hre.network.config.polkavm
+    if (hre.config.resolc?.target == "evm") return
 
     let artifactsPath = hre.config.paths.artifacts
     if (!artifactsPath.endsWith("-pvm")) {
@@ -135,7 +138,7 @@ task(TASK_COMPILE).setAction(
 subtask(
     TASK_COMPILE_SOLIDITY_GET_SOURCE_NAMES,
     async (args: { sourcePaths: string[] }, hre, runSuper) => {
-        if (!hre.network.polkavm) {
+        if (!hre.network.polkavm || hre.config.resolc?.target == "evm") {
             return await runSuper(args)
         }
         const contractsToCompile: string[] | undefined =
@@ -168,7 +171,7 @@ subtask(
         hre,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): Promise<any> => {
-        if (!hre.network.polkavm) {
+        if (!hre.network.polkavm || hre.config.resolc?.target == "evm") {
             return getArtifactFromContractOutput(sourceName, contractName, contractOutput)
         }
         const bytecode: string =
@@ -196,7 +199,7 @@ subtask(
         hre,
         runSuper,
     ) => {
-        if (!hre.network.polkavm) {
+        if (!hre.network.polkavm || hre.config.resolc?.target == "evm") {
             return await runSuper(args)
         }
 
@@ -305,7 +308,7 @@ subtask(
         hre,
         runSuper,
     ): Promise<{ output: CompilerOutput; solcBuild: SolcBuild }> => {
-        if (!hre.network.polkavm) {
+        if (!hre.network.polkavm || hre.config.resolc?.target == "evm") {
             return await runSuper(args)
         }
 
@@ -520,15 +523,12 @@ subtask(TASK_COMPILE_SOLIDITY_EMIT_ARTIFACTS).setAction(
 
 subtask(TASK_COMPILE_SOLIDITY_GET_COMPILER_INPUT, async (taskArgs, hre, runSuper) => {
     const compilerInput: ReviveCompilerInput = await runSuper(taskArgs)
-    if (!hre.network.polkavm) {
-        return compilerInput
-    }
 
     return compilerInput
 })
 
 subtask(TASK_COMPILE_REMOVE_OBSOLETE_ARTIFACTS, async (taskArgs, hre, runSuper) => {
-    if (!hre.network.polkavm) {
+    if (!hre.network.polkavm || hre.config.resolc?.target == "evm") {
         return await runSuper(taskArgs)
     }
 
