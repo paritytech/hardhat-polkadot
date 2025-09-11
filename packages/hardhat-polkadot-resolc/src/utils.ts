@@ -58,7 +58,7 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
 
     compiler.settings = {
         ...settings,
-        optimizer: { ...optimizer },
+        optimizer,
         outputSelection: {
             "*": {
                 "*": [
@@ -71,8 +71,7 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
                 "": ["ast"],
             },
         },
-        evmVersion: compiler.settings.evmVersion,
-        resolc: resolc,
+        resolc,
     }
 
     const [major, minor] = getVersionComponents(compiler.version)
