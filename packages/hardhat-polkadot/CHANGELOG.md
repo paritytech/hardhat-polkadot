@@ -1,4 +1,11 @@
 # Changelog
+
+## 0.2.0-pre1 (2025-09-11)
+### Internal
+
+- Bumped `@parity/hardhat-polkadot-node` to `0.2.0-pre1`.
+
+
 ## 0.2.0-pre0 (2025-09-11)
 ### Features
 
@@ -10,8 +17,8 @@
 
 ### Internal
 
-- Bumped `@parity/hardhat-polkadot-node` to `0.1.6-pre2`.
-- Bumped `@parity/hardhat-polkadot-resolc` to `0.1.9-pre1`.
+- Bumped `@parity/hardhat-polkadot-node` to `0.2.0-pre0`.
+- Bumped `@parity/hardhat-polkadot-resolc` to `0.2.0-pre0`.
 
 
 ## 0.1.11-pre1 (2025-08-20)
