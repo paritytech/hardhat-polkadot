@@ -1,5 +1,5 @@
 # Changelog
-## 0.1.11-pre2 (2025-09-11)
+## 0.2.0-pre0 (2025-09-11)
 ### Features
 
 - Add EVM Backend support. ([#308](https://github.com/paritytech/hardhat-polkadot/pull/308)) ([0c46b99](https://github.com/paritytech/hardhat-polkadot/commit/0c46b994c45811a54a22852591a67d90d134c884))
