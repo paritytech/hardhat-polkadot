@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0-pre1 (2025-09-11)
+### Bug Fixes
+
+- Fix test in memory node with target evm. ([#315](https://github.com/paritytech/hardhat-polkadot/pull/315)) ([25ffa41](https://github.com/paritytech/hardhat-polkadot/commit/25ffa41d639e49d4c099af954ecfca62384a3267))
+
+
 ## 0.2.0-pre0 (2025-09-11)
 ### Features
 
