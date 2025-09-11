@@ -249,7 +249,7 @@ task(
         runSuper,
     ) => {
         if (!noCompile) await run(TASK_COMPILE, { quiet: true })
-        if (network.config.polkadot !== true || network.name !== HARDHAT_NETWORK_NAME) {
+        if (!network.config.polkadot || network.name !== HARDHAT_NETWORK_NAME) {
             // If remote polkadot network
             if (network.config.polkadot)
                 await handleFactoryDependencies(
