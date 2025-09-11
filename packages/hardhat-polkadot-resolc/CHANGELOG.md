@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.0-pre0 (2025-09-11)
+### Features
+
+- Add EVM Backend support. ([#308](https://github.com/paritytech/hardhat-polkadot/pull/308)) ([0c46b99](https://github.com/paritytech/hardhat-polkadot/commit/0c46b994c45811a54a22852591a67d90d134c884))
+
+### Bug Fixes
+
+- Fix recompilation issue. ([#311](https://github.com/paritytech/hardhat-polkadot/pull/311)) ([704e7ee](https://github.com/paritytech/hardhat-polkadot/commit/704e7ee01abd03bcaadfb3959ff1911363948db1))
+- Extend compilation output. ([#302](https://github.com/paritytech/hardhat-polkadot/pull/302)) ([6df4038](https://github.com/paritytech/hardhat-polkadot/commit/6df4038bb861d223c23b053fa1f6e177bb1e5c0b))
+- Replace `npm` references with `pnpm`. ([#301](https://github.com/paritytech/hardhat-polkadot/pull/301)) ([985f345](https://github.com/paritytech/hardhat-polkadot/commit/985f3459b587e735661ff47c47dbbaade8068d62))
+
+### Chores
+
+- Bump `@eslint/js` from 9.30.1 to 9.34.0. ([#296](https://github.com/paritytech/hardhat-polkadot/pull/296)) ([82493d0](https://github.com/paritytech/hardhat-polkadot/commit/82493d06ce23b9e901690ebd30bf039d44945ec2))
+
+
 ## 0.1.9-pre0 (2025-08-18)
 ### Bug Fixes
 
@@ -8,6 +24,7 @@
 ### Chores
 
 - Bump `@parity/resolc` to 0.3.0. ([#216](https://github.com/paritytech/hardhat-polkadot/pull/216)) ([20cd285](https://github.com/paritytech/hardhat-polkadot/commit/20cd285a3d9d64356294038153e518e38a63f0d7))
+
 
 ## 0.1.8 (2025-08-13)
 ### Bug Fixes
@@ -19,6 +36,7 @@
 ### Chores
 
 - Bump `@parity/resolc` to 0.3.0. ([#216](https://github.com/paritytech/hardhat-polkadot/pull/216)) ([20cd285](https://github.com/paritytech/hardhat-polkadot/commit/20cd285a3d9d64356294038153e518e38a63f0d7))
+
 
 ## 0.1.7 (2025-07-22)
 ### Chores
