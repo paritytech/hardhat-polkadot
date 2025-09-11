@@ -35,3 +35,7 @@ export interface SplitCommands {
     nodeCommands: string[]
     adapterCommands?: string[]
 }
+
+export interface TargetVM {
+    target?: "evm" | "pvm"
+}

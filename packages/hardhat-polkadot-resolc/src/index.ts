@@ -54,13 +54,13 @@ import { ResolcCompilerDownloader } from "./downloader"
 const logDebug = debug("hardhat:core:tasks:compile")
 
 extendConfig((config, userConfig) => {
-    // Check if any network is using the polkavm flag
-    const hasPolkavm = Object.values(config.networks).some(
-        (network: NetworkConfig) => network && network.polkavm,
+    // Check if any network is using the polkadot flag
+    const hasPolkadot = Object.values(config.networks).some(
+        (network: NetworkConfig) => network && !!network.polkadot,
     )
-    const targetEvm = config.resolc?.target == "evm" ? true : false
+    const targetEvm = typeof config.networks.polkadot === "boolean" ? false : config.networks.polkadot?.target === "evm" ? true : false;
 
-    if (!hasPolkavm || targetEvm) return
+    if (!hasPolkadot || targetEvm) return
 
     // We check for `npm` as `compilerSource`, because for every other case
     // we prefer using the binary.
@@ -85,10 +85,10 @@ extendConfig((config, userConfig) => {
 })
 
 extendEnvironment((hre) => {
-    if (!hre.network.config.polkavm) return
+    if (!hre.network.config.polkadot) return
 
-    hre.network.polkavm = hre.network.config.polkavm
-    if (hre.config.resolc?.target == "evm") return
+    hre.network.polkadot = hre.network.config.polkadot
+    if (typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm") return
 
     let artifactsPath = hre.config.paths.artifacts
     if (!artifactsPath.endsWith("-pvm")) {
@@ -102,8 +102,8 @@ extendEnvironment((hre) => {
 
     hre.config.paths.artifacts = artifactsPath
     hre.config.paths.cache = cachePath
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(hre as any).artifacts = new Artifacts(artifactsPath)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ; (hre as any).artifacts = new Artifacts(artifactsPath)
 
     if (
         (hre.config.solidity.compilers.length > 1 && hre.config.resolc.compilerSource === "npm") ||
@@ -138,7 +138,7 @@ task(TASK_COMPILE).setAction(
 subtask(
     TASK_COMPILE_SOLIDITY_GET_SOURCE_NAMES,
     async (args: { sourcePaths: string[] }, hre, runSuper) => {
-        if (!hre.network.polkavm || hre.config.resolc?.target == "evm") {
+        if (!hre.network.polkadot || typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm") {
             return await runSuper(args)
         }
         const contractsToCompile: string[] | undefined =
@@ -171,7 +171,7 @@ subtask(
         hre,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): Promise<any> => {
-        if (!hre.network.polkavm || hre.config.resolc?.target == "evm") {
+        if (!hre.network.polkadot || typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm") {
             return getArtifactFromContractOutput(sourceName, contractName, contractOutput)
         }
         const bytecode: string =
@@ -199,7 +199,7 @@ subtask(
         hre,
         runSuper,
     ) => {
-        if (!hre.network.polkavm || hre.config.resolc?.target == "evm") {
+        if (!hre.network.polkadot || typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm") {
             return await runSuper(args)
         }
 
@@ -308,7 +308,7 @@ subtask(
         hre,
         runSuper,
     ): Promise<{ output: CompilerOutput; solcBuild: SolcBuild }> => {
-        if (!hre.network.polkavm || hre.config.resolc?.target == "evm") {
+        if (!hre.network.polkadot || typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm") {
             return await runSuper(args)
         }
 
@@ -467,7 +467,7 @@ subtask(TASK_COMPILE_SOLIDITY_EMIT_ARTIFACTS).setAction(
     ): Promise<{
         artifactsEmittedPerFile: ArtifactsEmittedPerFile
     }> => {
-        if (network.config.polkavm !== true) {
+        if (!network.config.polkadot) {
             return await runSuper({
                 compilationJob,
                 input,
@@ -528,7 +528,7 @@ subtask(TASK_COMPILE_SOLIDITY_GET_COMPILER_INPUT, async (taskArgs, hre, runSuper
 })
 
 subtask(TASK_COMPILE_REMOVE_OBSOLETE_ARTIFACTS, async (taskArgs, hre, runSuper) => {
-    if (!hre.network.polkavm || hre.config.resolc?.target == "evm") {
+    if (!hre.network.polkadot || typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm") {
         return await runSuper(taskArgs)
     }
 

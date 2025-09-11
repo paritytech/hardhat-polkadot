@@ -4,7 +4,6 @@ import { CompilerPlatform } from "hardhat/internal/solidity/compiler/downloader"
 export interface ResolcConfig {
     version: string
     compilerSource?: "binary" | "npm"
-    target?: "evm" | "pvm"
     settings?: {
         // Set the given path as the root of the source tree instead of the root of the filesystem. Passed to `solc` without changes.
         basePath?: string
@@ -34,6 +33,10 @@ export interface ResolcConfig {
         // Generate source based debug information in the output code file. This only has an effect with the LLVM-IR code generator and is ignored otherwise.
         emitDourceDebugInfo?: boolean
     }
+}
+
+export interface TargetVM {
+    target?: "evm" | "pvm"
 }
 
 export interface ReviveCompilerInput extends CompilerInput {
