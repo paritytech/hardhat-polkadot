@@ -44,5 +44,3 @@ export const ETH_RPC_TO_SUBSTRATE_RPC: Record<string, string> = {
     "kusama-asset-hub-eth-rpc.polkadot.io": "wss://asset-hub-kusama-rpc.dwellir.com",
     "westend-asset-hub-eth-rpc.polkadot.io": "wss://asset-hub-westend-rpc.dwellir.com",
 }
-
-export const DEFAULT_TIMEOUT_MILISECONDS = 30000

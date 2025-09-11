@@ -3,9 +3,6 @@ import "@parity/hardhat-polkadot"
 
 const config: HardhatUserConfig = {
     solidity: "0.8.28",
-    resolc: {
-        compilerSource: "npm",
-    },
     networks: {
         hardhat: {
             polkavm: true,

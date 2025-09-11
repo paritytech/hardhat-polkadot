@@ -14,10 +14,8 @@ run_test() {
   stop_node
   cd "$TMP_TESTS_DIR/$PROJECT_DIR"
   cp "../$CONFIG_FILE" ./hardhat.config.js
-  pnpm add "$HARDHAT_POLKADOT_NODE_TGZ_PATH"
-  pnpm add "$HARDHAT_POLKADOT_RESOLC_TGZ_PATH"
-  pnpm add "$HARDHAT_POLKADOT_TGZ_PATH"
-  pnpm install
+  npm add "$HARDHAT_POLKADOT_TGZ_PATH"
+  npm install
   await_start_node "$UNIQUE_NODE_LOG" # careful chopsticks uses ANSI color codes
 
   # When

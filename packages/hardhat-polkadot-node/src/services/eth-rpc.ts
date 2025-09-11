@@ -21,9 +21,10 @@ export class EthRpcService extends Service {
     public async from_binary(pathToBinary: string): Promise<void> {
         return new Promise((resolve, reject) => {
             let stdioConfig: StdioOptions = "inherit"
-
             if (!this.blockProcess) {
-                stdioConfig = ["ignore", "pipe", "pipe"]
+                // Use "ignore" to prevent stdout/stderr from being piped into an in-memory buffer,
+                // which could fill up and block the child process.
+                stdioConfig = ["ignore", "ignore", "ignore"]
             }
 
             if (this.blockProcess) {
