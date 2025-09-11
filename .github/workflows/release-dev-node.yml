@@ -1,6 +1,7 @@
 name: Release Polkadot Development Runtime
 
 on:
+  pull_request:
   # trigger manually from /actions
   workflow_dispatch:
     inputs:
@@ -75,6 +76,12 @@ jobs:
         if: matrix.os_tag == 'darwin'
         run: |
           xcode-select --install || true
+          
+          # Set libclang environment variables
+          XCODE_PATH=$(xcode-select --print-path)
+          echo "LIBCLANG_PATH=${XCODE_PATH}/Toolchains/XcodeDefault.xctoolchain/usr/lib" >> $GITHUB_ENV
+          echo "DYLD_LIBRARY_PATH=${XCODE_PATH}/Toolchains/XcodeDefault.xctoolchain/usr/lib:$DYLD_LIBRARY_PATH" >> $GITHUB_ENV
+
           brew uninstall cmake
           brew install openssl pkg-config git curl llvm protobuf jq cmake
 
@@ -146,6 +153,7 @@ jobs:
           if-no-files-found: error
 
   publish-release:
+    if: false # remove
     name: Publish GitHub Release
     needs: compile
     runs-on: ubuntu-latest
