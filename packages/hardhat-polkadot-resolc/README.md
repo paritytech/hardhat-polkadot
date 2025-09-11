@@ -40,7 +40,7 @@ import "@parity/hardhat-polkadot-resolc";
 
 ### Usage
 
-Compile solidity smart contracts for the Polkadot network, creating PolkaVM compatible hardhat artifacts.
+Compile solidity smart contracts for the Polkadot network, creating Polkadot compatible hardhat artifacts.
 
 ```sh
 $ npx hardhat compile

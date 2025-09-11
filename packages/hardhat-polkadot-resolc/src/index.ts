@@ -58,7 +58,8 @@ extendConfig((config, userConfig) => {
     const hasPolkadot = Object.values(config.networks).some(
         (network: NetworkConfig) => network && !!network.polkadot,
     )
-    const targetEvm = typeof config.networks.polkadot === "boolean" ? false : config.networks.polkadot?.target === "evm" ? true : false;
+    const targetEvm =
+        typeof config.networks.polkadot !== "boolean" && config.networks.polkadot?.target === "evm"
 
     if (!hasPolkadot || targetEvm) return
 
@@ -102,8 +103,8 @@ extendEnvironment((hre) => {
 
     hre.config.paths.artifacts = artifactsPath
     hre.config.paths.cache = cachePath
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ; (hre as any).artifacts = new Artifacts(artifactsPath)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(hre as any).artifacts = new Artifacts(artifactsPath)
 
     if (
         (hre.config.solidity.compilers.length > 1 && hre.config.resolc.compilerSource === "npm") ||
@@ -138,7 +139,10 @@ task(TASK_COMPILE).setAction(
 subtask(
     TASK_COMPILE_SOLIDITY_GET_SOURCE_NAMES,
     async (args: { sourcePaths: string[] }, hre, runSuper) => {
-        if (!hre.network.polkadot || typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm") {
+        if (
+            !hre.network.polkadot ||
+            (typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm")
+        ) {
             return await runSuper(args)
         }
         const contractsToCompile: string[] | undefined =
@@ -171,7 +175,10 @@ subtask(
         hre,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): Promise<any> => {
-        if (!hre.network.polkadot || typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm") {
+        if (
+            !hre.network.polkadot ||
+            (typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm")
+        ) {
             return getArtifactFromContractOutput(sourceName, contractName, contractOutput)
         }
         const bytecode: string =
@@ -199,7 +206,10 @@ subtask(
         hre,
         runSuper,
     ) => {
-        if (!hre.network.polkadot || typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm") {
+        if (
+            !hre.network.polkadot ||
+            (typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm")
+        ) {
             return await runSuper(args)
         }
 
@@ -308,7 +318,10 @@ subtask(
         hre,
         runSuper,
     ): Promise<{ output: CompilerOutput; solcBuild: SolcBuild }> => {
-        if (!hre.network.polkadot || typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm") {
+        if (
+            !hre.network.polkadot ||
+            (typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm")
+        ) {
             return await runSuper(args)
         }
 
@@ -528,7 +541,10 @@ subtask(TASK_COMPILE_SOLIDITY_GET_COMPILER_INPUT, async (taskArgs, hre, runSuper
 })
 
 subtask(TASK_COMPILE_REMOVE_OBSOLETE_ARTIFACTS, async (taskArgs, hre, runSuper) => {
-    if (!hre.network.polkadot || typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm") {
+    if (
+        !hre.network.polkadot ||
+        (typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm")
+    ) {
         return await runSuper(taskArgs)
     }
 

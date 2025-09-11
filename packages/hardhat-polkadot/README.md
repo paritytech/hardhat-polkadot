@@ -83,7 +83,7 @@ Get started from a boilerplate.
 $ npx hardhat-polkadot init
 ```
 
-Compile solidity smart contracts for the Polkadot network, creating PolkaVM compatible hardhat artifacts.
+Compile solidity smart contracts for the Polkadot network, creating Polkadot compatible hardhat artifacts.
 
 ```bash
 $ npx hardhat compile

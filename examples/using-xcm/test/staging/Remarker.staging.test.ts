@@ -16,7 +16,6 @@ import { blake2AsHex } from "@polkadot/util-crypto"
     : describe("Remarker", function () {
           // We define a fixture to reuse the same deployment across tests.
           //
-          // ⚠️ Note: `loadFixture` does not currently work with PolkaVM-compatible networks.
           async function deployRemarkerFixture() {
               const [deployer] = await hre.ethers.getSigners()
 
