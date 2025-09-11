@@ -8,7 +8,7 @@ const config: HardhatUserConfig = {
     },
     networks: {
         hardhat: {
-            polkavm: true,
+            polkadot: true,
             forking: {
                 url: "https://testnet-passet-hub.polkadot.io",
             },

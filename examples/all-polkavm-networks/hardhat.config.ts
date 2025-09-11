@@ -9,7 +9,7 @@ const config: HardhatUserConfig = {
     networks: {
         // npx hardhat node
         hardhat: {
-            polkavm: true,
+            polkadot: true,
             nodeConfig: {
                 nodeBinaryPath: "./bin/dev-node",
                 rpcPort: 8000,
@@ -24,7 +24,7 @@ const config: HardhatUserConfig = {
          * PAPI explorer: https://dev.papi.how/explorer#networkId=localhost&endpoint=http%3A%2F%2Flocalhost%3A8545
          */
         local: {
-            polkavm: true,
+            polkadot: true,
             url: "http://localhost:8545",
         },
         /** Polkadot Hub Testnet
@@ -34,7 +34,7 @@ const config: HardhatUserConfig = {
          * PAPI explorer: https://dev.papi.how/explorer#networkId=passet_hub&endpoint=wss%3A%2F%2Ftestnet-passet-hub.polkadot.io
          */
         polkadotHubTestnet: {
-            polkavm: true,
+            polkadot: true,
             url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
             accounts: PRIVATE_KEY
                 ? [PRIVATE_KEY]
@@ -48,7 +48,7 @@ const config: HardhatUserConfig = {
          * PAPI explorer: https://dev.papi.how/explorer#networkId=kusama_asset_hub&endpoint=light-client
          */
         kusamaHub: {
-            polkavm: true,
+            polkadot: true,
             url: "https://kusama-asset-hub-eth-rpc.polkadot.io",
             polkadotUrl: "wss://kusama-asset-hub-rpc.polkadot.io",
             accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
@@ -61,7 +61,7 @@ const config: HardhatUserConfig = {
          * PAPI explorer: https://dev.papi.how/explorer#networkId=westend_asset_hub&endpoint=light-client
          */
         westendHub: {
-            polkavm: true,
+            polkadot: true,
             url: "https://westend-asset-hub-eth-rpc.polkadot.io",
             accounts: PRIVATE_KEY
                 ? [PRIVATE_KEY]
@@ -72,7 +72,7 @@ const config: HardhatUserConfig = {
          * token: https://coinmarketcap.com/currencies/polkadot/#Markets
          */
         // polkadotHub: {
-        //     polkavm: true,
+        //     polkadot: true,
         // },
     },
 }

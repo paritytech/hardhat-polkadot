@@ -4,14 +4,14 @@ import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import hre from 'hardhat';
 
 describe('Greeter', function () {
-    const isPolkaVMCompatible = hre.network.polkavm;
+    const isPolkadotCompatible = !!hre.network.polkadot;
 
     // This is an example on how to skip tests that, due to incompatibilities,
     // are currently not working with Polkadot.
     // There are many other variations on how to do this.
-    it('Should run only on compatible PolkaVM chains', async function () {
-        if (!isPolkaVMCompatible) {
-            console.log(`Skipping test: not running on compatible PolkaVM chains.`);
+    it('Should run only on compatible Polkadot chains', async function () {
+        if (!isPolkadotCompatible) {
+            console.log(`Skipping test: not running on compatible Polkadot chains.`);
             this.skip();
         }
         const network = await hre.ethers.provider.getNetwork();
@@ -23,7 +23,6 @@ describe('Greeter', function () {
     // `loadFixture` snapshots the network state after the first run
     // and restores it before each test, ensuring isolated test runs.
     //
-    // ⚠️ Note: `loadFixture` does not currently work with PolkaVM-compatible networks.
     async function deployGreeterFixture() {
         const [deployer] = await hre.ethers.getSigners();
 
@@ -34,7 +33,7 @@ describe('Greeter', function () {
     }
 
     it('Should set the greeting to the constructor argument', async function () {
-        const { greeter } = isPolkaVMCompatible
+        const { greeter } = isPolkadotCompatible
             ? await deployGreeterFixture()
             : await loadFixture(deployGreeterFixture);
 

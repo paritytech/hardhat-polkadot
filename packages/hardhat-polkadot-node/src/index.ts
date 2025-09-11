@@ -250,7 +250,7 @@ task(
     ) => {
         if (!noCompile) await run(TASK_COMPILE, { quiet: true })
         if (network.config.polkadot !== true || network.name !== HARDHAT_NETWORK_NAME) {
-            // If remote polkavm network
+            // If remote polkadot network
             if (network.config.polkadot)
                 await handleFactoryDependencies(
                     config.paths.artifacts,

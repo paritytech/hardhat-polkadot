@@ -5,7 +5,7 @@ const config: HardhatUserConfig = {
     solidity: "0.8.28",
     networks: {
         hardhat: {
-            polkavm: true,
+            polkadot: true,
             nodeConfig: {
                 nodeBinaryPath: "path/to/dev-node/binary",
                 rpcPort: 8000,
