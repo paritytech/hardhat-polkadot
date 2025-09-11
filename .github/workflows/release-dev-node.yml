@@ -77,6 +77,13 @@ jobs:
           xcode-select --install || true
           brew uninstall cmake
           brew install openssl pkg-config git curl llvm protobuf jq cmake
+      
+      - name: Set LLVM environment variables (macOS)
+        if: matrix.os_tag == 'darwin'
+        run: |
+          echo "LIBCLANG_PATH=$(brew --prefix llvm)/lib" >> $GITHUB_ENV
+          echo "DYLD_LIBRARY_PATH=$(brew --prefix llvm)/lib:$DYLD_LIBRARY_PATH" >> $GITHUB_ENV
+
 
       - name: Checkout (repo context)
         uses: actions/checkout@v4
