@@ -6,7 +6,7 @@ const config: HardhatUserConfig = {
     solidity: "0.8.28",
     networks: {
         hardhat: {
-            polkavm: true,
+            polkadot: true,
             nodeConfig: {
                 nodeBinaryPath: "./bin/dev-node",
                 rpcPort: 8000,
@@ -18,11 +18,11 @@ const config: HardhatUserConfig = {
             },
         },
         localNode: {
-            polkavm: true,
+            polkadot: true,
             url: `http://127.0.0.1:8545`,
         },
         polkadotHubTestnet: {
-            polkavm: true,
+            polkadot: true,
             url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
             accounts: [vars.get("PRIVATE_KEY")],
         },

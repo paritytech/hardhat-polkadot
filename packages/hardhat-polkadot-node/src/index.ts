@@ -39,7 +39,7 @@ import { RpcServer } from "./types"
 import "./type-extensions"
 
 task(TASK_RUN).setAction(async (args, hre, runSuper) => {
-    if (!hre.network.polkavm || hre.network.name !== HARDHAT_NETWORK_NAME) {
+    if (!hre.network.polkadot || hre.network.name !== HARDHAT_NETWORK_NAME) {
         await runSuper(args, hre)
         return
     }
@@ -90,7 +90,7 @@ subtask(TASK_NODE_POLKADOT_CREATE_SERVER, "Creates a JSON-RPC server for Polkado
 
 task(TASK_NODE, "Start a Polkadot Node").setAction(
     async (args: TaskArguments, { network, run }, runSuper) => {
-        if (network.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
+        if (!network.polkadot || network.name !== HARDHAT_NETWORK_NAME) {
             return await runSuper()
         }
         await run(TASK_NODE_POLKADOT, args)
@@ -249,9 +249,9 @@ task(
         runSuper,
     ) => {
         if (!noCompile) await run(TASK_COMPILE, { quiet: true })
-        if (network.config.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
-            // If remote polkavm network
-            if (network.config.polkavm)
+        if (network.config.polkadot !== true || network.name !== HARDHAT_NETWORK_NAME) {
+            // If remote polkadot network
+            if (network.config.polkadot)
                 await handleFactoryDependencies(
                     config.paths.artifacts,
                     network.config.url,

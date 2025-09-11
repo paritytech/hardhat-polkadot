@@ -5,11 +5,11 @@ module.exports = {
     solidity: "0.8.28",
     networks: {
         hardhat: {
-            polkavm: true,
+            polkadot: true,
             docker: true,
         },
         localNode: {
-            polkavm: true,
+            polkadot: true,
             url: `http://127.0.0.1:8545`,
         },
     },

@@ -57,7 +57,7 @@ import "@parity/hardhat-polkadot";
 const config: HardhatUserConfig = {
   networks: {
     hardhat: {
-      polkavm: true,
+      polkadot: true,
       nodeConfig: {
         nodeBinaryPath: 'INSERT_PATH_TO_SUBSTRATE_NODE',
         rpcPort: 8000,
@@ -80,7 +80,7 @@ Get started from a boilerplate.
 $ npx hardhat-polkadot init
 ```
 
-Compile solidity smart contracts for the Polkadot network, creating PolkaVM compatible hardhat artifacts.
+Compile solidity smart contracts for the Polkadot network, creating Polkadot compatible hardhat artifacts.
 
 ```bash
 $ npx hardhat compile

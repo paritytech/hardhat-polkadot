@@ -11,12 +11,12 @@ const config: HardhatUserConfig = {
             chainId: 31337,
         },
         polkadotHubTestnet: {
-            polkavm: true,
+            polkadot: true,
             url: 'https://testnet-passet-hub-eth-rpc.polkadot.io',
             chainId: 420420422,
         },
         kusamaHub: {
-            polkavm: true,
+            polkadot: true,
             url: 'https://kusama-asset-hub-eth-rpc.polkadot.io/',
             chainId: 420420418,
         },

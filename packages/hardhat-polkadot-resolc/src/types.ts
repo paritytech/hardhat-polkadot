@@ -35,6 +35,10 @@ export interface ResolcConfig {
     }
 }
 
+export interface TargetVM {
+    target?: "evm" | "pvm"
+}
+
 export interface ReviveCompilerInput extends CompilerInput {
     // Suppress specified warnings. Currently supported: txorigin, sendtransfer
     suppressedWarnings?: string[]
