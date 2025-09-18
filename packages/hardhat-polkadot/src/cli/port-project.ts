@@ -71,16 +71,23 @@ export async function portProject(projectPath: string, yesFlag: boolean) {
  */
 export async function updatePackageJSON(projectPath: string): Promise<[string, string, boolean]> {
     // Read `package.json` object & formatting metadata
+    // We allow "File not found" errors to bubble up
     const pkgPath = path.join(projectPath, "package.json")
     const raw = fs.readFileSync(pkgPath, "utf8")
     const pkg = JSON.parse(raw)
     const indent = detectIndent(raw)
 
     // Fetch latest `@parity/hardhat-polkadot` module metadata from npm registry
+    // We allow "Fetch failed" error to bubble up, or throw a custom error in case
+    // of a successful but invalid response
     const m = (await (await fetch(`https://registry.npmjs.org/${MODULE}/latest`)).json()) as {
         version: string
         peerDependencies: { hardhat: string }
     }
+    if (!m.version || !m.peerDependencies) {
+        throw new Error(`Something went wrong fetching ${MODULE} metadata from the npm registry`)
+    }
+
     const polkadotHHVersion: string = m.version
     const HHVersionRange = m.peerDependencies.hardhat
     const minHHVersion = minVersion(HHVersionRange)!
