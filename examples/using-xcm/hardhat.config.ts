@@ -8,7 +8,7 @@ const config: HardhatUserConfig = {
     solidity: "0.8.28",
     networks: {
         polkadotHubTestnet: {
-            polkavm: true,
+            polkadot: true,
             url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
             accounts: PRIVATE_KEY
                 ? [PRIVATE_KEY]

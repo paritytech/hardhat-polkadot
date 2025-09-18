@@ -2,7 +2,7 @@
     "name": "@parity/hardhat-polkadot",
     "author": "Parity Technologies <admin@parity.io>",
     "license": "AGPL-3.0",
-    "version": "0.1.11-pre1",
+    "version": "0.2.0-pre1",
     "bugs": "https://github.com/paritytech/hardhat-polkadot/issues",
     "homepage": "https://github.com/paritytech/hardhat-polkadot/tree/master/packages/hardhat-polkadot#readme",
     "repository": {
@@ -41,7 +41,8 @@
         "prettier:fix": "prettier --write '**/*.{md,yml,ts,js,json}'",
         "eslint:check": "eslint 'src/**/*.ts'",
         "eslint:fix": "eslint 'src/**/*.ts' --fix",
-        "pack": "./prepack.sh && npm pack --silent"
+        "pack": "npm pack --silent",
+        "pack:dev": "./prepack.sh && npm pack --silent && ./postpack.sh"
     },
     "files": [
         "dist/",
@@ -66,7 +67,7 @@
         "hardhat": "^2.26.0"
     },
     "devDependencies": {
-        "@eslint/js": "^9.30.1",
+        "@eslint/js": "^9.34.0",
         "@nomicfoundation/hardhat-ignition": "^0.15.11",
         "@types/chai": "^5.2.1",
         "@types/fs-extra": "5.1.0",

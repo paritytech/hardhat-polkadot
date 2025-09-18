@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.2.0-pre1 (2025-09-11)
+### Bug Fixes
+
+- Fix test in memory node with target evm. ([#315](https://github.com/paritytech/hardhat-polkadot/pull/315)) ([25ffa41](https://github.com/paritytech/hardhat-polkadot/commit/25ffa41d639e49d4c099af954ecfca62384a3267))
+
+
+## 0.2.0-pre0 (2025-09-11)
+### Features
+
+- Add EVM Backend support. ([#308](https://github.com/paritytech/hardhat-polkadot/pull/308)) ([0c46b99](https://github.com/paritytech/hardhat-polkadot/commit/0c46b994c45811a54a22852591a67d90d134c884))
+
+### Bug Fixes
+
+- Fix child process handling. ([#307](https://github.com/paritytech/hardhat-polkadot/pull/307)) ([0d5db06](https://github.com/paritytech/hardhat-polkadot/commit/0d5db06e072ad4fc67f0bd10ff6e14abfe354574))
+
+### Chores
+
+- Bump `@eslint/js` from 9.30.1 to 9.34.0. ([#296](https://github.com/paritytech/hardhat-polkadot/pull/296)) ([82493d0](https://github.com/paritytech/hardhat-polkadot/commit/82493d06ce23b9e901690ebd30bf039d44945ec2))
+
+
 ## 0.1.6-pre1 (2025-08-20)
 ### Bug Fixes
 

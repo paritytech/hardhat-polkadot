@@ -1,5 +1,5 @@
 import { spawn } from "child_process"
-import { task, subtask, types } from "hardhat/config"
+import { task, subtask, types, scope } from "hardhat/config"
 import {
     TASK_COMPILE,
     TASK_NODE,
@@ -14,6 +14,7 @@ import { HARDHAT_NETWORK_NAME } from "hardhat/plugins"
 import { TaskArguments } from "hardhat/types"
 import { HardhatNetworkUserConfig } from "hardhat/types/config"
 import path from "path"
+
 import {
     NODE_START_PORT,
     ETH_RPC_ADAPTER_START_PORT,
@@ -38,7 +39,7 @@ import { RpcServer } from "./types"
 import "./type-extensions"
 
 task(TASK_RUN).setAction(async (args, hre, runSuper) => {
-    if (!hre.network.polkavm || hre.network.name !== HARDHAT_NETWORK_NAME) {
+    if (!hre.network.polkadot || hre.network.name !== HARDHAT_NETWORK_NAME) {
         await runSuper(args, hre)
         return
     }
@@ -89,7 +90,7 @@ subtask(TASK_NODE_POLKADOT_CREATE_SERVER, "Creates a JSON-RPC server for Polkado
 
 task(TASK_NODE, "Start a Polkadot Node").setAction(
     async (args: TaskArguments, { network, run }, runSuper) => {
-        if (network.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
+        if (!network.polkadot || network.name !== HARDHAT_NETWORK_NAME) {
             return await runSuper()
         }
         await run(TASK_NODE_POLKADOT, args)
@@ -248,9 +249,9 @@ task(
         runSuper,
     ) => {
         if (!noCompile) await run(TASK_COMPILE, { quiet: true })
-        if (network.config.polkavm !== true || network.name !== HARDHAT_NETWORK_NAME) {
-            // If remote polkavm network
-            if (network.config.polkavm)
+        if (!network.config.polkadot || network.name !== HARDHAT_NETWORK_NAME) {
+            // If remote polkadot network
+            if (network.config.polkadot)
                 await handleFactoryDependencies(
                     config.paths.artifacts,
                     network.config.url,
@@ -333,5 +334,13 @@ task(
         }
     },
 )
+
+// extends https://github.com/NomicFoundation/hardhat/blob/ba9d569d0ef251e5523d9e8ef0b2c359cc436f27/v-next/hardhat-ignition/src/index.ts#L10
+scope("ignition").task("deploy", async (_taskArgs, { config }, runSuper) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ignitionConfig = (config as any).ignition || {}
+    if (config.networks?.hardhat?.forking) ignitionConfig.requiredConfirmations = 1
+    return await runSuper()
+})
 
 interceptAndWrapTasksWithNode()

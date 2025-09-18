@@ -1,6 +1,6 @@
 import "hardhat/types/config"
 
-import type { ResolcConfig } from "./types"
+import type { ResolcConfig, TargetVM } from "./types"
 
 declare module "hardhat/types/config" {
     interface HardhatUserConfig {
@@ -12,28 +12,28 @@ declare module "hardhat/types/config" {
     }
 
     interface HardhatNetworkUserConfig {
-        polkavm?: boolean
+        polkadot?: boolean | TargetVM
     }
 
     interface HttpNetworkUserConfig {
-        polkavm?: boolean
+        polkadot?: boolean | TargetVM
     }
 
     interface HardhatNetworkConfig {
-        polkavm?: boolean
+        polkadot?: boolean | TargetVM
     }
 
     interface HttpNetworkConfig {
-        polkavm?: boolean
+        polkadot?: boolean | TargetVM
     }
 
     interface NetworksConfig {
-        polkavm?: boolean
+        polkadot?: boolean | TargetVM
     }
 }
 
 declare module "hardhat/types/runtime" {
     interface Network {
-        polkavm?: boolean
+        polkadot?: boolean | TargetVM
     }
 }

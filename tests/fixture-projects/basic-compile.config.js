@@ -4,7 +4,7 @@ module.exports = {
     solidity: "0.8.28",
     networks: {
         hardhat: {
-            polkavm: true,
+            polkadot: true,
         },
     },
 }

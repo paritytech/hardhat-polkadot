@@ -42,7 +42,7 @@ async function wrapTaskWithNode(
     env: HardhatRuntimeEnvironment,
     runSuper: RunSuperFunction<TaskArguments>,
 ) {
-    if (env.network.polkavm !== true || env.network.name !== HARDHAT_NETWORK_NAME) {
+    if (!env.network.polkadot || env.network.name !== HARDHAT_NETWORK_NAME) {
         return await runSuper(taskArgs)
     }
     const polkadotGlobal = global as PolkadotTasksWithWrappedNode

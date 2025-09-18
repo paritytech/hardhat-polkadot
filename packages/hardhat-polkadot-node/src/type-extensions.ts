@@ -1,10 +1,11 @@
 import "hardhat/types/config"
+import type { TargetVM } from "./types"
 
 declare module "hardhat/types/config" {
     interface HardhatNetworkUserConfig {
-        // Replace EVM-compatible node with PolkaVM-compatible node
-        polkavm?: boolean
-        // Configuration for PolkaVM-compatible node
+        // Replace EVM-compatible node with polkadot-compatible node
+        polkadot?: boolean | TargetVM
+        // Configuration for polkadot-compatible node
         nodeConfig?: {
             // Path to the substrate node binary
             nodeBinaryPath?: string
@@ -18,7 +19,7 @@ declare module "hardhat/types/config" {
                 period?: string | number
             }
         }
-        // Configuration for PolkaVM-compatible ETH-RPC adapter
+        // Configuration for polkadot-compatible ETH-RPC adapter
         adapterConfig?: {
             // Path to the eth-rpc-adapter binary
             adapterBinaryPath?: string
@@ -41,17 +42,17 @@ declare module "hardhat/types/config" {
     }
 
     interface HttpNetworkUserConfig {
-        polkavm?: boolean
+        polkadot?: boolean | TargetVM
     }
 
     interface HardhatNetworkConfig {
-        polkavm?: boolean
+        polkadot?: boolean | TargetVM
         url?: string
         polkadotUrl?: string
     }
 
     interface HttpNetworkConfig {
-        polkavm?: boolean
+        polkadot?: boolean | TargetVM
         ethNetwork?: string
         polkadotUrl?: string
     }
@@ -59,6 +60,6 @@ declare module "hardhat/types/config" {
 
 declare module "hardhat/types/runtime" {
     interface Network {
-        polkavm?: boolean
+        polkadot?: boolean | TargetVM
     }
 }

@@ -36,7 +36,7 @@ import "@parity/hardhat-polkadot-node";
 ...
 ```
 
-2. Configure a PolkaVM-compatible node and eth-rpc in `hardhat.config` according to [available options](https://github.com/paritytech/hardhat-polkadot/blob/500cba0310fad38cf01cc7b11cb2e4043bd71482/packages/hardhat-polkadot-node/src/type-extensions.ts#L4). 
+2. Configure a Polkadot-compatible node and eth-rpc in `hardhat.config` according to [available options](https://github.com/paritytech/hardhat-polkadot/blob/500cba0310fad38cf01cc7b11cb2e4043bd71482/packages/hardhat-polkadot-node/src/type-extensions.ts#L4). 
 
 ## Usage
 

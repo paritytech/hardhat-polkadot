@@ -58,14 +58,20 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
 
     compiler.settings = {
         ...settings,
-        optimizer: { ...optimizer },
+        optimizer,
         outputSelection: {
             "*": {
-                "*": ["abi"],
+                "*": [
+                    "abi",
+                    "metadata",
+                    "evm.bytecode",
+                    "evm.deployedBytecode",
+                    "evm.methodIdentifiers",
+                ],
+                "": ["ast"],
             },
         },
-        evmVersion: compiler.settings.evmVersion,
-        resolc: resolc,
+        resolc,
     }
 
     const [major, minor] = getVersionComponents(compiler.version)

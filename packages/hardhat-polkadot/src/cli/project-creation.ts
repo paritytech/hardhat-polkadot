@@ -211,7 +211,7 @@ module.exports = {
     },
     networks: {
         hardhat: {
-            polkavm: true,
+            polkadot: true,
             nodeConfig: {
                 nodeBinaryPath: './bin/dev-node',
                 dev: true,

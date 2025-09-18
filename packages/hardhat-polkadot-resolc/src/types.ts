@@ -1,4 +1,3 @@
-import { SolcOutput } from "@parity/resolc"
 import type { CompilerInput, SolcConfig } from "hardhat/types"
 import { CompilerPlatform } from "hardhat/internal/solidity/compiler/downloader"
 
@@ -34,6 +33,10 @@ export interface ResolcConfig {
         // Generate source based debug information in the output code file. This only has an effect with the LLVM-IR code generator and is ignored otherwise.
         emitDourceDebugInfo?: boolean
     }
+}
+
+export interface TargetVM {
+    target?: "evm" | "pvm"
 }
 
 export interface ReviveCompilerInput extends CompilerInput {
@@ -73,7 +76,8 @@ export interface ResolcBuild {
 }
 
 export interface ICompiler {
-    compile(input: CompilerInput, config: ResolcConfig): Promise<SolcOutput>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    compile(input: CompilerInput, config: ResolcConfig): Promise<any>
 }
 
 export enum CompilerName {

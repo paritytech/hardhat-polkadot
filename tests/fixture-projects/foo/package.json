@@ -1,3 +1,6 @@
 {
-    "name": "foo"
+    "name": "foo",
+    "dependencies": {
+        "hardhat": "^2.26.0"
+    }
 }

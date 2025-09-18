@@ -6,8 +6,6 @@ set -e # Fail if any command fails
 # Given
 cp ./basic-compile.config.js ./foo/hardhat.config.js # relative to tmp folder
 cd ./foo # relative to tmp folder
-npm add "$HARDHAT_POLKADOT_NODE_TGZ_PATH"
-npm add "$HARDHAT_POLKADOT_RESOLC_TGZ_PATH"
 npm add "$HARDHAT_POLKADOT_TGZ_PATH"
 npm install # install modules specified in the package.json
 
