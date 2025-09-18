@@ -1,9 +1,8 @@
-import os from "os"
 import fs from "fs"
 import chalk from "chalk"
-import { spawnSync } from "child_process"
 import fsPromises from "fs/promises"
 import path from "path"
+import { structuredPatch } from "diff"
 
 import { getRecommendedGitIgnore } from "../project-structure"
 
@@ -106,7 +105,10 @@ export async function addOrMergeGitIgnore(projectRoot: string): Promise<[string,
 
 /**
  * Prints diff between `before` and `after` versions of a file
- * NOTE: assumes `git` command is available
+ *
+ * @param filePath path to the file— only used for printing header
+ * @param before string of the old file content
+ * @param after string of the new file content
  */
 export function printDiff(filePath: string, before: string, after: string) {
     if (before === after) {
@@ -115,25 +117,13 @@ export function printDiff(filePath: string, before: string, after: string) {
     }
     console.log(chalk.bold.hex("#ED3194")("Changes in"), chalk.bold(filePath))
 
-    const tmpA = fs.mkdtempSync(path.join(os.tmpdir(), "jsc-a-"))
-    const tmpB = fs.mkdtempSync(path.join(os.tmpdir(), "jsc-b-"))
-    const A = path.join(tmpA, path.basename(filePath))
-    const B = path.join(tmpB, path.basename(filePath))
-    fs.writeFileSync(A, before)
-    fs.writeFileSync(B, after)
-
-    const { stdout } = spawnSync(
-        "git",
-        ["--no-pager", "diff", "--no-prefix", "--no-index", "--unified=0", "--color", "--", A, B],
-        { encoding: "utf8" },
-    )
-    const lines = stdout.split(/\r?\n/)
-
-    for (const l of lines.slice(4)) {
-        if (l.startsWith("\\ No newline at end of file")) continue
-        console.log(l)
+    // Create structured diff and print color-formatted output
+    const spatch = structuredPatch(filePath, filePath, before, after, "", "", { context: 0 })
+    for (const hunk of spatch.hunks) {
+        console.log("@@ line ", hunk.oldStart)
+        for (const [_, l] of hunk.lines.entries()) {
+            const text = l.startsWith("+") ? chalk.green(l) : chalk.red(l)
+            console.log(text)
+        }
     }
-
-    fs.rmSync(tmpA, { recursive: true, force: true })
-    fs.rmSync(tmpB, { recursive: true, force: true })
 }
