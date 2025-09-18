@@ -61,7 +61,8 @@
         "find-up": "5.0.0",
         "fs-extra": "^11.3.0",
         "jscodeshift": "^17.3.0",
-        "picocolors": "^1.1.1"
+        "picocolors": "^1.1.1",
+        "semver": "^7.7.2"
     },
     "peerDependencies": {
         "hardhat": "^2.26.0"
@@ -80,6 +81,7 @@
         "rimraf": "^3.0.2",
         "typescript": "^5.8.3",
         "typescript-eslint": "^8.31.0",
-        "viem": "^2.27.2"
+        "viem": "^2.27.2",
+        "@types/semver": "^7.7.0"
     }
 }

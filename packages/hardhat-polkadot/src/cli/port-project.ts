@@ -2,6 +2,7 @@ import fs from "fs"
 import chalk from "chalk"
 import path from "path"
 import jscodeshiftFactory from "jscodeshift"
+import { coerce, minVersion, lt, gtr } from "semver"
 
 import { patchExportConfig, insertImport } from "./hh-config-transform"
 import { confirmDiff } from "./prompt"
@@ -13,7 +14,7 @@ const PATCH = {
         hardhat: {
             polkavm: true,
             nodeConfig: {
-                nodeBinaryPath: "./bin/substrate-node",
+                nodeBinaryPath: "./bin/revive-dev-node",
                 rpcPort: 8000,
                 dev: true,
             },
@@ -81,16 +82,23 @@ export async function updatePackageJSON(projectPath: string): Promise<[string, s
         peerDependencies: { hardhat: string }
     }
     const polkadotHHVersion: string = m.version
-    const requiredHHVersion: string = m.peerDependencies.hardhat.match(/(\d+)\.(\d+)\.(\d+)/)![0]
+    const HHVersionRange = m.peerDependencies.hardhat
+    const minHHVersion = minVersion(HHVersionRange)!
 
-    // Update `hardhat` version if needed
+    // Ensure `hardhat` is within expected range
     const HHLocation = pkg.dependencies?.hardhat ? "dependencies" : "devDependencies"
-    const currentHHVersion = pkg[HHLocation]?.hardhat?.match(/(\d+)\.(\d+)\.(\d+)/)?.[0] || "0.0.0"
-    if (currentHHVersion < requiredHHVersion) {
-        pkg[HHLocation].hardhat = `^${requiredHHVersion}`
+    const currentHHVersion = coerce(pkg[HHLocation]?.hardhat ?? "0.0.0") ?? minVersion("0.0.0")!
+    pkg[HHLocation] ??= {}
+    if (lt(currentHHVersion, minHHVersion)) {
+        pkg[HHLocation].hardhat = `^${minHHVersion.version}`
+    } else if (gtr(currentHHVersion, HHVersionRange)) {
+        throw new Error(
+            `Unsupported hardhat version ${currentHHVersion.version}. Please manually install a compatible version (${HHVersionRange})`,
+        )
     }
 
     // Add `@parity/hardhat-polkadot` dev-dependency
+    pkg.devDependencies ??= {}
     pkg.devDependencies["@parity/hardhat-polkadot"] = `^${polkadotHHVersion}`
 
     const newPkg = JSON.stringify(pkg, null, indent) + "\n"
