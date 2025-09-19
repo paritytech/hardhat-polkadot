@@ -80,16 +80,18 @@ export async function updatePackageJSON(projectPath: string): Promise<[string, s
     // Fetch latest `@parity/hardhat-polkadot` module metadata from npm registry
     // We allow "Fetch failed" error to bubble up, or throw a custom error in case
     // of a successful but invalid response
-    const m = (await (await fetch(`https://registry.npmjs.org/${MODULE}/latest`)).json()) as {
+    const moduleMetadata = (await (
+        await fetch(`https://registry.npmjs.org/${MODULE}/latest`)
+    ).json()) as {
         version: string
         peerDependencies: { hardhat: string }
     }
-    if (!m.version || !m.peerDependencies) {
+    if (!moduleMetadata.version || !moduleMetadata.peerDependencies) {
         throw new Error(`Something went wrong fetching ${MODULE} metadata from the npm registry`)
     }
 
-    const polkadotHHVersion: string = m.version
-    const HHVersionRange = m.peerDependencies.hardhat
+    const polkadotHHVersion: string = moduleMetadata.version
+    const HHVersionRange = moduleMetadata.peerDependencies.hardhat
     const minHHVersion = minVersion(HHVersionRange)!
 
     // Ensure `hardhat` is within expected range

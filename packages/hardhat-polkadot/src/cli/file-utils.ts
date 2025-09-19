@@ -43,16 +43,16 @@ async function readdir(absolutePathToDir: string) {
     try {
         return await fsPromises.readdir(absolutePathToDir)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-        if (e.code === "ENOENT") {
+    } catch (error: any) {
+        if (error.code === "ENOENT") {
             return []
         }
 
-        if (e.code === "ENOTDIR") {
-            throw new Error(absolutePathToDir, e)
+        if (error.code === "ENOTDIR") {
+            throw new Error(absolutePathToDir, error)
         }
 
-        throw new Error(e.message, e)
+        throw new Error(error.message, error)
     }
 }
 
@@ -74,14 +74,14 @@ export async function addOrMergeGitIgnore(projectRoot: string): Promise<[string,
     const existingLines = originalGitIgnore.split(/\r?\n/)
     const newLines = newContent.split(/\r?\n/)
     let keepLines = newLines.filter(
-        (v) =>
-            v == "" ||
-            v.startsWith("#") ||
+        (line) =>
+            line == "" ||
+            line.startsWith("#") ||
             !(
-                existingLines.includes(v) ||
-                (v.startsWith("/") && // Handle multiple variants of directory entries
-                    (existingLines.includes(v.slice(1)) ||
-                        existingLines.includes(v.slice(1) + "/")))
+                existingLines.includes(line) ||
+                (line.startsWith("/") && // Handle multiple variants of directory entries
+                    (existingLines.includes(line.slice(1)) ||
+                        existingLines.includes(line.slice(1) + "/")))
             ),
     )
     // Remove comments for completely removed sections & format whitespace
