@@ -29,7 +29,19 @@ importers:
       hardhat:
         specifier: ^2.26.0
         version: 2.26.0(ts-node@10.9.2(@types/node@22.15.24)(typescript@5.9.2))(typescript@5.9.2)
+      jscodeshift:
+        specifier: ^17.3.0
+        version: 17.3.0
+      semver:
+        specifier: ^7.7.2
+        version: 7.7.2
     devDependencies:
+      '@types/jscodeshift':
+        specifier: ^17.3.0
+        version: 17.3.0
+      '@types/semver':
+        specifier: ^7.7.0
+        version: 7.7.0
       prettier:
         specifier: ^3.5.3
         version: 3.5.3
@@ -48,6 +60,9 @@ importers:
       '@openzeppelin/contracts':
         specifier: ^5.3.0
         version: 5.3.0
+      '@parity/hardhat-polkadot-migrator':
+        specifier: workspace:*
+        version: link:../core/migrator
       '@parity/hardhat-polkadot-node':
         specifier: workspace:*
         version: link:../hardhat-polkadot-node
@@ -111,7 +126,7 @@ importers:
         version: 9.27.0
       eslint-plugin-import:
         specifier: ^2.31.0
-        version: 2.31.0(@typescript-eslint/parser@8.33.0(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)
+        version: 2.31.0(eslint@9.27.0)
       globals:
         specifier: ^16.0.0
         version: 16.2.0
@@ -190,7 +205,7 @@ importers:
         version: 9.27.0
       eslint-plugin-import:
         specifier: ^2.31.0
-        version: 2.31.0(@typescript-eslint/parser@8.33.0(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)
+        version: 2.31.0(eslint@9.27.0)
       globals:
         specifier: ^16.0.0
         version: 16.2.0
@@ -5778,17 +5793,16 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.33.0(eslint@9.27.0)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint@9.27.0):
+  eslint-module-utils@2.12.0(eslint-import-resolver-node@0.3.9)(eslint@9.27.0):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
-      '@typescript-eslint/parser': 8.33.0(eslint@9.27.0)(typescript@5.8.3)
       eslint: 9.27.0
       eslint-import-resolver-node: 0.3.9
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.33.0(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0):
+  eslint-plugin-import@2.31.0(eslint@9.27.0):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.8
@@ -5799,7 +5813,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.27.0
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.33.0(eslint@9.27.0)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint@9.27.0)
+      eslint-module-utils: 2.12.0(eslint-import-resolver-node@0.3.9)(eslint@9.27.0)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -5810,8 +5824,6 @@ snapshots:
       semver: 6.3.1
       string.prototype.trimend: 1.0.9
       tsconfig-paths: 3.15.0
-    optionalDependencies:
-      '@typescript-eslint/parser': 8.33.0(eslint@9.27.0)(typescript@5.8.3)
     transitivePeerDependencies:
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack

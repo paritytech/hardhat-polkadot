@@ -35,9 +35,12 @@
     "eslint:fix": "eslint 'src/**/*.ts' --fix"
   },
   "dependencies": {
-
+    "jscodeshift": "^17.3.0",
+    "semver": "^7.7.2"
   },
   "devDependencies": {
+    "@types/jscodeshift": "^17.3.0",
+    "@types/semver": "^7.7.0",
     "prettier": "^3.5.3",
     "rimraf": "^3.0.2",
     "typescript": "^5.8.3",
