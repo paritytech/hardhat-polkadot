@@ -27,9 +27,9 @@ export function sizeCheckPatch() {
     ;(Module as any)._load = function (request: string, parent: Module, isMain: boolean) {
         if (patched) return originalLoad(request, parent, isMain)
 
-        if (request === "@nomicfoundation/ethereumjs-tx") {
-            const loaded = originalLoad(request, parent, isMain)
+        const loaded = originalLoad(request, parent, isMain)
 
+        if (request === "@nomicfoundation/ethereumjs-tx") {
             try {
                 const utilPath = path.join(
                     path.dirname(
@@ -51,12 +51,10 @@ export function sizeCheckPatch() {
             } catch (err) {
                 console.error("Failed to patch checkMaxInitCodeSize:", err)
             }
-
-            return loaded
         }
 
         // fallback: normal require
-        return originalLoad(request, parent, isMain)
+        return loaded
     }
 
     process.on("exit", () => {
