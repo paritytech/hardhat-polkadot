@@ -125,8 +125,13 @@ export function constructCommandArgs(
 
         if (args.nodeCommands?.nodeBinaryPath && args.nodeCommands?.consensus) {
             if (args.nodeCommands.consensus.seal === "Manual") {
+                const period: number = parseInt(`${args.nodeCommands.consensus.period}`, 10);
+                const manualSealTag: string = Number.isNaN(period) 
+                    ? "manual-seal"
+                    : "manual-seal-" + (period || 50);
+
                 nodeCommands.push(
-                    `--consensus=manual-seal-${args.nodeCommands.consensus.period || 50}`,
+                    `--consensus=${manualSealTag}`,
                 )
             } else {
                 nodeCommands.push(
