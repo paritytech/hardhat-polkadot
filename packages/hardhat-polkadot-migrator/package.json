@@ -5,7 +5,7 @@
   "version": "0.2.0-pre1",
   "bugs": "https://github.com/paritytech/hardhat-polkadot/issues",
   "repository": {
-    "directory": "packages/core/migrator",
+    "directory": "packages/hardhat-polkadot-migrator",
     "type": "git",
     "url": "https://github.com/paritytech/hardhat-polkadot.git"
   },

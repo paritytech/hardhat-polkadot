@@ -19,11 +19,11 @@ cd ../hardhat-polkadot-resolc
 HARDHAT_POLKADOT_RESOLC_TGZ=$(pnpm pack --silent --pack-destination "$BUNDLED_DIR")
 
 # 4) pack @parity/hardhat-polkadot-migrator
-cd ../core/migrator
+cd ../hardhat-polkadot-migrator
 HARDHAT_POLKADOT_MIGRATOR_TGZ=$(pnpm pack --silent --pack-destination "$BUNDLED_DIR")
 
 # 5) move prepacked to node_modules
-cd ../../hardhat-polkadot
+cd ../hardhat-polkadot
 pnpm add $HARDHAT_POLKADOT_NODE_TGZ
 pnpm add $HARDHAT_POLKADOT_RESOLC_TGZ
 pnpm add $HARDHAT_POLKADOT_MIGRATOR_TGZ

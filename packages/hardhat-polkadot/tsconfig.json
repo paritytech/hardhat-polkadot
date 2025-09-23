@@ -8,7 +8,7 @@
   "references": [
     { "path": "../hardhat-polkadot-resolc" },
     { "path": "../hardhat-polkadot-node" },
-    { "path": "../core/migrator" }
+    { "path": "../hardhat-polkadot-migrator" }
   ],
   "include": ["./src/**/*.ts"]
 }
