@@ -16,9 +16,8 @@ run_test() {
   npm install
   cp "../$CONFIG_FILE" ./hardhat.config.js
 
-
   # When
-  RUN_TESTS_OUTPUT="$(npx hardhat test --show-stack-traces)"
+  RUN_TESTS_OUTPUT="$(FORCE_COLOR=1 npx hardhat test --show-stack-traces | tee /dev/stderr)"
 
   # Then
   assert_directory_not_empty "artifacts-pvm"
