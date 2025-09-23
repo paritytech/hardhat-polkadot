@@ -14,6 +14,11 @@ on:
       - 'tests/**'
       - 'pnpm-lock.yaml'
 
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   run-unit-tests:
     strategy:
