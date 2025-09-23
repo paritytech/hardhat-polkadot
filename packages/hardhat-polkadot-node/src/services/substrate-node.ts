@@ -109,19 +109,6 @@ export class SubstrateNodeService extends Service {
             id: 1,
         }
 
-        try {
-            await waitForServiceToBeReady(this.port, payload, maxAttempts)
-        } catch (e: unknown) {
-            const output = await this.getOutput()
-            console.error("substrate node failed to lauch")
-            if (output.stdout) {
-                console.error("substrate node stdout:", output.stdout)
-            }
-            if (output.stderr) {
-                console.error("substrate node stderr:", output.stderr)
-            }
-
-            throw e
-        }
+        await waitForServiceToBeReady(this.port, payload, maxAttempts)
     }
 }
