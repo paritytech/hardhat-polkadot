@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [x86_64-unknown-linux-gnu, aarch64-apple-darwin, x86_64-apple-darwin]
+        target: [x86_64-unknown-linux-gnu, aarch64-apple-darwin] #, x86_64-apple-darwin]
         include:
           - target: x86_64-unknown-linux-gnu
             os_tag: linux
@@ -43,11 +43,11 @@ jobs:
             arch_tag: arm64
             runner: parity-macos
             exe_ext: ''
-          - target: x86_64-apple-darwin
-            os_tag: darwin
-            arch_tag: x64
-            runner: macos-13 # Intel, since parity-macos is arm64 only
-            exe_ext: ''
+          # - target: x86_64-apple-darwin
+          #   os_tag: darwin
+          #   arch_tag: x64
+          #   runner: macos-13 # Intel, since parity-macos is arm64 only
+          #   exe_ext: ''
           # Disabled for now
           # - target: x86_64-pc-windows-msvc
           #   os_tag: win32
