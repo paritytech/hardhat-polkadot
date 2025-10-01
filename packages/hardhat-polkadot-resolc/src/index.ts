@@ -35,7 +35,7 @@ import { assertHardhatInvariant } from "hardhat/internal/core/errors"
 import chalk from "chalk"
 import fs from "fs"
 
-import { getArtifactFromContractOutput, pluralize, updateDefaultCompilerConfig } from "./utils"
+import { pluralize, updateDefaultCompilerConfig } from "./utils"
 import { compile } from "./compile"
 import {
     defaultNpmResolcConfig,
@@ -163,24 +163,23 @@ subtask(
 subtask(
     TASK_COMPILE_SOLIDITY_GET_ARTIFACT_FROM_COMPILATION_OUTPUT,
     async (
-        {
-            sourceName,
-            contractName,
-            contractOutput,
-        }: {
+        args: {
             sourceName: string
             contractName: string
             contractOutput: CompilerOutputContract
         },
         hre,
+        runSuper,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): Promise<any> => {
         if (
             !hre.network.polkadot ||
             (typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm")
         ) {
-            return getArtifactFromContractOutput(sourceName, contractName, contractOutput)
+            return runSuper(args)
         }
+
+        const { sourceName, contractName, contractOutput } = args
         const bytecode: string =
             contractOutput.evm?.bytecode?.object ||
             contractOutput.evm?.deployedBytecode?.object ||
