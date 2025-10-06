@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
     - name: hardhat-polkadot plugins documentation page
-      url: https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#hardhat
+      url: https://docs.polkadot.com/develop/smart-contracts/dev-environments/hardhat/
       about: Please refer to the documentation for immediate answers.
