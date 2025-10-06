@@ -38,7 +38,7 @@
   "dependencies": {
     "@ethereumjs/util": "^10.0.0",
     "@parity/resolc": "0.3.0",
-    "axios": "1.9.0",
+    "axios": "1.12.2",
     "chalk": "4",
     "debug": "^4.4.0",
     "find-up": "5.0.0",
