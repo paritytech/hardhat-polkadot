@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0-pre2 (2025-10-06)
+### Bug Fixes
+
+- Support manual seal without interval. ([#333](https://github.com/paritytech/hardhat-polkadot/pull/333)) ([a725d2b](https://github.com/paritytech/hardhat-polkadot/commit/a725d2bcf8283f6b6034eed3765604d0670abe69))
+- Make plugin compatible with Node v18. ([#328](https://github.com/paritytech/hardhat-polkadot/pull/328)) ([3d2fb2b](https://github.com/paritytech/hardhat-polkadot/commit/3d2fb2b00af0d8d9421b14238f85dd474df7b77a))
+
+
 ## 0.2.0-pre1 (2025-09-11)
 ### Bug Fixes
 

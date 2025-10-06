@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0-pre1 (2025-10-06)
+### Features
+
+- Fix `0x` prefix with EVM Backend. ([#341](https://github.com/paritytech/hardhat-polkadot/pull/341)) ([412c371](https://github.com/paritytech/hardhat-polkadot/commit/412c3710471a3d77f4ed7eaf19e0ea598ed2858a))
+
+
 ## 0.2.0-pre0 (2025-09-11)
 ### Features
 
