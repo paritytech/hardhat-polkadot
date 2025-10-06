@@ -5,10 +5,5 @@
     "rootDir": "./src",
     "outDir": "./dist"
   },
-  "references": [
-    { "path": "../hardhat-polkadot-resolc" },
-    { "path": "../hardhat-polkadot-node" },
-    { "path": "../hardhat-polkadot-migrator" }
-  ],
   "include": ["./src/**/*.ts"]
 }
