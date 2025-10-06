@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.0-pre2 (2025-10-06)
+### Features
+
+- Introduced new `port <dir>` cli command. Migrates an existing Ethereum hardhat project for Polkadot Compatability. ([#282](https://github.com/paritytech/hardhat-polkadot/pull/282)) ([4778171](https://github.com/paritytech/hardhat-polkadot/commit/477817150aa6eeca0e78152a29b2ec891b3cca6f))
+
+### Internal
+
+- Bumped `@parity/hardhat-polkadot-resolc` to `0.2.0-pre1`.
+- Bumped `@parity/hardhat-polkadot-node` to `0.2.0-pre2`.
+
+
 ## 0.2.0-pre1 (2025-09-11)
 ### Internal
 
