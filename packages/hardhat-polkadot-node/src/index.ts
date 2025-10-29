@@ -1,5 +1,5 @@
 import { spawn } from "child_process"
-import { task, subtask, types, scope } from "hardhat/config"
+import { task, subtask, scope } from "hardhat/config"
 import {
     TASK_COMPILE,
     TASK_NODE,
@@ -57,36 +57,28 @@ task(TASK_RUN).setAction(async (args, hre, runSuper) => {
     )
 })
 
-subtask(TASK_NODE_POLKADOT_CREATE_SERVER, "Creates a JSON-RPC server for Polkadot node")
-    .addOptionalParam("nodePath", "Path to the node binary file", undefined, types.string)
-    .addOptionalParam(
-        "adapterPath",
-        "Path to the Eth Rpc Adapter binary file",
-        undefined,
-        types.string,
-    )
-    .setAction(
-        async (
-            {
-                nodePath,
-                adapterPath,
-                docker,
-            }: {
-                nodePath: string
-                adapterPath: string
-                docker: HardhatNetworkUserConfig["docker"]
-            },
-            { config },
-        ) => {
-            const server: RpcServer = createRpcServer({
-                docker,
-                nodePath,
-                adapterPath,
-                isForking: config.networks.hardhat.forking?.enabled,
-            })
-            return server
+subtask(TASK_NODE_POLKADOT_CREATE_SERVER, "Creates a JSON-RPC server for Polkadot node").setAction(
+    async (
+        {
+            nodePath,
+            adapterPath,
+            docker,
+        }: {
+            nodePath: string
+            adapterPath: string
+            docker: HardhatNetworkUserConfig["docker"]
         },
-    )
+        { config },
+    ) => {
+        const server: RpcServer = createRpcServer({
+            docker,
+            nodePath,
+            adapterPath,
+            isForking: config.networks.hardhat.forking?.enabled,
+        })
+        return server
+    },
+)
 
 task(TASK_NODE, "Start a Polkadot Node").setAction(
     async (args: TaskArguments, { network, run }, runSuper) => {
@@ -97,118 +89,32 @@ task(TASK_NODE, "Start a Polkadot Node").setAction(
     },
 )
 
-task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node")
-    .addOptionalParam(
-        "nodeBinaryPath",
-        "Path to the substrate node binary",
-        undefined,
-        types.string,
-    )
-    .addOptionalParam(
-        "rpcPort",
-        "Port where the node will listen on - default: 8000",
-        undefined,
-        types.int,
-    )
-    .addOptionalParam(
-        "adapterBinaryPath",
-        "Path to the eth-rpc-adapter binary",
-        undefined,
-        types.string,
-    )
-    .addOptionalParam(
-        "adapterPort",
-        "Port where the adapter will listen on - default: 8545 ",
-        undefined,
-        types.int,
-    )
-    .addOptionalParam(
-        "dev",
-        "Whether to run the adapter in dev mode - default: false",
-        undefined,
-        types.boolean,
-    )
-    .addOptionalParam(
-        "buildBlockMode",
-        "Build block mode for @acala-network/chopsticks",
-        undefined,
-        types.string,
-    )
-    .addOptionalParam(
-        "fork",
-        "Endpoint to fork a live chain using @acala-network/chopsticks",
-        undefined,
-        types.string,
-    )
-    .addOptionalParam(
-        "forkBlockNumber",
-        "Block hash or block number from where to fork",
-        undefined,
-        types.string,
-    )
-    .setAction(
-        async (
-            {
-                nodeBinaryPath,
-                rpcPort,
-                adapterBinaryPath,
-                adapterPort,
-                dev,
-                buildBlockMode,
-                fork,
-                forkBlockNumber,
-            }: {
-                nodeBinaryPath: string
-                rpcPort: number
-                adapterBinaryPath: string
-                adapterPort: number
-                dev: boolean
-                buildBlockMode: "Instant" | "Manual" | "Batch"
-                fork: string
-                forkBlockNumber: string
-            },
-            { run, config, userConfig },
-        ) => {
-            const commandArgs = constructCommandArgs(
-                {
-                    forking: config.networks.hardhat.forking,
-                    forkBlockNumber: config.networks.hardhat.forking?.blockNumber,
-                    nodeCommands: userConfig.networks?.hardhat?.nodeConfig,
-                    adapterCommands: userConfig.networks?.hardhat?.adapterConfig,
-                },
-                {
-                    nodeBinaryPath,
-                    rpcPort,
-                    adapterBinaryPath,
-                    adapterPort,
-                    dev,
-                    buildBlockMode,
-                    fork,
-                    forkBlockNumber,
-                },
-            )
+task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node").setAction(
+    async ({ run, config, userConfig }) => {
+        const commandArgs = constructCommandArgs({
+            forking: config.networks.hardhat.forking,
+            forkBlockNumber: config.networks.hardhat.forking?.blockNumber,
+            nodeCommands: userConfig.networks?.hardhat?.nodeConfig,
+            adapterCommands: userConfig.networks?.hardhat?.adapterConfig,
+        })
 
-            const nodePath = nodeBinaryPath
-                ? nodeBinaryPath
-                : userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath
-            const adapterPath = adapterBinaryPath
-                ? adapterBinaryPath
-                : userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath
+        const nodePath = userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath
+        const adapterPath = userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath
 
-            const server: RpcServer = await run(TASK_NODE_POLKADOT_CREATE_SERVER, {
-                docker: userConfig.networks?.hardhat?.docker,
-                nodePath,
-                adapterPath,
-            })
+        const server: RpcServer = await run(TASK_NODE_POLKADOT_CREATE_SERVER, {
+            docker: userConfig.networks?.hardhat?.docker,
+            nodePath,
+            adapterPath,
+        })
 
-            try {
-                await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands)
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } catch (error: any) {
-                throw new PolkadotNodePluginError(`Failed when running node: ${error.message}`)
-            }
-        },
-    )
+        try {
+            await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            throw new PolkadotNodePluginError(`Failed when running node: ${error.message}`)
+        }
+    },
+)
 
 subtask(
     TASK_RUN_POLKADOT_NODE_IN_SEPARATE_PROCESS,
