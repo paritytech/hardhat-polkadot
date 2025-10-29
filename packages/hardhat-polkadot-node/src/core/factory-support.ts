@@ -33,7 +33,9 @@ export async function handleFactoryDependencies(
     ethRpcUrl: HardhatNetworkConfig["url"],
     polkadotRpcUrl: HardhatNetworkConfig["polkadotUrl"],
     accounts: string[] | HardhatNetworkAccountsConfig | HttpNetworkAccountsConfig,
+    useAnvil?: boolean,
 ) {
+    if (useAnvil) return
     // get last build info file
     const files = await glob(`${pathToArtifacts}/build-info/*.json`)
     if (files.length === 0) return
