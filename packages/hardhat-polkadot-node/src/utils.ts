@@ -37,7 +37,14 @@ export function constructCommandArgs(
     cliCommands?: CliCommands,
 ): SplitCommands {
     const nodeCommands: string[] = []
-    const adapterCommands: string[] | undefined = []
+    const adapterCommands: string[] = []
+
+    if (args?.nodeCommands?.useAnvil) {
+        return {
+            nodeCommands,
+            adapterCommands,
+        }
+    }
 
     if (cliCommands && Object.values(cliCommands).find((v) => v !== undefined)) {
         if (cliCommands.fork) {
@@ -258,6 +265,7 @@ export async function startServer(
     nodePath?: string,
     adapterPath?: string,
 ) {
+    const useAnvil = !!commands.nodeCommands?.useAnvil
     const currentNodePort = await getAvailablePort(
         commands.nodeCommands?.rpcPort ? commands.nodeCommands.rpcPort : NODE_START_PORT,
         MAX_PORT_ATTEMPTS,
@@ -274,6 +282,7 @@ export async function startServer(
     return {
         commandArgs,
         server: createRpcServer({
+            useAnvil,
             docker: commands.docker,
             nodePath,
             adapterPath: adapterPath || commands.adapterCommands?.adapterBinaryPath,
