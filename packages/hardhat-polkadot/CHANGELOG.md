@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0-pre3 (2025-09-11)
+### Internal
+
+- Bumped `@parity/hardhat-polkadot-resolc` to `0.2.0-pre2`.
+
+
 ## 0.2.0-pre2 (2025-10-06)
 ### Features
 
