@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0-pre2 (2025-10-30)
+### Bug Fixes
+
+- Add `storageLayout` to `outputSelection`. ([#346](https://github.com/paritytech/hardhat-polkadot/pull/346)) ([8cd6751](https://github.com/paritytech/hardhat-polkadot/commit/8cd67513aff47076d76d5905592559d60b8a94fd))
+
+
 ## 0.2.0-pre1 (2025-10-06)
 ### Features
 
