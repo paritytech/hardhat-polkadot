@@ -39,6 +39,7 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
                     "evm.bytecode",
                     "evm.deployedBytecode",
                     "evm.methodIdentifiers",
+                    "storageLayout",
                 ],
                 "": ["ast"],
             },
