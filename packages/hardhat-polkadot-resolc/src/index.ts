@@ -341,11 +341,7 @@ subtask(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_RESOLC_COMPILER_START).setAction(
             return
         }
 
-        if (resolcVersion === "latest") {
-            console.log(`Downloading ${resolcVersion} version of the resolc compiler`)
-        } else {
-            console.log(`Downloading resolc compiler ${resolcVersion}`)
-        }
+        console.log(`Downloading resolc compiler ${resolcVersion}`)
     },
 )
 
