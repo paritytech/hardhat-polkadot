@@ -20,8 +20,8 @@ run_test() {
   RUN_TESTS_OUTPUT="$(FORCE_COLOR=1 npx hardhat test --show-stack-traces | tee /dev/stderr)"
 
   # Then
-  assert_directory_not_empty "artifacts-pvm"
-  assert_directory_not_empty "cache-pvm"
+  assert_directory_not_empty "artifacts"
+  assert_directory_not_empty "cache"
   check_log_value "$RUN_TESTS_OUTPUT" "$EXPECTED_PASSING passing"
   echo "✅ Tests in $NETWORK_NAME network passed in fixture-projects/$PROJECT_DIR"
 }

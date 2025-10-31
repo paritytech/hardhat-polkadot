@@ -13,10 +13,10 @@ npm install # install modules specified in the package.json
 run_test_and_handle_failure "npx hardhat compile --show-stack-traces" 0
 
 # Then
-assert_directory_exists "artifacts-pvm"
-assert_directory_exists "cache-pvm"
-assert_directory_not_empty "artifacts-pvm"
-assert_directory_not_empty "cache-pvm"
+assert_directory_exists "artifacts"
+assert_directory_exists "cache"
+assert_directory_not_empty "artifacts"
+assert_directory_not_empty "cache"
 
 echo "Solidity compiles successfully in fixture-pojects/foo" \
     "creating the appropriate artifacts ✅"
