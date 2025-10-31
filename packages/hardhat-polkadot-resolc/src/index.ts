@@ -5,7 +5,6 @@ import {
     TASK_COMPILE_SOLIDITY_LOG_COMPILATION_RESULT,
     TASK_COMPILE_SOLIDITY_LOG_RUN_COMPILER_START,
     TASK_COMPILE_SOLIDITY_GET_SOURCE_NAMES,
-    TASK_COMPILE_REMOVE_OBSOLETE_ARTIFACTS,
     TASK_COMPILE_SOLIDITY_COMPILE_SOLC,
     TASK_COMPILE_SOLIDITY_LOG_RUN_COMPILER_END,
     TASK_COMPILE_SOLIDITY_EMIT_ARTIFACTS,
@@ -33,7 +32,6 @@ import type {
 } from "hardhat/types"
 import { assertHardhatInvariant } from "hardhat/internal/core/errors"
 import chalk from "chalk"
-import fs from "fs"
 
 import { pluralize, updateDefaultCompilerConfig } from "./utils"
 import { compile } from "./compile"
@@ -91,15 +89,9 @@ extendEnvironment((hre) => {
     hre.network.polkadot = hre.network.config.polkadot
     if (typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm") return
 
-    let artifactsPath = hre.config.paths.artifacts
-    if (!artifactsPath.endsWith("-pvm")) {
-        artifactsPath = `${artifactsPath}-pvm`
-    }
+    const artifactsPath = hre.config.paths.artifacts
 
-    let cachePath = hre.config.paths.cache
-    if (!cachePath.endsWith("-pvm")) {
-        cachePath = `${cachePath}-pvm`
-    }
+    const cachePath = hre.config.paths.cache
 
     hre.config.paths.artifacts = artifactsPath
     hre.config.paths.cache = cachePath
@@ -537,21 +529,4 @@ subtask(TASK_COMPILE_SOLIDITY_GET_COMPILER_INPUT, async (taskArgs, hre, runSuper
     const compilerInput: ReviveCompilerInput = await runSuper(taskArgs)
 
     return compilerInput
-})
-
-subtask(TASK_COMPILE_REMOVE_OBSOLETE_ARTIFACTS, async (taskArgs, hre, runSuper) => {
-    if (
-        !hre.network.polkadot ||
-        (typeof hre.network.polkadot !== "boolean" && hre.network.polkadot?.target == "evm")
-    ) {
-        return await runSuper(taskArgs)
-    }
-
-    const artifactsDir = hre.config.paths.artifacts
-
-    if (artifactsDir.slice(-4) !== "-pvm") fs.rmSync(artifactsDir, { recursive: true })
-
-    const cacheDir = hre.config.paths.cache
-
-    if (cacheDir.slice(-4) !== "-pvm") fs.rmSync(cacheDir, { recursive: true })
 })

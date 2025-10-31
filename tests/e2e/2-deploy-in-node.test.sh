@@ -25,8 +25,8 @@ run_test() {
   )"
 
   # Then
-  assert_directory_not_empty "artifacts-pvm"
-  assert_directory_not_empty "cache-pvm"
+  assert_directory_not_empty "artifacts"
+  assert_directory_not_empty "cache"
   check_log_value "$DEPLOY_LOCAL_NODE_OUTPUT" "${CONTRACT_NAME}Module#${CONTRACT_NAME} - 0x"
   echo "Deploys on $NETWORK_NAME network successfully in fixture-projects/${PROJECT_DIR} ✅"
 
