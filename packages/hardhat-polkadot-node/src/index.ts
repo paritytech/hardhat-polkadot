@@ -93,7 +93,7 @@ task(TASK_NODE, "Start a Polkadot Node").setAction(
 )
 
 task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node").setAction(
-    async ({ run, config, userConfig }) => {
+    async ({ _taskArgs = [] }, { run, config, userConfig }) => {
         const commandArgs = constructCommandArgs({
             forking: config.networks.hardhat.forking,
             forkBlockNumber: config.networks.hardhat.forking?.blockNumber,
