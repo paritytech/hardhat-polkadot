@@ -57,32 +57,31 @@ task(TASK_RUN).setAction(async (args, hre, runSuper) => {
     )
 })
 
-subtask(TASK_NODE_POLKADOT_CREATE_SERVER, "Creates a JSON-RPC server for Polkadot node")
-    .setAction(
-        async (
-            {
-                nodePath,
-                adapterPath,
-                docker,
-                useAnvil,
-            }: {
-                nodePath: string
-                adapterPath: string
-                useAnvil: boolean
-                docker: HardhatNetworkUserConfig["docker"]
-            },
-            { config },
-        ) => {
-            const server: RpcServer = createRpcServer({
-                useAnvil,
-                docker,
-                nodePath,
-                adapterPath,
-                isForking: config.networks.hardhat.forking?.enabled,
-            })
-            return server
+subtask(TASK_NODE_POLKADOT_CREATE_SERVER, "Creates a JSON-RPC server for Polkadot node").setAction(
+    async (
+        {
+            nodePath,
+            adapterPath,
+            docker,
+            useAnvil,
+        }: {
+            nodePath: string
+            adapterPath: string
+            useAnvil: boolean
+            docker: HardhatNetworkUserConfig["docker"]
         },
-    )
+        { config },
+    ) => {
+        const server: RpcServer = createRpcServer({
+            useAnvil,
+            docker,
+            nodePath,
+            adapterPath,
+            isForking: config.networks.hardhat.forking?.enabled,
+        })
+        return server
+    },
+)
 
 task(TASK_NODE, "Start a Polkadot Node").setAction(
     async (args: TaskArguments, { network, run }, runSuper) => {
@@ -105,12 +104,12 @@ task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node").setAction
         const nodePath = userConfig.networks?.hardhat?.nodeConfig?.nodeBinaryPath
         const adapterPath = userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath
 
-            const server: RpcServer = await run(TASK_NODE_POLKADOT_CREATE_SERVER, {
-                useAnvil: !!userConfig.networks?.hardhat?.nodeConfig?.useAnvil,
-                docker: userConfig.networks?.hardhat?.docker,
-                nodePath,
-                adapterPath,
-            })
+        const server: RpcServer = await run(TASK_NODE_POLKADOT_CREATE_SERVER, {
+            useAnvil: !!userConfig.networks?.hardhat?.nodeConfig?.useAnvil,
+            docker: userConfig.networks?.hardhat?.docker,
+            nodePath,
+            adapterPath,
+        })
 
         try {
             await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands)
