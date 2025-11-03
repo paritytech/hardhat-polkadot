@@ -58,13 +58,6 @@ task(TASK_RUN).setAction(async (args, hre, runSuper) => {
 })
 
 subtask(TASK_NODE_POLKADOT_CREATE_SERVER, "Creates a JSON-RPC server for Polkadot node")
-    .addOptionalParam("nodePath", "Path to the node binary file", undefined, types.string)
-    .addOptionalParam(
-        "adapterPath",
-        "Path to the Eth Rpc Adapter binary file",
-        undefined,
-        types.string,
-    )
     .setAction(
         async (
             {
