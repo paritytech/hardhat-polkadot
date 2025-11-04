@@ -43,13 +43,6 @@ export function constructCommandArgs(args?: CommandArguments): SplitCommands {
         }
     }
 
-    if (args?.nodeCommands?.useAnvil) {
-        return {
-            nodeCommands,
-            adapterCommands,
-        }
-    }
-
     if (args && Object.values(args).find((v) => v !== undefined)) {
         if (args.forking) {
             nodeCommands.push(`npx`)
