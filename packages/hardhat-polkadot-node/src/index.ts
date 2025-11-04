@@ -170,7 +170,6 @@ task(
                     network.config.url,
                     network.config.polkadotUrl,
                     network.config.accounts,
-                    useAnvil,
                 )
             return await runSuper()
         }
@@ -234,7 +233,6 @@ task(
                     `http://localhost:${adapterPort}`,
                     `ws://localhost:${nodePort}`,
                     POLKADOT_NETWORK_ACCOUNTS,
-                    useAnvil,
                 )
                 testFailures = await run(TASK_TEST_RUN_MOCHA_TESTS, {
                     testFiles: files,
