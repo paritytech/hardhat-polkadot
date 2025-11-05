@@ -7,6 +7,7 @@ declare module "hardhat/types/config" {
         polkadot?: boolean | TargetVM
         // Configuration for polkadot-compatible node
         nodeConfig?: {
+            useAnvil?: boolean
             // Path to the substrate node binary
             nodeBinaryPath?: string
             // Port ETH-RPC adapter binary

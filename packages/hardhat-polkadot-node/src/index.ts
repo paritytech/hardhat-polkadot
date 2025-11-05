@@ -63,14 +63,17 @@ subtask(TASK_NODE_POLKADOT_CREATE_SERVER, "Creates a JSON-RPC server for Polkado
             nodePath,
             adapterPath,
             docker,
+            useAnvil,
         }: {
             nodePath: string
             adapterPath: string
+            useAnvil: boolean
             docker: HardhatNetworkUserConfig["docker"]
         },
         { config },
     ) => {
         const server: RpcServer = createRpcServer({
+            useAnvil,
             docker,
             nodePath,
             adapterPath,
@@ -90,7 +93,7 @@ task(TASK_NODE, "Start a Polkadot Node").setAction(
 )
 
 task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node").setAction(
-    async ({ run, config, userConfig }) => {
+    async ({ _taskArgs = [] }, { run, config, userConfig }) => {
         const commandArgs = constructCommandArgs({
             forking: config.networks.hardhat.forking,
             forkBlockNumber: config.networks.hardhat.forking?.blockNumber,
@@ -102,6 +105,7 @@ task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node").setAction
         const adapterPath = userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath
 
         const server: RpcServer = await run(TASK_NODE_POLKADOT_CREATE_SERVER, {
+            useAnvil: !!userConfig.networks?.hardhat?.nodeConfig?.useAnvil,
             docker: userConfig.networks?.hardhat?.docker,
             nodePath,
             adapterPath,
@@ -155,6 +159,9 @@ task(
         runSuper,
     ) => {
         if (!noCompile) await run(TASK_COMPILE, { quiet: true })
+
+        const useAnvil = !!userConfig.networks?.hardhat?.nodeConfig?.useAnvil
+
         if (!network.config.polkadot || network.name !== HARDHAT_NETWORK_NAME) {
             // If remote polkadot network
             if (network.config.polkadot)
@@ -181,6 +188,7 @@ task(
         const adapterPath = userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath
 
         const server: RpcServer = await run(TASK_NODE_POLKADOT_CREATE_SERVER, {
+            useAnvil,
             docker: userConfig.networks?.hardhat?.docker,
             nodePath,
             adapterPath,
@@ -211,8 +219,12 @@ task(
         try {
             await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false)
             await server.services().substrateNodeService?.waitForNodeToBeReady()
-            await server.services().ethRpcService?.waitForEthRpcToBeReady()
-            await configureNetwork(config, network, adapterPort || nodePort)
+            if (!useAnvil) await server.services().ethRpcService?.waitForEthRpcToBeReady()
+            await configureNetwork(
+                config,
+                network,
+                useAnvil ? adapterPort : adapterPort || nodePort,
+            )
 
             let testFailures = 0
             try {
