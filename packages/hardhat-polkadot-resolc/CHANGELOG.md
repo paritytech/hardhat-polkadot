@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0-pre3 (2025-11-06)
+### Bug Fixes
+
+- Remove artifacts and cache suffix. ([#349](https://github.com/paritytech/hardhat-polkadot/pull/349)) ([5824d71](https://github.com/paritytech/hardhat-polkadot/commit/5824d71ae683434a4c688909ec50bb1e9c86993c))
+
+
 ## 0.2.0-pre2 (2025-10-30)
 ### Bug Fixes
 
