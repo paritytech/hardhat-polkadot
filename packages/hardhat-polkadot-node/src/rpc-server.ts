@@ -33,6 +33,7 @@ export function createRpcServer(opts: {
             adapterArgs: string[] = [],
             blockProcess = true,
         ): Promise<void> {
+            if (opts.useAnvil) nodeArgs.push("--rpc-port=8545")
             substrateNodeService = new SubstrateNodeService(nodeArgs, blockProcess)
             ethRpcService = new EthRpcService(adapterArgs, blockProcess)
             chopsticksService = new ChopsticksService(nodeArgs, blockProcess)
