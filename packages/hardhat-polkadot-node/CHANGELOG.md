@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0-pre3 (2025-11-06)
+### Features
+
+- Add support for anvil node. ([#353](https://github.com/paritytech/hardhat-polkadot/pull/353)) ([0584669](https://github.com/paritytech/hardhat-polkadot/commit/0584669326bef9a6e3af3c83ec9c89671c02bc18))
+
+
 ## 0.2.0-pre2 (2025-10-06)
 ### Bug Fixes
 
