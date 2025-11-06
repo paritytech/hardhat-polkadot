@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0-pre4 (2025-11-06)
+### Bug Fixes
+
+- Fix node not responding. ([#356](https://github.com/paritytech/hardhat-polkadot/pull/353)) ([f1540d8](https://github.com/paritytech/hardhat-polkadot/commit/f1540d820526a67b799c9d78165f16ae162ddd79))
+
+
 ## 0.2.0-pre3 (2025-11-06)
 ### Features
 
