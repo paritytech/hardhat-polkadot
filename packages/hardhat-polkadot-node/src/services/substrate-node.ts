@@ -16,7 +16,11 @@ export class SubstrateNodeService extends Service {
         super(commandArgs.slice(1), blockProcess)
 
         const portArg = commandArgs.find((arg) => arg.startsWith("--rpc-port="))
-        this.port = portArg ? parseInt(portArg.split("=")[1], 10) : useAnvil ? 8545 : NODE_START_PORT
+        this.port = portArg
+            ? parseInt(portArg.split("=")[1], 10)
+            : useAnvil
+              ? 8545
+              : NODE_START_PORT
     }
 
     public async from_binary(pathToBinary: string): Promise<void> {
