@@ -7,7 +7,9 @@ const config: HardhatUserConfig = {
     networks: {
         // npx hardhat node
         hardhat: {
-            polkadot: true,
+            polkadot: {
+                target: "evm",
+            },
             forking: {
                 url: "https://testnet-passet-hub.polkadot.io",
             },

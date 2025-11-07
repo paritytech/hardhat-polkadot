@@ -5,23 +5,12 @@ const config: HardhatUserConfig = {
     solidity: "0.8.28",
     networks: {
         hardhat: {
-            polkadot: true,
+            polkadot: {
+                target: "evm",
+            },
             nodeConfig: {
-                nodeBinaryPath: "path/to/dev-node/binary",
-                rpcPort: 8000,
-                dev: true,
-            },
-            adapterConfig: {
-                adapterBinaryPath: "path/to/eth-rpc-adapter",
-                dev: true,
-            },
-        },
-    },
-    resolc: {
-        compilerSource: "binary",
-        settings: {
-            optimizer: {
-                enabled: true,
+                useAnvil: true,
+                nodeBinaryPath: "path/to/anvil-polkadot/binary",
             },
         },
     },

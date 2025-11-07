@@ -11,13 +11,8 @@ const config: HardhatUserConfig = {
         hardhat: {
             polkadot: true,
             nodeConfig: {
-                nodeBinaryPath: "./bin/dev-node",
-                rpcPort: 8000,
-                dev: true,
-            },
-            adapterConfig: {
-                adapterBinaryPath: "./bin/eth-rpc",
-                dev: true,
+                useAnviL: true,
+                nodeBinaryPath: "./bin/anvil-polkadot",
             },
         },
         /** Local Network
@@ -68,12 +63,6 @@ const config: HardhatUserConfig = {
                 : ["271ad9a5e1e0178acebdb572f8755aac3463d863ddfc70e32e7d5eb0b334e687"],
             chainId: 420420421,
         },
-        /** Polkadot Hub (Coming Soon)
-         * token: https://coinmarketcap.com/currencies/polkadot/#Markets
-         */
-        // polkadotHub: {
-        //     polkadot: true,
-        // },
     },
 }
 
