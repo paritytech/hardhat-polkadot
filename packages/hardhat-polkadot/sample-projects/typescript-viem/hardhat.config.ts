@@ -5,7 +5,9 @@ const config: HardhatUserConfig = {
     solidity: "0.8.28",
     networks: {
         hardhat: {
-            polkadot: true,
+            polkadot: {
+                target: "evm",
+            },
             forking: {
                 url: "https://testnet-passet-hub.polkadot.io",
             },
