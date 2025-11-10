@@ -5,15 +5,12 @@ const config: HardhatUserConfig = {
     solidity: "0.8.28",
     networks: {
         hardhat: {
-            polkadot: true,
+            polkadot: {
+                target: "evm",
+            },
             nodeConfig: {
                 useAnvil: true,
                 nodeBinaryPath: "<PATH_TO_ANVIL_BIN>",
-                dev: true,
-                rpcPort: 8000,
-                consensus: {
-                    seal: "manual-seal",
-                },
             },
         },
     },

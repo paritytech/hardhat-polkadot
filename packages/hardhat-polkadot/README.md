@@ -59,13 +59,8 @@ const config: HardhatUserConfig = {
     hardhat: {
       polkadot: true,
       nodeConfig: {
-        nodeBinaryPath: 'INSERT_PATH_TO_SUBSTRATE_NODE',
-        rpcPort: 8000,
-        dev: true,
-      },
-      adapterConfig: {
-        adapterBinaryPath: 'INSERT_PATH_TO_ETH_RPC_ADAPTER',
-        dev: true,
+        useAnvil: true,
+        nodeBinaryPath: 'INSERT_PATH_TO_ANVIL_NODE',
       },
     },
   },
@@ -106,7 +101,7 @@ $ npx hardhat run scripts/interact.js
 
 ## Documentation
 
-* See [Examples](https://github.com/paritytech/hardhat-polkadot/tree/main/examples)
+* See [Examples](../../examples)
 
 * Get started from scratch with [How to use Hardhat with Polkadot](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/)
 
