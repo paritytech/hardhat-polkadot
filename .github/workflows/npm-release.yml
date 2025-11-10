@@ -37,6 +37,10 @@ jobs:
               run: pnpm pack
               working-directory: "./packages/hardhat-polkadot-node"
 
+            - name: pack hardhat-polkadot-migrator
+              run: pnpm pack
+              working-directory: "./packages/hardhat-polkadot-migrator"
+
             - name: pack hardhat-polkadot
               run: pnpm pack
               working-directory: "./packages/hardhat-polkadot"
@@ -46,6 +50,7 @@ jobs:
                 mkdir -p packs
                 cp ./packages/hardhat-polkadot-resolc/*.tgz packs/
                 cp ./packages/hardhat-polkadot-node/*.tgz packs/
+                cp ./packages/hardhat-polkadot-migrator/*.tgz packs/
                 cp ./packages/hardhat-polkadot/*.tgz packs/
                 ls -ltr packs
 
