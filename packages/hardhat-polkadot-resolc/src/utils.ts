@@ -1,36 +1,8 @@
-import type { Artifact, CompilerInput } from "hardhat/types"
-import { ARTIFACT_FORMAT_VERSION } from "hardhat/internal/constants"
+import type { CompilerInput } from "hardhat/types"
 import { createHash } from "crypto"
 import { updateSolc } from "./compile/npm"
 import type { ResolcConfig, SolcConfigData } from "./types"
 import { ResolcPluginError } from "./errors"
-
-export function getArtifactFromContractOutput(
-    sourceName: string,
-    contractName: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    contractOutput: any,
-): Artifact {
-    const evmBytecode = contractOutput.evm?.bytecode
-    const bytecode: string = evmBytecode?.object ?? ""
-
-    const evmDeployedBytecode = contractOutput.evm?.deployedBytecode
-    const deployedBytecode: string = evmDeployedBytecode?.object ?? ""
-
-    const linkReferences = evmBytecode?.linkReferences ?? {}
-    const deployedLinkReferences = evmDeployedBytecode?.linkReferences ?? {}
-
-    return {
-        _format: ARTIFACT_FORMAT_VERSION,
-        contractName,
-        sourceName,
-        abi: contractOutput.abi,
-        bytecode,
-        deployedBytecode,
-        linkReferences,
-        deployedLinkReferences,
-    }
-}
 
 export function getVersionComponents(version: string): number[] {
     const versionComponents = version.split(".")
@@ -67,6 +39,7 @@ export function updateDefaultCompilerConfig(solcConfigData: SolcConfigData, reso
                     "evm.bytecode",
                     "evm.deployedBytecode",
                     "evm.methodIdentifiers",
+                    "storageLayout",
                 ],
                 "": ["ast"],
             },

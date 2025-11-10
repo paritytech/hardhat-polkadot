@@ -2,7 +2,7 @@
   "name": "@parity/hardhat-polkadot-node",
   "author": "Parity Technologies <admin@parity.io>",
   "license": "AGPL-3.0",
-  "version": "0.2.0-pre1",
+  "version": "0.2.0-pre4",
   "bugs": "https://github.com/paritytech/hardhat-polkadot/issues",
   "homepage": "https://github.com/paritytech/hardhat-polkadot/tree/master/packages/hardhat-polkadot-node#readme",
   "repository": {
@@ -39,7 +39,7 @@
     "axios": "1.9.0",
     "chalk": "4",
     "debug": "^4.4.0",
-    "dockerode": "^4.0.6",
+    "dockerode": "^4.0.9",
     "ethers": "^6.15.0",
     "fast-glob": "^3.3.3",
     "lru-cache": "^11.1.0",

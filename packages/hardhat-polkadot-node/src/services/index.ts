@@ -1,7 +1,6 @@
 import chalk from "chalk"
 import Docker from "dockerode"
 import { ChildProcess } from "child_process"
-import { text } from "stream/consumers"
 
 export abstract class Service {
     public process: ChildProcess | null = null
@@ -35,13 +34,6 @@ export abstract class Service {
     abstract from_binary(pathToBinary: string): Promise<void>
 
     abstract from_docker(...args: unknown[]): Promise<void>
-
-    public async getOutput(): Promise<{ stdout: string | null; stderr: string | null }> {
-        const stdout = this.process?.stdout ? await text(this.process.stdout) : null
-        const stderr = this.process?.stderr ? await text(this.process.stderr) : null
-
-        return { stdout, stderr }
-    }
 }
 
 export { ChopsticksService } from "./chopsticks"

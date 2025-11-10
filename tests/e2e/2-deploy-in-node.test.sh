@@ -19,11 +19,14 @@ run_test() {
   await_start_node "$UNIQUE_NODE_LOG" # careful chopsticks uses ANSI color codes
 
   # When
-  DEPLOY_LOCAL_NODE_OUTPUT=$(yes | npx hardhat ignition deploy "./ignition/modules/${CONTRACT_NAME}.js" --network localNode)
+  DEPLOY_LOCAL_NODE_OUTPUT="$(
+    yes | FORCE_COLOR=1 npx hardhat ignition deploy "./ignition/modules/${CONTRACT_NAME}.js" --network localNode \
+      | tee /dev/stderr
+  )"
 
   # Then
-  assert_directory_not_empty "artifacts-pvm"
-  assert_directory_not_empty "cache-pvm"
+  assert_directory_not_empty "artifacts"
+  assert_directory_not_empty "cache"
   check_log_value "$DEPLOY_LOCAL_NODE_OUTPUT" "${CONTRACT_NAME}Module#${CONTRACT_NAME} - 0x"
   echo "Deploys on $NETWORK_NAME network successfully in fixture-projects/${PROJECT_DIR} ✅"
 

@@ -1,17 +1,17 @@
-name: Release Polkadot Development Runtime
+name: Release Anvil Development Node
 
 on:
   # trigger manually from /actions
   workflow_dispatch:
     inputs:
-      sdk-branch:
-        description: Branch to use for polkadot-sdk
+      foundry-polkadot-branch:
+        description: Branch to use for foundry-polkadot
         required: true
-        default: "anp-dirty-node"
+        default: "master"
       mark-as-latest:
         type: boolean
         required: false
-        default: true
+        default: false
         description: Mark as latest
 
 permissions:
@@ -22,8 +22,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  POLKADOT_SDK_REPO: 'https://github.com/paritytech/polkadot-sdk'
-  POLKADOT_SDK_BRANCH: ${{ inputs.sdk-branch || 'anp-dirty-node' }}
+  FOUNDRY_POLKADOT_REPO: 'https://github.com/paritytech/foundry-polkadot'
+  FOUNDRY_POLKADOT_BRANCH: ${{ inputs.foundry-polkadot-branch || 'master' }}
 
 jobs:
   compile:
@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [x86_64-unknown-linux-gnu, aarch64-apple-darwin] #, x86_64-apple-darwin]
+        target: [x86_64-unknown-linux-gnu, aarch64-apple-darwin]
         include:
           - target: x86_64-unknown-linux-gnu
             os_tag: linux
@@ -43,17 +43,7 @@ jobs:
             arch_tag: arm64
             runner: parity-macos
             exe_ext: ''
-          # - target: x86_64-apple-darwin
-          #   os_tag: darwin
-          #   arch_tag: x64
-          #   runner: macos-13 # Intel, since parity-macos is arm64 only
-          #   exe_ext: ''
-          # Disabled for now
-          # - target: x86_64-pc-windows-msvc
-          #   os_tag: win32
-          #   arch_tag: x64
-          #   runner: windows-2022
-          #   exe_ext: '.exe'
+
     runs-on: ${{ matrix.runner }}
     steps:
 
@@ -87,29 +77,16 @@ jobs:
       - name: Checkout (repo context)
         uses: actions/checkout@v4
 
-      - name: Clone polkadot-sdk
+      - name: Clone foundry-polkadot
         shell: bash
         run: |
-          git clone --depth 1 --branch "$POLKADOT_SDK_BRANCH" "$POLKADOT_SDK_REPO" polkadot-sdk
-
-      # Polkadot-sdk doesn't have rust-toolchain.toml, so we need to read the rust version from the IMAGE env variable at a time of building.
-      # We don't use ci-unified image, because it's too big and won't work for mac builds anyways
-      - name: Read env variables from polkadot-sdk
-        shell: bash
-        run: |
-          source polkadot-sdk/.github/env
-
-          echo "Current IMAGE: $IMAGE"
-
-          # extract rust version (like 1.88.0) from "IMAGE=docker.io/paritytech/ci-unified:bullseye-1.88.0-2025-06-27-v202507221446"
-          RUST_VERSION=$(echo "$IMAGE" | grep -oE '[0-9][.]+[0-9.]+')
-          echo "RUST_VERSION=$RUST_VERSION" >> "$GITHUB_ENV"
+          git clone --depth 1 --branch "$FOUNDRY_POLKADOT_BRANCH" "$FOUNDRY_POLKADOT_REPO" foundry-polkadot
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@v1
         id: toolchain
         with:
-          toolchain: ${{ env.RUST_VERSION }}
+          toolchain: '1.88.0'
           targets: wasm32-unknown-unknown, ${{ matrix.target }}
           components: rustfmt, clippy, rust-src
 
@@ -125,15 +102,15 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            polkadot-sdk/target
+            foundry-polkadot/target
           key: ${{ runner.os }}-cargo-${{ matrix.target }}-${{ steps.toolchain.outputs.cachekey }}
 
-      - name: Build nodes
-        working-directory: polkadot-sdk
+      - name: Build anvil-polkadot nodes
+        working-directory: foundry-polkadot
         shell: bash
         run: |
           set -euxo pipefail
-          cargo build --release --target ${{ matrix.target }} -p revive-dev-node -p pallet-revive-eth-rpc
+          cargo build --release --target ${{ matrix.target }} -p anvil-polkadot
 
       - name: Stage artifact with OS/arch suffix
         shell: bash
@@ -141,13 +118,12 @@ jobs:
           set -euo pipefail
           mkdir -p out
 
-          cp "polkadot-sdk/target/${{ matrix.target }}/release/revive-dev-node${{ matrix.exe_ext }}" "out/revive-dev-node-${{ matrix.os_tag }}-${{ matrix.arch_tag }}${{ matrix.exe_ext }}"
-          cp "polkadot-sdk/target/${{ matrix.target }}/release/eth-rpc${{ matrix.exe_ext }}" "out/eth-rpc-${{ matrix.os_tag }}-${{ matrix.arch_tag }}${{ matrix.exe_ext }}"
+          cp "foundry-polkadot/target/${{ matrix.target }}/release/anvil-polkadot${{ matrix.exe_ext }}" "out/anvil-polkadot-${{ matrix.os_tag }}-${{ matrix.arch_tag }}${{ matrix.exe_ext }}"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: nodes-${{ matrix.os_tag }}-${{ matrix.arch_tag }}
+          name: anvil-polkadot-nodes-${{ matrix.os_tag }}-${{ matrix.arch_tag }}
           path: out/*
           if-no-files-found: error
 
@@ -169,7 +145,7 @@ jobs:
 
       - name: Save latest commit hash to env
         run: |
-          echo "LATEST_COMMIT_HASH=$(git ls-remote ${{ env.POLKADOT_SDK_REPO }} refs/heads/${{ env.POLKADOT_SDK_BRANCH }} | awk '{ print $1 }')" >> "$GITHUB_ENV"
+          echo "LATEST_COMMIT_HASH=$(git ls-remote ${{ env.FOUNDRY_POLKADOT_REPO }} refs/heads/${{ env.FOUNDRY_POLKADOT_BRANCH }} | awk '{ print $1 }')" >> "$GITHUB_ENV"
 
       - name: Generate checksums and release body
         shell: bash
@@ -186,14 +162,13 @@ jobs:
           # Build release notes with real date and checksums
           {
             echo "Build date: ${DATE}"
-            echo "Based on [${{ env.POLKADOT_SDK_BRANCH }}](https://github.com/paritytech/polkadot-sdk/tree/${{ env.POLKADOT_SDK_BRANCH }})#[${{ env.LATEST_COMMIT_HASH }}](${{ env.POLKADOT_SDK_REPO }}/commit/${{ env.LATEST_COMMIT_HASH }})"
+            echo "Based on [${{ env.FOUNDRY_POLKADOT_BRANCH }}](https://github.com/paritytech/foundry-polkadot/tree/${{ env.FOUNDRY_POLKADOT_BRANCH }})#[${{ env.LATEST_COMMIT_HASH }}](${{ env.FOUNDRY_POLKADOT_REPO }}/commit/${{ env.LATEST_COMMIT_HASH }})"
             echo
             echo "⚠️ Disclaimer: This is a temporary release for testing purposes, it may not be stable and not meant to be used in production."
             echo
-            echo "This release includes revive-dev-node and eth-rpc binaries for the following platforms:"
+            echo "This release includes anvil-polkadot binaries for the following platforms:"
             echo
             echo "  - Linux x86_64"
-            echo "  - macOS x86_64"
             echo "  - macOS arm64"
             echo
             echo "Checksums:"
@@ -209,8 +184,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: nodes-${{ github.run_id }}
-          name: Nodes build ${{ github.run_id }}
+          tag_name: anvil-polkadot-nodes-${{ github.run_id }}
+          name: Anvil-polkadot nodes build ${{ github.run_id }}
           draft: false
           prerelease: true # to prevent marking as latest, since it should be a main npm package
           generate_release_notes: false
@@ -218,12 +193,12 @@ jobs:
           files: |
             dist/*
 
-      - name: Create/Update Latest Tag (nodes-latest)
+      - name: Create/Update Latest Tag (anvil-polkadot-nodes-latest)
         if: inputs.mark-as-latest
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: nodes-latest
-          name: Nodes latest
+          tag_name: anvil-polkadot-nodes-latest
+          name: Anvil-polkadot nodes latest
           draft: false
           prerelease: true # to prevent marking as latest, since it should be a main npm package
           generate_release_notes: false

@@ -117,19 +117,6 @@ export class EthRpcService extends Service {
             params: [],
             id: 1,
         }
-        try {
-            await waitForServiceToBeReady(this.port, payload, maxAttempts)
-        } catch (e: unknown) {
-            const output = await this.getOutput()
-            console.error("ETH RPC failed to lauch")
-            if (output.stdout) {
-                console.error("ETH RPC stdout:", output.stdout)
-            }
-            if (output.stderr) {
-                console.error("ETH RPC stderr:", output.stderr)
-            }
-
-            throw e
-        }
+        await waitForServiceToBeReady(this.port, payload, maxAttempts)
     }
 }

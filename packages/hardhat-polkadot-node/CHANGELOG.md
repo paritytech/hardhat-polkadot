@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.2.0-pre4 (2025-11-06)
+### Bug Fixes
+
+- Fix node not responding. ([#356](https://github.com/paritytech/hardhat-polkadot/pull/353)) ([f1540d8](https://github.com/paritytech/hardhat-polkadot/commit/f1540d820526a67b799c9d78165f16ae162ddd79))
+
+
+## 0.2.0-pre3 (2025-11-06)
+### Features
+
+- Add support for anvil node. ([#353](https://github.com/paritytech/hardhat-polkadot/pull/353)) ([0584669](https://github.com/paritytech/hardhat-polkadot/commit/0584669326bef9a6e3af3c83ec9c89671c02bc18))
+
+
+## 0.2.0-pre2 (2025-10-06)
+### Bug Fixes
+
+- Support manual seal without interval. ([#333](https://github.com/paritytech/hardhat-polkadot/pull/333)) ([a725d2b](https://github.com/paritytech/hardhat-polkadot/commit/a725d2bcf8283f6b6034eed3765604d0670abe69))
+- Make plugin compatible with Node v18. ([#328](https://github.com/paritytech/hardhat-polkadot/pull/328)) ([3d2fb2b](https://github.com/paritytech/hardhat-polkadot/commit/3d2fb2b00af0d8d9421b14238f85dd474df7b77a))
+
+
 ## 0.2.0-pre1 (2025-09-11)
 ### Bug Fixes
 

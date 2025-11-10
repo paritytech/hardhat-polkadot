@@ -12,11 +12,15 @@ const SUBSTRATE_NODE_CONTAINER_NAME = "substrate"
 export class SubstrateNodeService extends Service {
     public port: number
 
-    constructor(commandArgs: string[] = [], blockProcess: boolean = true) {
+    constructor(useAnvil: boolean, commandArgs: string[] = [], blockProcess: boolean = true) {
         super(commandArgs.slice(1), blockProcess)
 
         const portArg = commandArgs.find((arg) => arg.startsWith("--rpc-port="))
-        this.port = portArg ? parseInt(portArg.split("=")[1], 10) : NODE_START_PORT
+        this.port = portArg
+            ? parseInt(portArg.split("=")[1], 10)
+            : useAnvil
+              ? 8545
+              : NODE_START_PORT
     }
 
     public async from_binary(pathToBinary: string): Promise<void> {
@@ -109,19 +113,6 @@ export class SubstrateNodeService extends Service {
             id: 1,
         }
 
-        try {
-            await waitForServiceToBeReady(this.port, payload, maxAttempts)
-        } catch (e: unknown) {
-            const output = await this.getOutput()
-            console.error("substrate node failed to lauch")
-            if (output.stdout) {
-                console.error("substrate node stdout:", output.stdout)
-            }
-            if (output.stderr) {
-                console.error("substrate node stderr:", output.stderr)
-            }
-
-            throw e
-        }
+        await waitForServiceToBeReady(this.port, payload, maxAttempts)
     }
 }

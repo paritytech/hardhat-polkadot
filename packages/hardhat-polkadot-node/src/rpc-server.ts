@@ -9,6 +9,7 @@ import { ChopsticksService } from "./services/chopsticks"
 import { getDockerSocketPath } from "./utils"
 
 export function createRpcServer(opts: {
+    useAnvil: boolean
     docker?: HardhatNetworkUserConfig["docker"]
     nodePath?: string
     adapterPath?: string
@@ -32,9 +33,13 @@ export function createRpcServer(opts: {
             adapterArgs: string[] = [],
             blockProcess = true,
         ): Promise<void> {
-            substrateNodeService = new SubstrateNodeService(nodeArgs, blockProcess)
+            substrateNodeService = new SubstrateNodeService(opts.useAnvil, nodeArgs, blockProcess)
             ethRpcService = new EthRpcService(adapterArgs, blockProcess)
             chopsticksService = new ChopsticksService(nodeArgs, blockProcess)
+
+            if (!!opts.nodePath && !!opts.useAnvil) {
+                return substrateNodeService.from_binary(opts.nodePath)
+            }
 
             if (!!opts.adapterPath && !!opts.nodePath && !opts.isForking) {
                 return Promise.all([

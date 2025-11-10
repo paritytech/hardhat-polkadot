@@ -2,17 +2,6 @@ import { HardhatNetworkForkingUserConfig } from "hardhat/types"
 import { HardhatNetworkUserConfig } from "hardhat/types/config"
 import { ChopsticksService, EthRpcService, SubstrateNodeService } from "./services"
 
-export interface CliCommands {
-    nodeBinaryPath?: string
-    rpcPort?: number
-    adapterBinaryPath?: string
-    adapterPort?: number
-    dev?: boolean
-    buildBlockMode?: "Instant" | "Manual" | "Batch"
-    fork?: string
-    forkBlockNumber?: string
-}
-
 export interface CommandArguments {
     forking?: HardhatNetworkForkingUserConfig
     forkBlockNumber?: string | number

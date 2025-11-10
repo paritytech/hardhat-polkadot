@@ -9,7 +9,7 @@ import path from "path"
 import type { HardhatNetworkConfig, HardhatNetworkUserConfig } from "hardhat/types/config"
 
 import { createRpcServer } from "./rpc-server"
-import type { CliCommands, CommandArguments, SplitCommands } from "./types"
+import type { CommandArguments, SplitCommands } from "./types"
 import { PolkadotNodePluginError } from "./errors"
 import {
     BASE_URL,
@@ -32,70 +32,35 @@ const cache = new LRUCache<string, string>({
     ttl: 1000 * 60 * 5,
 })
 
-export function constructCommandArgs(
-    args?: CommandArguments,
-    cliCommands?: CliCommands,
-): SplitCommands {
+export function constructCommandArgs(args?: CommandArguments): SplitCommands {
     const nodeCommands: string[] = []
-    const adapterCommands: string[] | undefined = []
+    const adapterCommands: string[] = []
 
-    if (cliCommands && Object.values(cliCommands).find((v) => v !== undefined)) {
-        if (cliCommands.fork) {
-            nodeCommands.push(`npx`)
-            nodeCommands.push(`@acala-network/chopsticks@latest`)
-
-            nodeCommands.push(`--endpoint=${cliCommands.fork}`)
-        } else if (cliCommands.nodeBinaryPath) {
-            nodeCommands.push(cliCommands.nodeBinaryPath)
-        }
-        if (cliCommands.rpcPort) {
-            if (cliCommands.fork) {
-                nodeCommands.push(`--port=${cliCommands.rpcPort}`)
-            } else {
-                nodeCommands.push(`--rpc-port=${cliCommands.rpcPort}`)
-            }
-            nodeCommands.push(`--rpc-port=${cliCommands.rpcPort}`)
-            adapterCommands.push(`--node-rpc-url=ws://localhost:${cliCommands.rpcPort}`)
-        } else {
-            adapterCommands.push(`--node-rpc-url=ws://localhost:8000`)
-        }
-
-        if (cliCommands.adapterPort && cliCommands.adapterPort !== cliCommands.rpcPort) {
-            adapterCommands.push(`--rpc-port=${cliCommands.adapterPort}`)
-        } else if (cliCommands.adapterPort && cliCommands.adapterPort === cliCommands.rpcPort) {
-            throw new PolkadotNodePluginError("Adapter and node cannot share the same port.")
-        }
-
-        if (cliCommands.fork) {
-            nodeCommands.push(`--build-block-mode=${cliCommands.buildBlockMode || "Instant"}`)
-        }
-
-        if (cliCommands.dev) {
-            adapterCommands.push("--dev")
-            if (cliCommands.nodeBinaryPath && !cliCommands.fork) {
-                nodeCommands.push("--dev")
-            }
+    if (args?.nodeCommands?.useAnvil) {
+        return {
+            nodeCommands,
+            adapterCommands,
         }
     }
 
     if (args && Object.values(args).find((v) => v !== undefined)) {
-        if (args.forking && !cliCommands?.fork) {
+        if (args.forking) {
             nodeCommands.push(`npx`)
             nodeCommands.push(`@acala-network/chopsticks@latest`)
 
             nodeCommands.push(`--endpoint=${args.forking.url}`)
-        } else if (args.nodeCommands?.nodeBinaryPath && !cliCommands?.nodeBinaryPath) {
+        } else if (args.nodeCommands?.nodeBinaryPath) {
             nodeCommands.push(args.nodeCommands?.nodeBinaryPath)
         }
 
-        if (args.nodeCommands?.rpcPort && !cliCommands?.rpcPort) {
-            if (args.forking && !cliCommands?.fork) {
+        if (args.nodeCommands?.rpcPort) {
+            if (args.forking) {
                 nodeCommands.push(`--port=${args.nodeCommands.rpcPort}`)
             } else {
                 nodeCommands.push(`--rpc-port=${args.nodeCommands.rpcPort}`)
             }
             adapterCommands.push(`--node-rpc-url=ws://localhost:${args.nodeCommands.rpcPort}`)
-        } else if (!cliCommands?.rpcPort) {
+        } else {
             adapterCommands.push(`--node-rpc-url=ws://localhost:8000`)
         }
 
@@ -117,7 +82,7 @@ export function constructCommandArgs(
         ) {
             throw new PolkadotNodePluginError("Adapter and node cannot share the same port.")
         }
-        if (args.forking && !cliCommands?.buildBlockMode) {
+        if (args.forking) {
             nodeCommands.push(
                 `--build-block-mode=${args.adapterCommands?.buildBlockMode || "Instant"}`,
             )
@@ -125,9 +90,12 @@ export function constructCommandArgs(
 
         if (args.nodeCommands?.nodeBinaryPath && args.nodeCommands?.consensus) {
             if (args.nodeCommands.consensus.seal === "Manual") {
-                nodeCommands.push(
-                    `--consensus=manual-seal-${args.nodeCommands.consensus.period || 50}`,
-                )
+                const period: number = parseInt(`${args.nodeCommands.consensus.period}`, 10)
+                const manualSealTag: string = Number.isNaN(period)
+                    ? "manual-seal"
+                    : "manual-seal-" + (period || 50)
+
+                nodeCommands.push(`--consensus=${manualSealTag}`)
             } else {
                 nodeCommands.push(
                     `--consensus=${(args.nodeCommands.consensus.seal || "None").toLowerCase()}`,
@@ -135,23 +103,14 @@ export function constructCommandArgs(
             }
         }
 
-        if (
-            args.nodeCommands?.nodeBinaryPath &&
-            args.nodeCommands.dev &&
-            !cliCommands?.dev &&
-            !args.forking
-        ) {
+        if (args.nodeCommands?.nodeBinaryPath && args.nodeCommands.dev && !args.forking) {
+            nodeCommands.push(`--pruning=archive`)
             nodeCommands.push(`--dev`)
         }
 
-        if (args.adapterCommands?.dev && !cliCommands?.dev) {
+        if (args.adapterCommands?.dev) {
             adapterCommands.push("--dev")
         }
-    }
-
-    // TODO: revisit this condition, possibly merge with something from above
-    if (!args?.forking) {
-        nodeCommands.push(`--pruning=archive`)
     }
 
     return {
@@ -255,6 +214,7 @@ export async function startServer(
     nodePath?: string,
     adapterPath?: string,
 ) {
+    const useAnvil = !!commands.nodeCommands?.useAnvil
     const currentNodePort = await getAvailablePort(
         commands.nodeCommands?.rpcPort ? commands.nodeCommands.rpcPort : NODE_START_PORT,
         MAX_PORT_ATTEMPTS,
@@ -271,6 +231,7 @@ export async function startServer(
     return {
         commandArgs,
         server: createRpcServer({
+            useAnvil,
             docker: commands.docker,
             nodePath,
             adapterPath: adapterPath || commands.adapterCommands?.adapterBinaryPath,

@@ -1,5 +1,11 @@
 import Module from "module"
 import path from "path"
+import WebSocket from "ws"
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+if (!(global as any).WebSocket) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(global as any).WebSocket = WebSocket
+}
 
 function needsPatch() {
     return (
@@ -47,6 +53,7 @@ export function sizeCheckPatch() {
             }
         }
 
+        // fallback: normal require
         return loaded
     }
 

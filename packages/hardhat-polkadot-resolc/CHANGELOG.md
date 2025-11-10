@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.2.0-pre3 (2025-11-06)
+### Bug Fixes
+
+- Remove artifacts and cache suffix. ([#349](https://github.com/paritytech/hardhat-polkadot/pull/349)) ([5824d71](https://github.com/paritytech/hardhat-polkadot/commit/5824d71ae683434a4c688909ec50bb1e9c86993c))
+
+
+## 0.2.0-pre2 (2025-10-30)
+### Bug Fixes
+
+- Add `storageLayout` to `outputSelection`. ([#346](https://github.com/paritytech/hardhat-polkadot/pull/346)) ([8cd6751](https://github.com/paritytech/hardhat-polkadot/commit/8cd67513aff47076d76d5905592559d60b8a94fd))
+
+
+## 0.2.0-pre1 (2025-10-06)
+### Features
+
+- Fix `0x` prefix with EVM Backend. ([#341](https://github.com/paritytech/hardhat-polkadot/pull/341)) ([412c371](https://github.com/paritytech/hardhat-polkadot/commit/412c3710471a3d77f4ed7eaf19e0ea598ed2858a))
+
+
 ## 0.2.0-pre0 (2025-09-11)
 ### Features
 

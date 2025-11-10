@@ -201,9 +201,8 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
         }
 
         const list = await this._readCompilerList(listPath)
-        if (version === "latest") {
-            const latestVersion = list.latestRelease.slice(1)
-            return list.builds.find((b) => b.version === latestVersion)
+        if (Number.isNaN(parseInt(version))) {
+            throw new ResolcPluginError(`${version} is not a valid version.`)
         }
 
         return list.builds.find((b) => b.version === version)
