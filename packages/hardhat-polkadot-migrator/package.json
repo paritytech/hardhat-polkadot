@@ -1,0 +1,52 @@
+{
+  "name": "@parity/hardhat-polkadot-migrator",
+  "author": "Parity Technologies <admin@parity.io>",
+  "license": "AGPL-3.0",
+  "version": "0.2.0-pre1",
+  "bugs": "https://github.com/paritytech/hardhat-polkadot/issues",
+  "repository": {
+    "directory": "packages/hardhat-polkadot-migrator",
+    "type": "git",
+    "url": "https://github.com/paritytech/hardhat-polkadot.git"
+  },
+  "main": "dist/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build .",
+    "build:dev": "tsc --build . --watch",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "prettier:check": "prettier --check '**/*.{md,yml,ts,js,json}'",
+    "prettier:fix": "prettier --write '**/*.{md,yml,ts,js,json}'",
+    "eslint:check": "eslint 'src/**/*.ts'",
+    "eslint:fix": "eslint 'src/**/*.ts' --fix"
+  },
+  "dependencies": {
+    "jscodeshift": "^17.3.0",
+    "semver": "^7.7.2"
+  },
+  "devDependencies": {
+    "@types/jscodeshift": "^17.3.0",
+    "@types/semver": "^7.7.0",
+    "prettier": "^3.5.3",
+    "rimraf": "^3.0.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.31.0"
+  },
+  "peerDependencies": {
+    "hardhat": "^2.26.0"
+  }
+}
