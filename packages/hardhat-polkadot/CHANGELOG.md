@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.1 (2025-11-11)
+## 0.2.0 (2025-11-11)
 ### Internal
 
 - Bumped `@parity/hardhat-polkadot-node` to `0.2.0`.
