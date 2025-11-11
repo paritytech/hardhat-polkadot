@@ -2,7 +2,7 @@
   "name": "@parity/hardhat-polkadot-migrator",
   "author": "Parity Technologies <admin@parity.io>",
   "license": "AGPL-3.0",
-  "version": "0.2.0-pre1",
+  "version": "0.1.0",
   "bugs": "https://github.com/paritytech/hardhat-polkadot/issues",
   "repository": {
     "directory": "packages/hardhat-polkadot-migrator",
