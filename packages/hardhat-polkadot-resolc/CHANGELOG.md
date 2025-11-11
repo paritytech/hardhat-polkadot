@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0 (2025-11-11)
+### Chores
+
+- Promote `0.2.0-p3` hotfix to stable release. No code changes
+
+
 ## 0.2.0-pre3 (2025-11-06)
 ### Bug Fixes
 
