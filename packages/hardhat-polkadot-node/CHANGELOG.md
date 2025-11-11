@@ -5,6 +5,10 @@
 
 - Override anvil when forking a chain. ([#361](https://github.com/paritytech/hardhat-polkadot/pull/361)) ([9628517](https://github.com/paritytech/hardhat-polkadot/commit/96285174c6906e9ca3c1a8abdde8fd39f17ec439))
 
+### Chores
+
+- Promote `0.2.0-p4` hotfix to stable release.
+
 
 ## 0.2.0-pre4 (2025-11-06)
 ### Bug Fixes
