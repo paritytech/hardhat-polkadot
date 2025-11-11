@@ -12,7 +12,7 @@ const SUBSTRATE_NODE_CONTAINER_NAME = "substrate"
 export class SubstrateNodeService extends Service {
     public port: number
 
-    constructor(useAnvil: boolean, commandArgs: string[] = [], blockProcess: boolean = true) {
+    constructor(commandArgs: string[] = [], blockProcess: boolean = true, useAnvil: boolean = false) {
         super(commandArgs.slice(1), blockProcess)
 
         const portArg = commandArgs.find((arg) => arg.startsWith("--rpc-port="))

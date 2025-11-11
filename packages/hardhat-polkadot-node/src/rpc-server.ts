@@ -33,7 +33,7 @@ export function createRpcServer(opts: {
             adapterArgs: string[] = [],
             blockProcess = true,
         ): Promise<void> {
-            substrateNodeService = new SubstrateNodeService(opts.useAnvil, nodeArgs, blockProcess)
+            substrateNodeService = new SubstrateNodeService(nodeArgs, blockProcess, opts.useAnvil)
             ethRpcService = new EthRpcService(adapterArgs, blockProcess)
             chopsticksService = new ChopsticksService(nodeArgs, blockProcess)
 
