@@ -105,7 +105,9 @@ task(TASK_NODE_POLKADOT, "Starts a JSON-RPC server for Polkadot node").setAction
         const adapterPath = userConfig.networks?.hardhat?.adapterConfig?.adapterBinaryPath
 
         const server: RpcServer = await run(TASK_NODE_POLKADOT_CREATE_SERVER, {
-            useAnvil: !!userConfig.networks?.hardhat?.nodeConfig?.useAnvil,
+            useAnvil:
+                !!userConfig.networks?.hardhat?.nodeConfig?.useAnvil &&
+                !userConfig.networks.hardhat.forking,
             docker: userConfig.networks?.hardhat?.docker,
             nodePath,
             adapterPath,
@@ -160,7 +162,9 @@ task(
     ) => {
         if (!noCompile) await run(TASK_COMPILE, { quiet: true })
 
-        const useAnvil = !!userConfig.networks?.hardhat?.nodeConfig?.useAnvil
+        const useAnvil =
+            !!userConfig.networks?.hardhat?.nodeConfig?.useAnvil &&
+            !userConfig.networks.hardhat.forking
 
         if (!network.config.polkadot || network.name !== HARDHAT_NETWORK_NAME) {
             // If remote polkadot network
