@@ -36,7 +36,7 @@ export function constructCommandArgs(args?: CommandArguments): SplitCommands {
     const nodeCommands: string[] = []
     const adapterCommands: string[] = []
 
-    if (args?.nodeCommands?.useAnvil) {
+    if (args?.nodeCommands?.useAnvil && !args.forking) {
         return {
             nodeCommands,
             adapterCommands,

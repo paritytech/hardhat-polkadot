@@ -44,4 +44,6 @@ import "@parity/hardhat-polkadot-node";
 
 See [Examples](../../examples/).
 
+**NOTE**: When the `forking` field is used, the path to the `eth-rpc` must be provided, even if `useAnvil` is set to `true`, since `anvil-polkadot` has no forking functionality yet. 
+
 ## Happy building! 👷‍♀️👷‍♂️
