@@ -33,7 +33,7 @@ export async function handleFactoryDependencies(
     ethRpcUrl: HardhatNetworkConfig["url"],
     polkadotRpcUrl: HardhatNetworkConfig["polkadotUrl"],
     accounts: string[] | HardhatNetworkAccountsConfig | HttpNetworkAccountsConfig,
-    useAnvil?: boolean
+    useAnvil?: boolean,
 ) {
     // get last build info file
     const files = await glob(`${pathToArtifacts}/build-info/*.json`)
@@ -48,7 +48,9 @@ export async function handleFactoryDependencies(
 
             const ethProvider = new JsonRpcProvider(ethRpcUrl)
             const wallet = new Wallet(getPrivateKey(accounts), ethProvider)
-            const dotProvider = getWsProvider(getPolkadotRpcUrl(ethRpcUrl, polkadotRpcUrl, useAnvil))
+            const dotProvider = getWsProvider(
+                getPolkadotRpcUrl(ethRpcUrl, polkadotRpcUrl, useAnvil),
+            )
             const client = createClient(dotProvider)
             const api = client.getUnsafeApi()
             const unsafeToken = await api.runtimeToken

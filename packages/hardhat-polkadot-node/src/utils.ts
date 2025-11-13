@@ -332,7 +332,7 @@ export async function waitForServiceToBeReady(
 export function getPolkadotRpcUrl(
     ethRpcUrl: HardhatNetworkConfig["url"],
     polkadotRpcUrl: HardhatNetworkConfig["polkadotUrl"],
-    useAnvil: boolean = false
+    useAnvil: boolean = false,
 ): string {
     // Case 1: Explicit config
     if (polkadotRpcUrl) return polkadotRpcUrl
@@ -344,7 +344,7 @@ export function getPolkadotRpcUrl(
             return ETH_RPC_TO_SUBSTRATE_RPC[url]
         }
     }
-    
+
     // Case 3: we are using anvil as the node
     if (useAnvil) {
         return "ws://localhost:9944"
