@@ -20,11 +20,15 @@ const config: HardhatUserConfig = {
             },
         },
         localNode: {
-            polkadot: true,
+            polkadot: {
+                target: "evm",
+            },
             url: `http://127.0.0.1:8545`,
         },
         polkadotHubTestnet: {
-            polkadot: true,
+            polkadot: {
+                target: "evm",
+            },
             url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
             accounts: [vars.get("PRIVATE_KEY")],
         },
