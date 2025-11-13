@@ -61,7 +61,7 @@ export function constructCommandArgs(args?: CommandArguments): SplitCommands {
             }
             adapterCommands.push(`--node-rpc-url=ws://localhost:${args.nodeCommands.rpcPort}`)
         } else {
-            adapterCommands.push(`--node-rpc-url=ws://localhost:8000`)
+            adapterCommands.push(`--node-rpc-url=ws://localhost:9944`)
         }
 
         if (
@@ -332,6 +332,7 @@ export async function waitForServiceToBeReady(
 export function getPolkadotRpcUrl(
     ethRpcUrl: HardhatNetworkConfig["url"],
     polkadotRpcUrl: HardhatNetworkConfig["polkadotUrl"],
+    useAnvil: boolean = false
 ): string {
     // Case 1: Explicit config
     if (polkadotRpcUrl) return polkadotRpcUrl
@@ -342,6 +343,11 @@ export function getPolkadotRpcUrl(
         if (url in ETH_RPC_TO_SUBSTRATE_RPC) {
             return ETH_RPC_TO_SUBSTRATE_RPC[url]
         }
+    }
+    
+    // Case 3: we are using anvil as the node
+    if (useAnvil) {
+        return "ws://localhost:9944"
     }
 
     throw new PolkadotNodePluginError(
