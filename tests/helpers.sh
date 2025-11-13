@@ -101,7 +101,7 @@ await_start_node() {
 stop_node() {
   # if docker process
   docker ps --format '{{.ID}} {{.Ports}}' \
-  | awk '/:8000->/ {print $1}' \
+  | awk '/:9944->/ {print $1}' \
   | xargs -r docker rm -f
 
   # if node process
