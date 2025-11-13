@@ -5,6 +5,10 @@
 
 - Update the default hardhat configs. ([#364](https://github.com/paritytech/hardhat-polkadot/pull/364)) ([491c93b](https://github.com/paritytech/hardhat-polkadot/commit/491c93ba10e9307f21da41e13f5252b34ec0b67d))
 
+### Internal
+
+- Bumped `@parity/hardhat-polkadot-node` to `0.2.1`.
+
 
 ## 0.2.0 (2025-11-11)
 ### Internal
