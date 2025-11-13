@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1 (2025-11-13)
+### Bug Fixes
+
+- Update default ports. ([#366](https://github.com/paritytech/hardhat-polkadot/pull/361)) ([1844cb8](https://github.com/paritytech/hardhat-polkadot/commit/1844cb80939174386fb4c2cbe6cc492b1f053183))
+
+
 ## 0.2.0 (2025-11-11)
 ### Bug Fixes
 
