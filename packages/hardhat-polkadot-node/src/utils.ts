@@ -334,7 +334,12 @@ export function getPolkadotRpcUrl(
     polkadotRpcUrl: HardhatNetworkConfig["polkadotUrl"],
     useAnvil: boolean = false,
 ): string {
-    // Case 1: Explicit config
+    // Case 1: we are using anvil as the node
+    if (useAnvil) {
+        return "ws://localhost:9944"
+    }
+
+    // Case 2: Explicit config
     if (polkadotRpcUrl) return polkadotRpcUrl
 
     // Case 2: Infer from ETH RPC URL
@@ -343,11 +348,6 @@ export function getPolkadotRpcUrl(
         if (url in ETH_RPC_TO_SUBSTRATE_RPC) {
             return ETH_RPC_TO_SUBSTRATE_RPC[url]
         }
-    }
-
-    // Case 3: we are using anvil as the node
-    if (useAnvil) {
-        return "ws://localhost:9944"
     }
 
     throw new PolkadotNodePluginError(
