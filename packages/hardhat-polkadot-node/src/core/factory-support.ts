@@ -15,7 +15,7 @@ import { PolkadotNodePluginError } from "../errors"
 import { getPolkadotRpcUrl } from "../utils"
 
 const MAGIC_DEPLOY_ADDRESS = "0x6d6f646c70792f70616464720000000000000000"
-const ALICE_ACCOUNT_SS58 = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
+const ENDOWED_ACCOUNT_SS58 = "5Ha8yXQgvWcvpFya1BmjtJX386xUskafNTzU4Zmb6B3UwYd9"
 const MAX_U_128 = BigInt("0xffffffffffffffffffffffffffffffff") // 2^128 - 1
 
 type Contracts = Record<
@@ -47,7 +47,8 @@ export async function handleFactoryDependencies(
             if (!factoryDependencies || Object.keys(factoryDependencies).length === 0) continue
 
             const ethProvider = new JsonRpcProvider(ethRpcUrl)
-            const wallet = new Wallet(getPrivateKey(accounts), ethProvider)
+            const wallet = new Wallet(getPrivateKey(accounts, useAnvil), ethProvider)
+            console.log(wallet.address)
             const dotProvider = getWsProvider(
                 getPolkadotRpcUrl(ethRpcUrl, polkadotRpcUrl, useAnvil),
             )
@@ -75,7 +76,7 @@ export async function handleFactoryDependencies(
 
                 // estimate the storage deposit limit
                 const uploadCodeApi = await api.apis.ReviveApi.upload_code(
-                    ALICE_ACCOUNT_SS58, // not relevant
+                    ENDOWED_ACCOUNT_SS58, // not relevant
                     Binary.fromHex(bytecode),
                     MAX_U_128,
                 )
@@ -100,9 +101,16 @@ export async function handleFactoryDependencies(
 
 function getPrivateKey(
     accounts: string[] | HardhatNetworkAccountsConfig | HttpNetworkAccountsConfig,
+    useAnvil: boolean = false
 ): string {
+    console.log(accounts)
     if (Array.isArray(accounts)) {
         if (accounts.length === 0) throw new PolkadotNodePluginError("Accounts array is empty.")
+
+        if (accounts.length > 1 && useAnvil) {
+            return accounts[1] as string
+        }
+
         if (typeof accounts[0] === "string") return accounts[0]
         return accounts[0].privateKey
     }
