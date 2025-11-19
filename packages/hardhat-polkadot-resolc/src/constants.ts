@@ -13,13 +13,13 @@ export const COMPILER_REPOSITORY_URL = "https://github.com/paritytech/revive/rel
 export const COMPILER_REPOSITORY_API_URL = "https://api.github.com/repos/paritytech/revive/releases"
 
 export const defaultNpmResolcConfig: ResolcConfig = {
-    version: "0.1.0",
+    version: "0.5.0",
     compilerSource: "npm",
     settings: {},
 }
 
 export const defaultBinaryResolcConfig: ResolcConfig = {
-    version: "0.1.0",
+    version: "0.5.0",
     compilerSource: "binary",
     settings: {
         optimizer: {
