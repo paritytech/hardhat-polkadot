@@ -101,7 +101,7 @@ export async function handleFactoryDependencies(
 
 function getPrivateKey(
     accounts: string[] | HardhatNetworkAccountsConfig | HttpNetworkAccountsConfig,
-    useAnvil: boolean = false
+    useAnvil: boolean = false,
 ): string {
     console.log(accounts)
     if (Array.isArray(accounts)) {
