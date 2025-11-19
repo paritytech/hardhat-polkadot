@@ -37,6 +37,7 @@ export function constructCommandArgs(args?: CommandArguments): SplitCommands {
     const adapterCommands: string[] = []
 
     if (args?.nodeCommands?.useAnvil && !args.forking) {
+        nodeCommands.push("", "--accounts", "20")
         return {
             nodeCommands,
             adapterCommands,
