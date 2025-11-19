@@ -48,7 +48,6 @@ export async function handleFactoryDependencies(
 
             const ethProvider = new JsonRpcProvider(ethRpcUrl)
             const wallet = new Wallet(getPrivateKey(accounts, useAnvil), ethProvider)
-            console.log(wallet.address)
             const dotProvider = getWsProvider(
                 getPolkadotRpcUrl(ethRpcUrl, polkadotRpcUrl, useAnvil),
             )
@@ -103,7 +102,6 @@ function getPrivateKey(
     accounts: string[] | HardhatNetworkAccountsConfig | HttpNetworkAccountsConfig,
     useAnvil: boolean = false,
 ): string {
-    console.log(accounts)
     if (Array.isArray(accounts)) {
         if (accounts.length === 0) throw new PolkadotNodePluginError("Accounts array is empty.")
 
