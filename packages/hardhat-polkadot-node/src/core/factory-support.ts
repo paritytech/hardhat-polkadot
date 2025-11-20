@@ -83,7 +83,7 @@ export async function handleFactoryDependencies(
                 // upload the bytecode through the ETH RPC
                 const call = api.tx.Revive.upload_code({
                     code: Binary.fromHex(bytecode),
-                    storage_deposit_limit: uploadCodeApi.value.deposit,
+                    storage_deposit_limit: uploadCodeApi.value?.deposit ?? MAX_U_128,
                 })
                 const payload = call.getEncodedData(unsafeToken)
                 const tx = await wallet.sendTransaction({
