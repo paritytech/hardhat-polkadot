@@ -31,18 +31,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [x86_64-unknown-linux-gnu, aarch64-apple-darwin]
+        target: [x86_64-unknown-linux-gnu] #, aarch64-apple-darwin #]
         include:
           - target: x86_64-unknown-linux-gnu
             os_tag: linux
             arch_tag: x64
             runner: parity-default
             exe_ext: ''
-          - target: aarch64-apple-darwin
-            os_tag: darwin
-            arch_tag: arm64
-            runner: parity-macos
-            exe_ext: ''
+          # - target: aarch64-apple-darwin
+            # os_tag: darwin
+            # arch_tag: arm64
+            # runner: parity-macos
+            # exe_ext: ''
 
     runs-on: ${{ matrix.runner }}
     steps:
@@ -169,7 +169,6 @@ jobs:
             echo "This release includes anvil-polkadot binaries for the following platforms:"
             echo
             echo "  - Linux x86_64"
-            echo "  - macOS arm64"
             echo
             echo "Checksums:"
             echo '```'
