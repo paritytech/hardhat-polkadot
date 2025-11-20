@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.2 (2025-11-20)
+### Bug Fixes
+
+- Increase dev accounts to 20 in anvil. ([#369](https://github.com/paritytech/hardhat-polkadot/pull/369)) ([7ac51ee](https://github.com/paritytech/hardhat-polkadot/commit/7ac51ee51545722f5b81ec6fe5fdfdd09693c432))
+- Change default addr for anvil. ([#368](https://github.com/paritytech/hardhat-polkadot/pull/368)) ([1d6756a](https://github.com/paritytech/hardhat-polkadot/commit/1d6756ab2e4490d483fab7757ae51fd9e4b86e72))
+- Ignore explicit config if using anvil. ([#367](https://github.com/paritytech/hardhat-polkadot/pull/367)) ([8f9c4df](https://github.com/paritytech/hardhat-polkadot/commit/8f9c4df68d5d934cfc8f268760f0cb10df43b8c9))
+
+
 ## 0.2.1 (2025-11-13)
 ### Bug Fixes
 

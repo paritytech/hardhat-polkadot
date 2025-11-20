@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.2 (2025-11-20)
+### Internal
+
+- Bumped `@parity/hardhat-polkadot-node` to `0.2.2`.
+- Bumped `@parity/hardhat-polkadot-resolc` to `0.2.1`.
+
+
 ## 0.2.1 (2025-11-13)
 ### Chores
 
