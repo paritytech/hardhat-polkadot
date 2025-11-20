@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.3 (2025-11-20)
+### Bug Fixes
+
+- Fix storage_deposit_limit being undefined. ([#375](https://github.com/paritytech/hardhat-polkadot/pull/375)) ([16c6f73](https://github.com/paritytech/hardhat-polkadot/commit/16c6f73a176cbd48213071d50c80eb792d36a72e))
+
+
 ## 0.2.2 (2025-11-20)
 ### Bug Fixes
 
