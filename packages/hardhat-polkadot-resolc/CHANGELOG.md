@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1 (2025-11-20)
+### Chores
+
+- Upgrade default compiler version. ([#370](https://github.com/paritytech/hardhat-polkadot/pull/370)) ([f698b18](https://github.com/paritytech/hardhat-polkadot/commit/f698b1899486b2839ac44f55c7db4114c2758262))
+
+
 ## 0.2.0 (2025-11-11)
 ### Chores
 
