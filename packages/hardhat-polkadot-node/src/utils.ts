@@ -23,6 +23,7 @@ import {
     RPC_ENDPOINT_PATH,
     ETH_RPC_TO_SUBSTRATE_RPC,
 } from "./constants"
+import { HARDHAT_NETWORK_NAME } from "hardhat/internal/constants"
 
 export const PARITYPR_DOCKER_REGISTRY = "https://registry.hub.docker.com/v2/repositories/paritypr/"
 const DOCKER_SOCKET_DEFAULT_PATH = "/var/run/docker.sock"
@@ -167,15 +168,13 @@ export function adjustTaskArgsForPort(taskArgs: string[], currentPort: number): 
 
 export function getNetworkConfig(url: string, chainId?: number) {
     return {
-        accounts: "remote",
-        gas: NETWORK_GAS.AUTO,
-        gasPrice: NETWORK_GAS_PRICE.AUTO,
+        accounts: "remote" as const,
+        gas: "auto" as const,
+        gasPrice: "auto" as const,
         gasMultiplier: 1,
         httpHeaders: {},
         timeout: 20000,
         url,
-        ethNetwork: NETWORK_ETH.LOCALHOST,
-        chainId: chainId || 420420421,
     }
 }
 
@@ -204,10 +203,16 @@ export async function configureNetwork(
         // If it fails, it will just try again
     }
 
-    network.name = POLKADOT_TEST_NODE_NETWORK_NAME
-    network.config = getNetworkConfig(url, chainId)
-    config.networks[network.name] = network.config
-    network.provider = await createProvider(config, network.name)
+    const networkName = network.name === HARDHAT_NETWORK_NAME 
+        ? POLKADOT_TEST_NODE_NETWORK_NAME 
+        : network.name;
+    
+    const networkConfig = getNetworkConfig(url, chainId);
+    
+    network.name = networkName;
+    network.config = networkConfig;
+    config.networks[networkName] = networkConfig;
+    network.provider = await createProvider(config, networkName);
 }
 
 export async function startServer(
