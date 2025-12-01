@@ -1,1 +1,6 @@
-console.log("hekklo")
+B:
+B
+B
+D
+C
+console.log("hekklokdfjs")
