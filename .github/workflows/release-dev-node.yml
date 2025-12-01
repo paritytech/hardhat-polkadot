@@ -133,7 +133,7 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          cargo build --release --target ${{ matrix.target }} -p revive-dev-node -p pallet-revive-eth-rpc
+          cargo build --target ${{ matrix.target }} -p revive-dev-node -p pallet-revive-eth-rpc
 
       - name: Stage artifact with OS/arch suffix
         shell: bash
