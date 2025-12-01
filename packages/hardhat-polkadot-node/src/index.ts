@@ -181,8 +181,6 @@ task(
 
         const files = await run(TASK_TEST_GET_TEST_FILES, { testFiles })
 
-        await run(TASK_TEST_SETUP_TEST_ENVIRONMENT)
-
         let nodePort = userConfig.networks?.hardhat?.nodeConfig?.rpcPort || NODE_START_PORT
         let adapterPort =
             userConfig.networks?.hardhat?.adapterConfig?.adapterPort || ETH_RPC_ADAPTER_START_PORT
@@ -230,6 +228,8 @@ task(
                 network,
                 useAnvil ? adapterPort : adapterPort || nodePort,
             )
+
+            await run(TASK_TEST_SETUP_TEST_ENVIRONMENT)
 
             let testFailures = 0
             try {

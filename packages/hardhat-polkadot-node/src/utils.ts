@@ -8,15 +8,13 @@ import os from "os"
 import path from "path"
 import type { HardhatNetworkConfig, HardhatNetworkUserConfig } from "hardhat/types/config"
 
+import { HARDHAT_NETWORK_NAME } from "hardhat/internal/constants"
 import { createRpcServer } from "./rpc-server"
 import type { CommandArguments, SplitCommands } from "./types"
 import { PolkadotNodePluginError } from "./errors"
 import {
     BASE_URL,
     MAX_PORT_ATTEMPTS,
-    NETWORK_ETH,
-    NETWORK_GAS,
-    NETWORK_GAS_PRICE,
     NODE_START_PORT,
     ETH_RPC_ADAPTER_START_PORT,
     POLKADOT_TEST_NODE_NETWORK_NAME,
@@ -165,17 +163,15 @@ export function adjustTaskArgsForPort(taskArgs: string[], currentPort: number): 
     return taskArgs
 }
 
-export function getNetworkConfig(url: string, chainId?: number) {
+export function getNetworkConfig(url: string) {
     return {
-        accounts: "remote",
-        gas: NETWORK_GAS.AUTO,
-        gasPrice: NETWORK_GAS_PRICE.AUTO,
+        accounts: "remote" as const,
+        gas: "auto" as const,
+        gasPrice: "auto" as const,
         gasMultiplier: 1,
         httpHeaders: {},
         timeout: 20000,
         url,
-        ethNetwork: NETWORK_ETH.LOCALHOST,
-        chainId: chainId || 420420421,
     }
 }
 
@@ -192,22 +188,27 @@ export async function configureNetwork(
         params: [],
         id: 1,
     }
-    let chainId = 0
+    let _chainId = 0
     try {
         const response = await axios.post(url, payload)
 
         if (response.status == 200) {
-            chainId = parseInt(response.data.result)
+            _chainId = parseInt(response.data.result)
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (_e: any) {
         // If it fails, it will just try again
     }
 
-    network.name = POLKADOT_TEST_NODE_NETWORK_NAME
-    network.config = getNetworkConfig(url, chainId)
-    config.networks[network.name] = network.config
-    network.provider = await createProvider(config, network.name)
+    const networkName =
+        network.name === HARDHAT_NETWORK_NAME ? POLKADOT_TEST_NODE_NETWORK_NAME : network.name
+
+    const networkConfig = getNetworkConfig(url)
+
+    network.name = networkName
+    network.config = networkConfig
+    config.networks[networkName] = networkConfig
+    network.provider = await createProvider(config, networkName)
 }
 
 export async function startServer(
