@@ -188,7 +188,7 @@ export async function configureNetwork(
         params: [],
         id: 1,
     }
-    const _chainId = 0
+    let _chainId = 0
     try {
         const response = await axios.post(url, payload)
 
