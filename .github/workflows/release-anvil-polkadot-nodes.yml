@@ -110,7 +110,7 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          cargo build --release --target ${{ matrix.target }} -p anvil-polkadot
+          cargo build --target ${{ matrix.target }} -p anvil-polkadot
 
       - name: Stage artifact with OS/arch suffix
         shell: bash
