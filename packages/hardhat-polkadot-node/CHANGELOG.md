@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.4 (2025-12-01)
+### Bug Fixes
+
+- Ensure correct env setup for tests. ([#378](https://github.com/paritytech/hardhat-polkadot/pull/378)) ([0874a54](https://github.com/paritytech/hardhat-polkadot/commit/0874a54cdeb629100c470fb03841f4da05814292))
+
+
 ## 0.2.3 (2025-11-20)
 ### Bug Fixes
 
