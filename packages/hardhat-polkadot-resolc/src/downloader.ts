@@ -3,14 +3,14 @@ import path from "path"
 import fsExtra from "fs-extra"
 import debug from "debug"
 import os from "os"
-import { execFile } from "child_process"
+import { execFile, exec } from "child_process"
 import { assertHardhatInvariant } from "hardhat/internal/core/errors"
 import { MultiProcessMutex } from "hardhat/internal/util/multi-process-mutex"
 import {
     CompilerPlatform,
     ICompilerDownloader,
 } from "hardhat/internal/solidity/compiler/downloader"
-import { listAttributesSync, removeAttributeSync } from "fs-xattr"
+import { promisify } from "util"
 import { download } from "./download"
 import { CompilerName, type ResolcCompiler, type CompilerBuild, type CompilerList } from "./types"
 import { ResolcPluginError } from "./errors"
@@ -18,6 +18,7 @@ import { COMPILER_REPOSITORY_API_URL, COMPILER_REPOSITORY_URL } from "./constant
 
 const log = debug("hardhat:core:resolc:downloader")
 
+const execAsync = promisify(exec)
 export interface IResolcCompilerDownloader extends Omit<ICompilerDownloader, "getCompiler"> {
     getCompiler(version: string): Promise<ResolcCompiler | undefined>
 }
@@ -271,9 +272,10 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
         if (this._platform === CompilerPlatform.LINUX) {
             fsExtra.chmodSync(downloadPath, 0o755)
         } else if (this._platform === CompilerPlatform.MACOS) {
-            const attributes = listAttributesSync(downloadPath)
-            for (const attr of attributes) {
-                removeAttributeSync(downloadPath, attr)
+            try {
+                await execAsync(`xattr -cr "${downloadPath}"`)
+            } catch (error) {
+                log("Warning: Could not clear extended attributes:", error)
             }
             fsExtra.chmodSync(downloadPath, 0o755)
         }
