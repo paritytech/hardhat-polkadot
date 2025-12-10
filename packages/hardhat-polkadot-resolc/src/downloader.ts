@@ -3,23 +3,22 @@ import path from "path"
 import fsExtra from "fs-extra"
 import debug from "debug"
 import os from "os"
-import { execFile } from "child_process"
+import { execFile, exec } from "child_process"
 import { assertHardhatInvariant } from "hardhat/internal/core/errors"
 import { MultiProcessMutex } from "hardhat/internal/util/multi-process-mutex"
 import {
     CompilerPlatform,
     ICompilerDownloader,
 } from "hardhat/internal/solidity/compiler/downloader"
+import { promisify } from "util"
 import { download } from "./download"
 import { CompilerName, type ResolcCompiler, type CompilerBuild, type CompilerList } from "./types"
 import { ResolcPluginError } from "./errors"
 import { COMPILER_REPOSITORY_API_URL, COMPILER_REPOSITORY_URL } from "./constants"
-import { exec } from "child_process";
-import { promisify } from "util";
 
 const log = debug("hardhat:core:resolc:downloader")
 
-const execAsync = promisify(exec);
+const execAsync = promisify(exec)
 export interface IResolcCompilerDownloader extends Omit<ICompilerDownloader, "getCompiler"> {
     getCompiler(version: string): Promise<ResolcCompiler | undefined>
 }
@@ -74,7 +73,7 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
         private readonly _compilersDir: string,
         private readonly _compilerListCachePeriodMs = ResolcCompilerDownloader.defaultCompilerListCachePeriod,
         private readonly _downloadFunction: typeof download = download,
-    ) { }
+    ) {}
 
     public async isCompilerDownloaded(version: string): Promise<boolean> {
         const build = await this._getCompilerBuild(version)
@@ -274,9 +273,9 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
             fsExtra.chmodSync(downloadPath, 0o755)
         } else if (this._platform === CompilerPlatform.MACOS) {
             try {
-                await execAsync(`xattr -cr "${downloadPath}"`);
+                await execAsync(`xattr -cr "${downloadPath}"`)
             } catch (error) {
-                log('Warning: Could not clear extended attributes:', error);
+                log("Warning: Could not clear extended attributes:", error)
             }
             fsExtra.chmodSync(downloadPath, 0o755)
         }
