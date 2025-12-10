@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2 (2025-12-10)
+### Bug Fixes
+
+- Remove `fs-xattr`. ([#383](https://github.com/paritytech/hardhat-polkadot/pull/383)) ([012e6e8](https://github.com/paritytech/hardhat-polkadot/commit/012e6e8c4d1830ece630489310a6d9bc57c01f4e))
+
+
 ## 0.2.1 (2025-11-20)
 ### Chores
 
