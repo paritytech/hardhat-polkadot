@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [x86_64-unknown-linux-gnu, aarch64-apple-darwin] #, x86_64-apple-darwin]
+        target: [x86_64-unknown-linux-gnu, aarch64-apple-darwin, x86_64-apple-darwin]
         include:
           - target: x86_64-unknown-linux-gnu
             os_tag: linux
@@ -43,17 +43,11 @@ jobs:
             arch_tag: arm64
             runner: parity-macos
             exe_ext: ''
-          # - target: x86_64-apple-darwin
-          #   os_tag: darwin
-          #   arch_tag: x64
-          #   runner: macos-13 # Intel, since parity-macos is arm64 only
-          #   exe_ext: ''
-          # Disabled for now
-          # - target: x86_64-pc-windows-msvc
-          #   os_tag: win32
-          #   arch_tag: x64
-          #   runner: windows-2022
-          #   exe_ext: '.exe'
+          - target: x86_64-apple-darwin
+            os_tag: darwin
+            arch_tag: x64
+            runner: macos-13 # Intel, since parity-macos is arm64 only
+            exe_ext: ''
     runs-on: ${{ matrix.runner }}
     steps:
 
@@ -74,15 +68,14 @@ jobs:
       - name: Install shared dependencies (macOS)
         if: matrix.os_tag == 'darwin'
         run: |
-          xcode-select --install || true
-          
           # Set libclang environment variables
-          XCODE_PATH=$(xcode-select --print-path)
-          echo "LIBCLANG_PATH=${XCODE_PATH}/Toolchains/XcodeDefault.xctoolchain/usr/lib" >> $GITHUB_ENV
-          echo "DYLD_LIBRARY_PATH=${XCODE_PATH}/Toolchains/XcodeDefault.xctoolchain/usr/lib:$DYLD_LIBRARY_PATH" >> $GITHUB_ENV
+          brew install llvm
+          brew link llvm
+          echo "LLVM_CONFIG_PATH=$(brew --prefix llvm)/bin/llvm-config" >> $GITHUB_ENV
+          echo "LIBCLANG_PATH=$(brew --prefix llvm)/lib" >> $GITHUB_ENV
 
           brew uninstall cmake
-          brew install openssl pkg-config git curl llvm protobuf jq cmake
+          brew install openssl pkg-config git curl protobuf jq cmake
 
       - name: Checkout (repo context)
         uses: actions/checkout@v4
