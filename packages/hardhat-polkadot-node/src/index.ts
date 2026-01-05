@@ -37,6 +37,7 @@ import { handleFactoryDependencies } from "./core/factory-support"
 import { runScriptWithHardhat } from "./core/script-runner"
 import { RpcServer } from "./types"
 import "./type-extensions"
+import { intervalPollingPatch } from "./polling-patch"
 
 task(TASK_RUN).setAction(async (args, hre, runSuper) => {
     if (!hre.network.polkadot || hre.network.name !== HARDHAT_NETWORK_NAME) {
@@ -268,3 +269,5 @@ scope("ignition").task("deploy", async (_taskArgs, { config }, runSuper) => {
 })
 
 interceptAndWrapTasksWithNode()
+
+intervalPollingPatch()
