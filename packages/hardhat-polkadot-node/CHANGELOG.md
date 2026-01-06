@@ -1,5 +1,12 @@
 # Changelog
 
+
+## 0.2.5 (2026-01-06)
+### Bug Fixes
+
+- Increase polling rate. ([#387](https://github.com/paritytech/hardhat-polkadot/pull/387)) ([f86663b](https://github.com/paritytech/hardhat-polkadot/commit/f86663b9b90a2461e33fbbbac32211fa464c50fb))
+
+
 ## 0.2.4 (2025-12-01)
 ### Bug Fixes
 
