@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.3 (2026-01-07)
+### Features
+
+- Heap and stack size limits are now configurable for resolc. ([#389](https://github.com/paritytech/hardhat-polkadot/pull/389)) ([cf869db](https://github.com/paritytech/hardhat-polkadot/commit/cf869db84476115346557b8c32f3bce855888ce3))
+
+
 ## 0.2.2 (2025-12-10)
 ### Bug Fixes
 
