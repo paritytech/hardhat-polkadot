@@ -32,6 +32,13 @@ export interface ResolcConfig {
         contractsToCompile?: string[]
         // Generate source based debug information in the output code file. This only has an effect with the LLVM-IR code generator and is ignored otherwise.
         emitDourceDebugInfo?: boolean
+        // Memory config settings
+        memoryConfig?: {
+            // A numerical value allowing to configure the contract heap size. Corresponds to `resolc --heap-size`.
+            heapSize?: number
+            // A numerical value allowing to configure the contract stack size. Corresponds to `resolc --stack-size`.
+            stackSize?: number
+        }
     }
 }
 
