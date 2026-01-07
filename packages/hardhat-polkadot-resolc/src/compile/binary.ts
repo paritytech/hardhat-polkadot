@@ -9,7 +9,7 @@ export async function compileWithBinary(
     config: ResolcConfig,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
-    const { resolcPath, optimizer } = config.settings!
+    const { resolcPath, optimizer, memoryConfig } = config.settings!
 
     const commands = extractCommands(config)
 
@@ -27,6 +27,14 @@ export async function compileWithBinary(
             enabled: false,
         }
     }
+    let memorySettings: object | undefined
+
+    if (memoryConfig) {
+        memorySettings = {
+            heapSize: memoryConfig.heapSize,
+            stackSize: memoryConfig.stackSize,
+        }
+    }
 
     const inputs = JSON.stringify({
         language: "Solidity",
@@ -34,6 +42,9 @@ export async function compileWithBinary(
         settings: {
             optimizer: optimizerSettings,
             outputSelection: input.settings.outputSelection,
+            polkavm: {
+                memoryConfig: memorySettings,
+            },
         },
     })
 
