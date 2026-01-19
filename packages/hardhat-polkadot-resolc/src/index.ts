@@ -33,7 +33,7 @@ import type {
 import { assertHardhatInvariant } from "hardhat/internal/core/errors"
 import chalk from "chalk"
 
-import { pluralize, updateDefaultCompilerConfig } from "./utils"
+import { pluralize, updateDefaultCompilerConfig, getResolcVersionFromBinary } from "./utils"
 import { compile } from "./compile"
 import {
     defaultNpmResolcConfig,
@@ -81,6 +81,14 @@ extendConfig((config, userConfig) => {
             optimizer,
         },
     }
+
+    const customResolcPath = config.resolc?.settings?.resolcPath
+    if (customResolcPath) {
+        const versionInfo = getResolcVersionFromBinary(customResolcPath)
+        if (versionInfo) {
+            config.resolc.version = versionInfo.version
+        }
+    }
 })
 
 extendEnvironment((hre) => {
@@ -95,8 +103,8 @@ extendEnvironment((hre) => {
 
     hre.config.paths.artifacts = artifactsPath
     hre.config.paths.cache = cachePath
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(hre as any).artifacts = new Artifacts(artifactsPath)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ; (hre as any).artifacts = new Artifacts(artifactsPath)
 
     if (
         (hre.config.solidity.compilers.length > 1 && hre.config.resolc.compilerSource === "npm") ||
@@ -346,35 +354,67 @@ subtask(TASK_COMPILE_SOLIDITY_GET_RESOLC_BUILD).setAction(
             quiet: boolean
             resolcVersion: string
         },
-        { run },
+        { run, config },
     ): Promise<ResolcBuild> => {
+
+        const customResolcPath = config.resolc?.settings?.resolcPath
+        if (customResolcPath) {
+            console.log(`Using custom resolc binary: ${customResolcPath}`)
+            const versionInfo = getResolcVersionFromBinary(customResolcPath)
+
+            if (versionInfo) {
+                console.log(`Detected resolc version: ${versionInfo.version}`)
+            } else {
+                console.warn(`Using configured version: ${resolcVersion}`)
+            }
+
+            return {
+                resolcPath: customResolcPath,
+                version: versionInfo?.version ?? resolcVersion,
+                longVersion: versionInfo?.longVersion ?? resolcVersion,
+                isJs: false,
+            }
+        }
+
         const compilersCache = await getCompilersDir()
 
+        const downloadAndGetCompiler = async (
+            platform: CompilerPlatform,
+            startTask: string,
+            startVersionParam: string,
+        ): Promise<ResolcBuild | undefined> => {
+            const downloader = ResolcCompilerDownloader.getConcurrencySafeDownloader(
+                platform,
+                compilersCache,
+            )
+
+            await downloader.downloadCompiler(
+                resolcVersion,
+                async (isCompilerDownloaded: boolean) => {
+                    await run(startTask, {
+                        [startVersionParam]: resolcVersion,
+                        isCompilerDownloaded,
+                        quiet,
+                    })
+                },
+                async (isCompilerDownloaded: boolean) => {
+                    await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_END, {
+                        solcVersion: resolcVersion,
+                        isCompilerDownloaded,
+                        quiet,
+                    })
+                },
+            )
+
+            return downloader.getCompiler(resolcVersion)
+        }
+
         const compilerPlatform = ResolcCompilerDownloader.getCompilerPlatform()
-        const downloader = ResolcCompilerDownloader.getConcurrencySafeDownloader(
+        const compiler = await downloadAndGetCompiler(
             compilerPlatform,
-            compilersCache,
+            TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_RESOLC_COMPILER_START,
+            "resolcVersion",
         )
-
-        await downloader.downloadCompiler(
-            resolcVersion,
-            async (isCompilerDownloaded: boolean) => {
-                await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_RESOLC_COMPILER_START, {
-                    resolcVersion: resolcVersion,
-                    isCompilerDownloaded,
-                    quiet,
-                })
-            },
-            async (isCompilerDownloaded: boolean) => {
-                await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_END, {
-                    solcVersion: resolcVersion,
-                    isCompilerDownloaded,
-                    quiet,
-                })
-            },
-        )
-
-        const compiler = await downloader.getCompiler(resolcVersion)
 
         if (compiler !== undefined) {
             return compiler
@@ -384,30 +424,11 @@ subtask(TASK_COMPILE_SOLIDITY_GET_RESOLC_BUILD).setAction(
             "Native resolc binary doesn't work, using wasm instead. Try running npx hardhat clean --global",
         )
 
-        const wasmDownloader = ResolcCompilerDownloader.getConcurrencySafeDownloader(
+        const wasmCompiler = await downloadAndGetCompiler(
             CompilerPlatform.WASM,
-            compilersCache,
+            TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_START,
+            "solcVersion",
         )
-
-        await wasmDownloader.downloadCompiler(
-            resolcVersion,
-            async (isCompilerDownloaded: boolean) => {
-                await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_START, {
-                    solcVersion: resolcVersion,
-                    isCompilerDownloaded,
-                    quiet,
-                })
-            },
-            async (isCompilerDownloaded: boolean) => {
-                await run(TASK_COMPILE_SOLIDITY_LOG_DOWNLOAD_COMPILER_END, {
-                    solcVersion: resolcVersion,
-                    isCompilerDownloaded,
-                    quiet,
-                })
-            },
-        )
-
-        const wasmCompiler = await wasmDownloader.getCompiler(resolcVersion)
 
         assertHardhatInvariant(
             wasmCompiler !== undefined,
