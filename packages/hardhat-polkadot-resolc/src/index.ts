@@ -103,8 +103,8 @@ extendEnvironment((hre) => {
 
     hre.config.paths.artifacts = artifactsPath
     hre.config.paths.cache = cachePath
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ; (hre as any).artifacts = new Artifacts(artifactsPath)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(hre as any).artifacts = new Artifacts(artifactsPath)
 
     if (
         (hre.config.solidity.compilers.length > 1 && hre.config.resolc.compilerSource === "npm") ||
@@ -356,7 +356,6 @@ subtask(TASK_COMPILE_SOLIDITY_GET_RESOLC_BUILD).setAction(
         },
         { run, config },
     ): Promise<ResolcBuild> => {
-
         const customResolcPath = config.resolc?.settings?.resolcPath
         if (customResolcPath) {
             console.log(`Using custom resolc binary: ${customResolcPath}`)
