@@ -28,7 +28,7 @@ const config: HardhatUserConfig = {
             polkadot: {
                 target: "evm",
             },
-            url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
+            url: "https://services.polkadothub-rpc.com/testnet",
             accounts: [vars.get("PRIVATE_KEY")],
         },
     },

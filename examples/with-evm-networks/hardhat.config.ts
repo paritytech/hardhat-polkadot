@@ -12,7 +12,7 @@ const config: HardhatUserConfig = {
         },
         polkadotHubTestnet: {
             polkadot: true,
-            url: 'https://testnet-passet-hub-eth-rpc.polkadot.io',
+            url: 'https://services.polkadothub-rpc.com/testnet',
             chainId: 420420422,
         },
         kusamaHub: {
