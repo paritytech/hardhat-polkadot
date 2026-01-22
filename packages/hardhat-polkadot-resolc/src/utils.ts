@@ -1,8 +1,39 @@
 import type { CompilerInput } from "hardhat/types"
 import { createHash } from "crypto"
+import { execSync } from "child_process"
 import { updateSolc } from "./compile/npm"
 import type { ResolcConfig, SolcConfigData } from "./types"
 import { ResolcPluginError } from "./errors"
+
+interface ResolcVersionInfo {
+    version: string
+    longVersion: string
+}
+
+export function getResolcVersionFromBinary(resolcPath: string): ResolcVersionInfo | undefined {
+    try {
+        const versionOutput = execSync(`"${resolcPath}" --version`, {
+            encoding: "utf8",
+            stdio: ["pipe", "pipe", "pipe"],
+        }).trim()
+
+        const versionMatch = versionOutput.match(/version\s+(\d+\.\d+\.\d+)(?:\+[^\s]+)?/i)
+
+        if (versionMatch) {
+            return {
+                version: versionMatch[1],
+                longVersion: versionOutput,
+            }
+        }
+
+        console.warn(`Could not parse version from: ${versionOutput}`)
+        return undefined
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error)
+        console.warn(`Could not execute resolc binary: ${message}`)
+        return undefined
+    }
+}
 
 export function getVersionComponents(version: string): number[] {
     const versionComponents = version.split(".")
