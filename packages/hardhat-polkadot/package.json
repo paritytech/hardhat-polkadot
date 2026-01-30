@@ -59,7 +59,7 @@
         "@parity/hardhat-polkadot-resolc": "workspace:*",
         "chalk": "4",
         "diff": "^8.0.2",
-        "enquirer": "2.3.0",
+        "enquirer": "2.4.1",
         "find-up": "5.0.0",
         "fs-extra": "^11.3.0",
         "jscodeshift": "^17.3.0",
