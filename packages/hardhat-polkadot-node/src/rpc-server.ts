@@ -2,7 +2,6 @@ import { HardhatNetworkUserConfig } from "hardhat/types/config"
 import Docker from "dockerode"
 
 import { PolkadotNodePluginError } from "./errors"
-import { ANVIL_POLKADOT_DEFAULT_BINARY } from "./constants"
 import { RpcServer } from "./types"
 import { EthRpcService } from "./services/eth-rpc"
 import { SubstrateNodeService } from "./services/substrate-node"
@@ -38,14 +37,13 @@ export function createRpcServer(opts: {
             ethRpcService = new EthRpcService(adapterArgs, blockProcess)
             chopsticksService = new ChopsticksService(nodeArgs, blockProcess)
 
-            // Anvil mode (binary): use provided path or default binary name
-            if (opts.useAnvil && !opts.isForking) {
-                const anvilPath = opts.nodePath || ANVIL_POLKADOT_DEFAULT_BINARY
-                return substrateNodeService.from_binary(anvilPath)
+            // Anvil mode (binary): use provided nodeBinaryPath
+            if (opts.useAnvil && opts.nodePath && !opts.isForking) {
+                return substrateNodeService.from_binary(opts.nodePath)
             }
 
-            // Anvil mode (docker)
-            if (opts.useAnvil && opts.docker && !opts.isForking) {
+            // Anvil mode (docker): default when useAnvil is true and no nodeBinaryPath
+            if (opts.useAnvil && !opts.isForking) {
                 const docker = new Docker({ socketPath: getDockerSocketPath(opts.docker) })
                 return substrateNodeService.from_docker(docker)
             }
