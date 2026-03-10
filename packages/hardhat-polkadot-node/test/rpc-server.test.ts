@@ -111,14 +111,16 @@ describe("createRpcServer", () => {
             expect(mockEthRpcService.from_binary).not.toHaveBeenCalled()
         })
 
-        it("uses default anvil-polkadot binary when no nodePath provided", async () => {
+        it("defaults to docker when no nodePath provided", async () => {
             const server = createRpcServer({
                 useAnvil: true,
             })
             await server.listen()
 
-            expect(mockSubstrateService.from_binary).toHaveBeenCalledWith("anvil-polkadot")
+            expect(mockSubstrateService.from_docker).toHaveBeenCalled()
+            expect(mockSubstrateService.from_binary).not.toHaveBeenCalled()
             expect(mockEthRpcService.from_binary).not.toHaveBeenCalled()
+            expect(mockEthRpcService.from_docker).not.toHaveBeenCalled()
         })
     })
 
