@@ -8,10 +8,17 @@ vi.mock("../src/services/index", async () => {
     abstract class Service {
         public process: unknown = null
         public container: unknown = null
-        constructor(protected commandArgs: string[], protected blockProcess: boolean) {}
-        protected _handleOnExit(_name: string) { return () => {} }
+        constructor(
+            protected commandArgs: string[],
+            protected blockProcess: boolean,
+        ) {}
+        protected _handleOnExit(_name: string) {
+            return () => {}
+        }
         protected _handleOnError(_name: string, rejectFn: (error: Error) => void) {
-            return (error: Error) => { rejectFn(error) }
+            return (error: Error) => {
+                rejectFn(error)
+            }
         }
         abstract from_binary(pathToBinary: string): Promise<void>
         abstract from_docker(...args: unknown[]): Promise<void>
@@ -255,9 +262,7 @@ describe("getAvailablePort", () => {
             )
         } finally {
             await Promise.all(
-                servers.map(
-                    (s) => new Promise<void>((resolve) => s.close(() => resolve())),
-                ),
+                servers.map((s) => new Promise<void>((resolve) => s.close(() => resolve()))),
             )
         }
     })
@@ -334,26 +339,17 @@ describe("getPolkadotRpcUrl", () => {
     })
 
     it("infers polkadot RPC from known ETH RPC URLs", () => {
-        const url = getPolkadotRpcUrl(
-            "https://testnet-passet-hub-eth-rpc.polkadot.io",
-            undefined,
-        )
+        const url = getPolkadotRpcUrl("https://testnet-passet-hub-eth-rpc.polkadot.io", undefined)
         expect(url).toBe("wss://testnet-passet-hub.polkadot.io")
     })
 
     it("infers kusama asset hub RPC URL", () => {
-        const url = getPolkadotRpcUrl(
-            "https://kusama-asset-hub-eth-rpc.polkadot.io",
-            undefined,
-        )
+        const url = getPolkadotRpcUrl("https://kusama-asset-hub-eth-rpc.polkadot.io", undefined)
         expect(url).toBe("wss://asset-hub-kusama-rpc.dwellir.com")
     })
 
     it("infers westend asset hub RPC URL", () => {
-        const url = getPolkadotRpcUrl(
-            "https://westend-asset-hub-eth-rpc.polkadot.io",
-            undefined,
-        )
+        const url = getPolkadotRpcUrl("https://westend-asset-hub-eth-rpc.polkadot.io", undefined)
         expect(url).toBe("wss://asset-hub-westend-rpc.dwellir.com")
     })
 
@@ -364,8 +360,6 @@ describe("getPolkadotRpcUrl", () => {
     })
 
     it("throws when ethRpcUrl is undefined and polkadotRpcUrl is undefined", () => {
-        expect(() => getPolkadotRpcUrl(undefined, undefined)).toThrow(
-            "Factory dependencies found",
-        )
+        expect(() => getPolkadotRpcUrl(undefined, undefined)).toThrow("Factory dependencies found")
     })
 })

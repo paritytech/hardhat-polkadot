@@ -97,10 +97,7 @@ describe("ResolcCompilerDownloader", () => {
         })
 
         it("returns false when no compiler list exists", async () => {
-            const downloader = new ResolcCompilerDownloader(
-                CompilerPlatform.LINUX,
-                tmpDir,
-            )
+            const downloader = new ResolcCompilerDownloader(CompilerPlatform.LINUX, tmpDir)
             const result = await downloader.isCompilerDownloaded("0.6.0")
             expect(result).toBe(false)
         })
@@ -124,10 +121,7 @@ describe("ResolcCompilerDownloader", () => {
                 latestRelease: "v0.5.0",
             })
 
-            const downloader = new ResolcCompilerDownloader(
-                CompilerPlatform.LINUX,
-                tmpDir,
-            )
+            const downloader = new ResolcCompilerDownloader(CompilerPlatform.LINUX, tmpDir)
             const result = await downloader.isCompilerDownloaded("0.6.0")
             expect(result).toBe(false)
         })
@@ -151,10 +145,7 @@ describe("ResolcCompilerDownloader", () => {
                 latestRelease: "v0.6.0",
             })
 
-            const downloader = new ResolcCompilerDownloader(
-                CompilerPlatform.LINUX,
-                tmpDir,
-            )
+            const downloader = new ResolcCompilerDownloader(CompilerPlatform.LINUX, tmpDir)
             const result = await downloader.isCompilerDownloaded("0.6.0")
             expect(result).toBe(false)
         })
@@ -180,10 +171,7 @@ describe("ResolcCompilerDownloader", () => {
             // Create the binary file
             await fsExtra.writeFile(path.join(listDir, "resolc-0.6.0"), "fake binary")
 
-            const downloader = new ResolcCompilerDownloader(
-                CompilerPlatform.LINUX,
-                tmpDir,
-            )
+            const downloader = new ResolcCompilerDownloader(CompilerPlatform.LINUX, tmpDir)
             const result = await downloader.isCompilerDownloaded("0.6.0")
             expect(result).toBe(true)
         })
@@ -220,10 +208,7 @@ describe("ResolcCompilerDownloader", () => {
             })
             await fsExtra.writeFile(path.join(listDir, "resolc-0.6.0"), "fake binary")
 
-            const downloader = new ResolcCompilerDownloader(
-                CompilerPlatform.LINUX,
-                tmpDir,
-            )
+            const downloader = new ResolcCompilerDownloader(CompilerPlatform.LINUX, tmpDir)
             const compiler = await downloader.getCompiler("0.6.0")
             expect(compiler).toBeDefined()
             expect(compiler!.version).toBe("0.6.0")
@@ -250,15 +235,9 @@ describe("ResolcCompilerDownloader", () => {
                 latestRelease: "v0.6.0",
             })
             await fsExtra.writeFile(path.join(listDir, "resolc-0.6.0"), "fake binary")
-            await fsExtra.writeFile(
-                path.join(listDir, "resolc-0.6.0.does.not.work"),
-                "",
-            )
+            await fsExtra.writeFile(path.join(listDir, "resolc-0.6.0.does.not.work"), "")
 
-            const downloader = new ResolcCompilerDownloader(
-                CompilerPlatform.LINUX,
-                tmpDir,
-            )
+            const downloader = new ResolcCompilerDownloader(CompilerPlatform.LINUX, tmpDir)
             const compiler = await downloader.getCompiler("0.6.0")
             expect(compiler).toBeUndefined()
         })
@@ -283,10 +262,7 @@ describe("ResolcCompilerDownloader", () => {
             })
             await fsExtra.writeFile(path.join(listDir, "resolc.wasm"), "fake wasm")
 
-            const downloader = new ResolcCompilerDownloader(
-                CompilerPlatform.WASM,
-                tmpDir,
-            )
+            const downloader = new ResolcCompilerDownloader(CompilerPlatform.WASM, tmpDir)
             const compiler = await downloader.getCompiler("0.6.0")
             expect(compiler).toBeDefined()
             expect(compiler!.isJs).toBe(true)
@@ -312,10 +288,7 @@ describe("ResolcCompilerDownloader", () => {
         })
 
         it("throws for non-numeric version strings", async () => {
-            const downloader = new ResolcCompilerDownloader(
-                CompilerPlatform.LINUX,
-                tmpDir,
-            )
+            const downloader = new ResolcCompilerDownloader(CompilerPlatform.LINUX, tmpDir)
             await expect(downloader.isCompilerDownloaded("abc")).rejects.toThrow(
                 "is not a valid version",
             )

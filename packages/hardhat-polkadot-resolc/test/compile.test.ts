@@ -20,7 +20,8 @@ function makeCompilerInput(): CompilerInput {
         language: "Solidity",
         sources: {
             "Test.sol": {
-                content: "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\ncontract Test {}",
+                content:
+                    "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\ncontract Test {}",
             },
         },
         settings: {

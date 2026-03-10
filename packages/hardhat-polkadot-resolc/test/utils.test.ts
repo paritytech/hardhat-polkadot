@@ -13,7 +13,7 @@ import {
 import type { ResolcConfig, SolcConfigData } from "../src/types"
 
 describe("pluralize", () => {
-    it('returns singular when n is 1', () => {
+    it("returns singular when n is 1", () => {
         expect(pluralize(1, "file")).toBe("file")
     })
 
@@ -163,11 +163,9 @@ describe("extractImports", () => {
     })
 
     it("extracts multiple imports", () => {
-        const content = [
-            'import "a.sol";',
-            "import 'b.sol';",
-            'import { X } from "c.sol";',
-        ].join("\n")
+        const content = ['import "a.sol";', "import 'b.sol';", 'import { X } from "c.sol";'].join(
+            "\n",
+        )
         expect(extractImports(content)).toEqual(["a.sol", "b.sol", "c.sol"])
     })
 
@@ -178,9 +176,7 @@ describe("extractImports", () => {
 
     it("handles OpenZeppelin-style imports", () => {
         const content = 'import "@openzeppelin/contracts/token/ERC20/ERC20.sol";'
-        expect(extractImports(content)).toEqual([
-            "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        ])
+        expect(extractImports(content)).toEqual(["@openzeppelin/contracts/token/ERC20/ERC20.sol"])
     })
 })
 
