@@ -16,13 +16,17 @@
     "clean": "pnpm --recursive run clean",
     "prettier:check": "pnpm --recursive run prettier:check && npx prettier --check 'examples/**/*.{md,yml,ts,js,json}'",
     "prettier:fix": "pnpm --recursive run prettier:fix && npx prettier --check 'examples/**/*.{md,yml,ts,js,json}'",
-    "eslint:check": "pnpm --recursive run eslint:check"
+    "eslint:check": "pnpm --recursive run eslint:check",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@types/node": "^22.15.3",
+    "@vitest/coverage-v8": "^4.0.18",
     "globals": "^16.0.0",
     "prettier": "^3.3.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^4.0.18"
   },
   "packageManager": "pnpm@9.3.0",
   "resolutions": {
