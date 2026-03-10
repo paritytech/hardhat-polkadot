@@ -43,8 +43,13 @@ import { ChopsticksService } from "../src/services/chopsticks"
 
 describe("SubstrateNodeService", () => {
     describe("constructor", () => {
-        it("defaults to NODE_START_PORT when no port arg", () => {
+        it("defaults to 8545 (anvil port) when no port arg", () => {
             const service = new SubstrateNodeService()
+            expect(service.port).toBe(8545)
+        })
+
+        it("defaults to NODE_START_PORT when useAnvil is false and no port arg", () => {
+            const service = new SubstrateNodeService([], true, false)
             expect(service.port).toBe(NODE_START_PORT)
         })
 

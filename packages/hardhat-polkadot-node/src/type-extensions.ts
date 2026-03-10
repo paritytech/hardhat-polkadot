@@ -7,6 +7,7 @@ declare module "hardhat/types/config" {
         polkadot?: boolean | TargetVM
         // Configuration for polkadot-compatible node
         nodeConfig?: {
+            // Use anvil-polkadot as the node - default: true
             useAnvil?: boolean
             // Path to the substrate node binary
             nodeBinaryPath?: string

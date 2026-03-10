@@ -7,6 +7,7 @@ export const TASK_RUN_POLKADOT_NODE_IN_SEPARATE_PROCESS = "node-polkadot:run-in-
 
 export const PROCESS_TERMINATION_SIGNALS = ["SIGINT", "SIGTERM", "SIGKILL"]
 
+export const ANVIL_POLKADOT_DEFAULT_BINARY = "anvil-polkadot"
 export const NODE_START_PORT = 9944
 export const ETH_RPC_ADAPTER_START_PORT = 8545
 export const MAX_PORT_ATTEMPTS = 10
