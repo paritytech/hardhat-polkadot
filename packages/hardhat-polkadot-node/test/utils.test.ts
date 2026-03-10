@@ -37,15 +37,15 @@ import {
 } from "../src/utils"
 
 describe("constructCommandArgs", () => {
-    it("returns empty arrays when no args provided", () => {
+    it("defaults to anvil mode when no args provided", () => {
         const result = constructCommandArgs()
-        expect(result.nodeCommands).toEqual([])
+        expect(result.nodeCommands).toEqual(["", "--accounts", "20"])
         expect(result.adapterCommands).toEqual([])
     })
 
-    it("returns empty arrays when all args are undefined", () => {
+    it("defaults to anvil mode when all args are undefined", () => {
         const result = constructCommandArgs({})
-        expect(result.nodeCommands).toEqual([])
+        expect(result.nodeCommands).toEqual(["", "--accounts", "20"])
         expect(result.adapterCommands).toEqual([])
     })
 
@@ -95,7 +95,7 @@ describe("constructCommandArgs", () => {
 
     it("sets node rpc port with --rpc-port for non-forking mode", () => {
         const result = constructCommandArgs({
-            nodeCommands: { nodeBinaryPath: "/path/to/node", rpcPort: 9955 },
+            nodeCommands: { useAnvil: false, nodeBinaryPath: "/path/to/node", rpcPort: 9955 },
         })
         expect(result.nodeCommands).toContain("--rpc-port=9955")
         expect(result.adapterCommands).toContain("--node-rpc-url=ws://localhost:9955")
@@ -103,14 +103,14 @@ describe("constructCommandArgs", () => {
 
     it("defaults adapter node-rpc-url to port 9944 when no rpc port specified", () => {
         const result = constructCommandArgs({
-            nodeCommands: { nodeBinaryPath: "/path/to/node" },
+            nodeCommands: { useAnvil: false, nodeBinaryPath: "/path/to/node" },
         })
         expect(result.adapterCommands).toContain("--node-rpc-url=ws://localhost:9944")
     })
 
     it("sets adapter port", () => {
         const result = constructCommandArgs({
-            nodeCommands: { nodeBinaryPath: "/path/to/node" },
+            nodeCommands: { useAnvil: false, nodeBinaryPath: "/path/to/node" },
             adapterCommands: { adapterPort: 8546 },
         })
         expect(result.adapterCommands).toContain("--rpc-port=8546")
@@ -119,7 +119,7 @@ describe("constructCommandArgs", () => {
     it("throws when adapter and node share the same port", () => {
         expect(() =>
             constructCommandArgs({
-                nodeCommands: { nodeBinaryPath: "/path/to/node", rpcPort: 8545 },
+                nodeCommands: { useAnvil: false, nodeBinaryPath: "/path/to/node", rpcPort: 8545 },
                 adapterCommands: { adapterPort: 8545 },
             }),
         ).toThrow("Adapter and node cannot share the same port.")
@@ -128,6 +128,7 @@ describe("constructCommandArgs", () => {
     it("configures consensus for manual seal with period", () => {
         const result = constructCommandArgs({
             nodeCommands: {
+                useAnvil: false,
                 nodeBinaryPath: "/path/to/node",
                 consensus: { seal: "Manual", period: 100 },
             },
@@ -138,6 +139,7 @@ describe("constructCommandArgs", () => {
     it("configures consensus for manual seal without valid period", () => {
         const result = constructCommandArgs({
             nodeCommands: {
+                useAnvil: false,
                 nodeBinaryPath: "/path/to/node",
                 consensus: { seal: "Manual", period: "invalid" },
             },
@@ -148,6 +150,7 @@ describe("constructCommandArgs", () => {
     it("configures consensus for manual seal with zero period", () => {
         const result = constructCommandArgs({
             nodeCommands: {
+                useAnvil: false,
                 nodeBinaryPath: "/path/to/node",
                 consensus: { seal: "Manual", period: 0 },
             },
@@ -158,6 +161,7 @@ describe("constructCommandArgs", () => {
     it("configures consensus for non-manual seal modes", () => {
         const result = constructCommandArgs({
             nodeCommands: {
+                useAnvil: false,
                 nodeBinaryPath: "/path/to/node",
                 consensus: { seal: "Instant" },
             },
@@ -168,6 +172,7 @@ describe("constructCommandArgs", () => {
     it("configures consensus with default None seal", () => {
         const result = constructCommandArgs({
             nodeCommands: {
+                useAnvil: false,
                 nodeBinaryPath: "/path/to/node",
                 consensus: {},
             },
@@ -178,6 +183,7 @@ describe("constructCommandArgs", () => {
     it("adds dev and pruning flags when dev mode enabled", () => {
         const result = constructCommandArgs({
             nodeCommands: {
+                useAnvil: false,
                 nodeBinaryPath: "/path/to/node",
                 dev: true,
             },
@@ -200,7 +206,7 @@ describe("constructCommandArgs", () => {
 
     it("adds adapter dev flag", () => {
         const result = constructCommandArgs({
-            nodeCommands: { nodeBinaryPath: "/path/to/node" },
+            nodeCommands: { useAnvil: false, nodeBinaryPath: "/path/to/node" },
             adapterCommands: { dev: true },
         })
         expect(result.adapterCommands).toContain("--dev")
@@ -209,6 +215,7 @@ describe("constructCommandArgs", () => {
     it("does not add consensus when no nodeBinaryPath", () => {
         const result = constructCommandArgs({
             nodeCommands: {
+                useAnvil: false,
                 consensus: { seal: "Instant" },
             },
         })
@@ -334,32 +341,51 @@ describe("getPolkadotRpcUrl", () => {
     })
 
     it("returns explicit polkadotRpcUrl when provided", () => {
-        const url = getPolkadotRpcUrl("http://localhost:8545", "wss://custom.rpc.com")
+        const url = getPolkadotRpcUrl("http://localhost:8545", "wss://custom.rpc.com", false)
         expect(url).toBe("wss://custom.rpc.com")
     })
 
     it("infers polkadot RPC from known ETH RPC URLs", () => {
-        const url = getPolkadotRpcUrl("https://testnet-passet-hub-eth-rpc.polkadot.io", undefined)
+        const url = getPolkadotRpcUrl(
+            "https://testnet-passet-hub-eth-rpc.polkadot.io",
+            undefined,
+            false,
+        )
         expect(url).toBe("wss://testnet-passet-hub.polkadot.io")
     })
 
     it("infers kusama asset hub RPC URL", () => {
-        const url = getPolkadotRpcUrl("https://kusama-asset-hub-eth-rpc.polkadot.io", undefined)
+        const url = getPolkadotRpcUrl(
+            "https://kusama-asset-hub-eth-rpc.polkadot.io",
+            undefined,
+            false,
+        )
         expect(url).toBe("wss://asset-hub-kusama-rpc.dwellir.com")
     })
 
     it("infers westend asset hub RPC URL", () => {
-        const url = getPolkadotRpcUrl("https://westend-asset-hub-eth-rpc.polkadot.io", undefined)
+        const url = getPolkadotRpcUrl(
+            "https://westend-asset-hub-eth-rpc.polkadot.io",
+            undefined,
+            false,
+        )
         expect(url).toBe("wss://asset-hub-westend-rpc.dwellir.com")
     })
 
-    it("throws when no polkadot URL can be resolved", () => {
-        expect(() => getPolkadotRpcUrl("http://unknown-rpc.example.com", undefined)).toThrow(
+    it("defaults to ws://localhost:9944 when useAnvil is not specified (defaults to true)", () => {
+        const url = getPolkadotRpcUrl("http://unknown-rpc.example.com", undefined)
+        expect(url).toBe("ws://localhost:9944")
+    })
+
+    it("throws when no polkadot URL can be resolved and useAnvil is false", () => {
+        expect(() => getPolkadotRpcUrl("http://unknown-rpc.example.com", undefined, false)).toThrow(
             "Factory dependencies found",
         )
     })
 
-    it("throws when ethRpcUrl is undefined and polkadotRpcUrl is undefined", () => {
-        expect(() => getPolkadotRpcUrl(undefined, undefined)).toThrow("Factory dependencies found")
+    it("throws when ethRpcUrl is undefined and polkadotRpcUrl is undefined and useAnvil is false", () => {
+        expect(() => getPolkadotRpcUrl(undefined, undefined, false)).toThrow(
+            "Factory dependencies found",
+        )
     })
 })

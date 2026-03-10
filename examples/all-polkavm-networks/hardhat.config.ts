@@ -11,7 +11,6 @@ const config: HardhatUserConfig = {
         hardhat: {
             polkadot: true,
             nodeConfig: {
-                useAnviL: true,
                 nodeBinaryPath: "./bin/anvil-polkadot",
             },
         },

@@ -2,6 +2,7 @@ import { HardhatNetworkUserConfig } from "hardhat/types/config"
 import Docker from "dockerode"
 
 import { PolkadotNodePluginError } from "./errors"
+import { ANVIL_POLKADOT_DEFAULT_BINARY } from "./constants"
 import { RpcServer } from "./types"
 import { EthRpcService } from "./services/eth-rpc"
 import { SubstrateNodeService } from "./services/substrate-node"
@@ -37,10 +38,19 @@ export function createRpcServer(opts: {
             ethRpcService = new EthRpcService(adapterArgs, blockProcess)
             chopsticksService = new ChopsticksService(nodeArgs, blockProcess)
 
-            if (!!opts.nodePath && !!opts.useAnvil) {
-                return substrateNodeService.from_binary(opts.nodePath)
+            // Anvil mode (binary): use provided path or default binary name
+            if (opts.useAnvil && !opts.isForking) {
+                const anvilPath = opts.nodePath || ANVIL_POLKADOT_DEFAULT_BINARY
+                return substrateNodeService.from_binary(anvilPath)
             }
 
+            // Anvil mode (docker)
+            if (opts.useAnvil && opts.docker && !opts.isForking) {
+                const docker = new Docker({ socketPath: getDockerSocketPath(opts.docker) })
+                return substrateNodeService.from_docker(docker)
+            }
+
+            // Legacy mode (binary): revive-node + eth-rpc adapter
             if (!!opts.adapterPath && !!opts.nodePath && !opts.isForking) {
                 return Promise.all([
                     substrateNodeService.from_binary(opts.nodePath),
@@ -48,6 +58,7 @@ export function createRpcServer(opts: {
                 ]).then(() => {})
             }
 
+            // Legacy mode (docker): revive-node + eth-rpc adapter
             if (opts.docker && !opts.isForking) {
                 const docker = new Docker({ socketPath: getDockerSocketPath(opts.docker) })
 

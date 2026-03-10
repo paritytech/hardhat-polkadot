@@ -59,7 +59,6 @@ const config: HardhatUserConfig = {
     hardhat: {
       polkadot: true,
       nodeConfig: {
-        useAnvil: true,
         nodeBinaryPath: 'INSERT_PATH_TO_ANVIL_NODE',
       },
     },

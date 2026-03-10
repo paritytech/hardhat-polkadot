@@ -9,7 +9,6 @@ const config: HardhatUserConfig = {
                 target: "evm",
             },
             nodeConfig: {
-                useAnvil: true,
                 nodeBinaryPath: "path/to/anvil-polkadot/binary",
             },
         },

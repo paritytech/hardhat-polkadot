@@ -98,7 +98,7 @@ describe("createRpcServer", () => {
     })
 
     describe("listen - anvil mode", () => {
-        it("starts only substrate node from binary in anvil mode", async () => {
+        it("starts only substrate node from binary with explicit path", async () => {
             const server = createRpcServer({
                 useAnvil: true,
                 nodePath: "/path/to/anvil",
@@ -108,6 +108,17 @@ describe("createRpcServer", () => {
             const services = server.services()
             expect(services.substrateNodeService).not.toBeNull()
             expect(mockSubstrateService.from_binary).toHaveBeenCalledWith("/path/to/anvil")
+            expect(mockEthRpcService.from_binary).not.toHaveBeenCalled()
+        })
+
+        it("uses default anvil-polkadot binary when no nodePath provided", async () => {
+            const server = createRpcServer({
+                useAnvil: true,
+            })
+            await server.listen()
+
+            expect(mockSubstrateService.from_binary).toHaveBeenCalledWith("anvil-polkadot")
+            expect(mockEthRpcService.from_binary).not.toHaveBeenCalled()
         })
     })
 

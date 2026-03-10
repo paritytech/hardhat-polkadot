@@ -7,7 +7,7 @@ import { NODE_START_PORT } from "../constants"
 import { waitForServiceToBeReady } from "../utils"
 import { Service } from "./index"
 
-const SUBSTRATE_NODE_CONTAINER_NAME = "substrate"
+const ANVIL_POLKADOT_CONTAINER_NAME = "anvil-polkadot"
 
 export class SubstrateNodeService extends Service {
     public port: number
@@ -15,7 +15,7 @@ export class SubstrateNodeService extends Service {
     constructor(
         commandArgs: string[] = [],
         blockProcess: boolean = true,
-        useAnvil: boolean = false,
+        useAnvil: boolean = true,
     ) {
         super(commandArgs.slice(1), blockProcess)
 
@@ -55,24 +55,20 @@ export class SubstrateNodeService extends Service {
     }
 
     public async from_docker(docker: Docker): Promise<void> {
-        // TODO: use latestImage once it is more stable
-        // const imageTag = await getLatestImageName(SUBSTRATE_NODE_CONTAINER_NAME)
-        const imageTag = "master-a209e590"
-
-        const container = docker.getContainer(SUBSTRATE_NODE_CONTAINER_NAME)
+        const container = docker.getContainer(ANVIL_POLKADOT_CONTAINER_NAME)
         await container
             .inspect()
             .then(() => container.remove({ force: true }))
             .catch(() => {})
 
         this.container = await runSimple({
-            name: SUBSTRATE_NODE_CONTAINER_NAME,
-            image: `paritypr/substrate:${imageTag}`,
+            name: ANVIL_POLKADOT_CONTAINER_NAME,
+            image: "paritytech/anvil-polkadot:latest",
             autoRemove: true,
             ports: {
                 [`${this.port}/tcp`]: `${this.port}`,
             },
-            cmd: ["--dev", "--rpc-port", `${this.port}`, "--unsafe-rpc-external"],
+            cmd: ["--accounts", "20", "--port", `${this.port}`],
             verbose: true,
         })
 
