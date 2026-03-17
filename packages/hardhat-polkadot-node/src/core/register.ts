@@ -1,4 +1,5 @@
-// @ts-nocheck — This file uses Hardhat v2 internal APIs and will be deleted in PR 7 (network hooks migration)
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck — This file uses Hardhat v2 internal APIs and will be replaced with v3 network hooks
 import debug from "debug"
 
 import { HardhatContext } from "hardhat/internal/context"

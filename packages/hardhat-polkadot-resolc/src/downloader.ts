@@ -18,9 +18,7 @@ export interface IResolcCompilerDownloader {
     isCompilerDownloaded(version: string): Promise<boolean>
     downloadCompiler(
         version: string,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         downloadStartedCb: (isCompilerDownloaded: boolean) => Promise<any>,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         downloadEndedCb: (isCompilerDownloaded: boolean) => Promise<any>,
     ): Promise<void>
     getCompiler(version: string): Promise<ResolcCompiler | undefined>

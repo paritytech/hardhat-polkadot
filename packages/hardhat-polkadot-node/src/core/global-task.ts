@@ -1,4 +1,4 @@
-// TODO(v3): This file will be deleted in PR 7 (network hooks migration)
+// TODO(v3): This file uses Hardhat v2 internal APIs and will be replaced with v3 network hooks
 import type { TargetVM } from "../types.js"
 
 export type PolkadotTasksWithWrappedNode = typeof global & {
