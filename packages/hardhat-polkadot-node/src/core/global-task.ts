@@ -1,8 +1,9 @@
-import { Network } from "hardhat/types"
+// TODO(v3): This file will be deleted in PR 7 (network hooks migration)
+import type { TargetVM } from "../types.js"
 
 export type PolkadotTasksWithWrappedNode = typeof global & {
     _polkadotTasksForWrapping: PolkadotTasksForWrapping
-    _polkadotNodeNetwork?: Network
+    _polkadotNodeNetwork?: { polkadot?: boolean | TargetVM }
 }
 
 export class PolkadotTasksForWrapping {

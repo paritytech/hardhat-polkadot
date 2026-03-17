@@ -1,12 +1,12 @@
 import { HardhatNetworkUserConfig } from "hardhat/types/config"
 import Docker from "dockerode"
 
-import { PolkadotNodePluginError } from "./errors"
-import { RpcServer } from "./types"
-import { EthRpcService } from "./services/eth-rpc"
-import { SubstrateNodeService } from "./services/substrate-node"
-import { ChopsticksService } from "./services/chopsticks"
-import { getDockerSocketPath } from "./utils"
+import { PolkadotNodePluginError } from "./errors.js"
+import { RpcServer } from "./types.js"
+import { EthRpcService } from "./services/eth-rpc.js"
+import { SubstrateNodeService } from "./services/substrate-node.js"
+import { ChopsticksService } from "./services/chopsticks.js"
+import { getDockerSocketPath } from "./utils.js"
 
 export function createRpcServer(opts: {
     useAnvil: boolean

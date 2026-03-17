@@ -3,7 +3,7 @@ import path from "path"
 import jscodeshiftFactory from "jscodeshift"
 import { coerce, minVersion, lt, gtr } from "semver"
 
-import { patchExportConfig, insertImport } from "./hh-config-transform"
+import { patchExportConfig, insertImport } from "./hh-config-transform.js"
 
 const MODULE = "@parity/hardhat-polkadot"
 const PATCH = {

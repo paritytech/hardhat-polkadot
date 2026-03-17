@@ -1,8 +1,17 @@
-import { sizeCheckPatch } from "./sizeCheckPatch"
+import type { HardhatPlugin } from "hardhat/types/plugins"
+
+import { sizeCheckPatch } from "./sizeCheckPatch.js"
 sizeCheckPatch()
 
-import "@parity/hardhat-polkadot-node"
-import "@parity/hardhat-polkadot-resolc"
+const hardhatPolkadotPlugin: HardhatPlugin = {
+    id: "hardhat-polkadot",
+    npmPackage: "@parity/hardhat-polkadot",
+    dependencies: () => [
+        import("@parity/hardhat-polkadot-resolc") as unknown as Promise<{ default: HardhatPlugin }>,
+        import("@parity/hardhat-polkadot-node") as unknown as Promise<{ default: HardhatPlugin }>,
+    ],
+    hookHandlers: {},
+    tasks: [],
+}
 
-export * from "@parity/hardhat-polkadot-node"
-export * from "@parity/hardhat-polkadot-resolc"
+export default hardhatPolkadotPlugin

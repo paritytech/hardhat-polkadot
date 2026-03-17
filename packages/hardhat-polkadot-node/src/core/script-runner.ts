@@ -1,3 +1,4 @@
+// @ts-nocheck — This file uses Hardhat v2 internal APIs and will be deleted in PR 7 (network hooks migration)
 import { isRunningHardhatCoreTests } from "hardhat/internal/core/execution-mode"
 import { HardhatArguments } from "hardhat/types"
 import { getEnvVariablesMap } from "hardhat/internal/core/params/env-variables"

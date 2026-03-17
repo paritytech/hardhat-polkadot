@@ -2,8 +2,8 @@ import fs from "fs"
 import chalk from "chalk"
 import { updatePackageJSON, updateHHConfig } from "@parity/hardhat-polkadot-migrator"
 
-import { confirmDiff } from "./prompt"
-import { addOrMergeGitIgnore, printDiff } from "./file-utils"
+import { confirmDiff } from "./prompt.js"
+import { addOrMergeGitIgnore, printDiff } from "./file-utils.js"
 
 export async function portProject(projectDir: string, hasYesFlag: boolean) {
     try {

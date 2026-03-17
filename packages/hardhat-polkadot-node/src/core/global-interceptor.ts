@@ -1,3 +1,4 @@
+// @ts-nocheck — This file uses Hardhat v2 internal APIs and will be deleted in PR 7 (network hooks migration)
 import { HardhatRuntimeEnvironment, RunSuperFunction, TaskArguments } from "hardhat/types"
 import { GlobalWithHardhatContext } from "hardhat/src/internal/context"
 import { HARDHAT_NETWORK_NAME } from "hardhat/plugins"

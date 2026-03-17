@@ -2,8 +2,7 @@ import { Wallet, JsonRpcProvider } from "ethers"
 import fs from "fs"
 import { glob } from "fast-glob"
 import chalk from "chalk"
-import {
-    HardhatNetworkAccountsConfig,
+import type {
     HardhatNetworkConfig,
     HttpNetworkAccountsConfig,
 } from "hardhat/types"
@@ -11,8 +10,8 @@ import { createClient, Binary } from "polkadot-api"
 import { getWsProvider } from "polkadot-api/ws-provider/web"
 import path from "path"
 
-import { PolkadotNodePluginError } from "../errors"
-import { getPolkadotRpcUrl } from "../utils"
+import { PolkadotNodePluginError } from "../errors.js"
+import { getPolkadotRpcUrl } from "../utils.js"
 
 const MAGIC_DEPLOY_ADDRESS = "0x6d6f646c70792f70616464720000000000000000"
 const ENDOWED_ACCOUNT_SS58 = "5Ha8yXQgvWcvpFya1BmjtJX386xUskafNTzU4Zmb6B3UwYd9"
@@ -32,7 +31,7 @@ export async function handleFactoryDependencies(
     pathToArtifacts: string,
     ethRpcUrl: HardhatNetworkConfig["url"],
     polkadotRpcUrl: HardhatNetworkConfig["polkadotUrl"],
-    accounts: string[] | HardhatNetworkAccountsConfig | HttpNetworkAccountsConfig,
+    accounts: string[] | HttpNetworkAccountsConfig,
     useAnvil?: boolean,
 ) {
     // get last build info file
@@ -99,7 +98,7 @@ export async function handleFactoryDependencies(
 }
 
 function getPrivateKey(
-    accounts: string[] | HardhatNetworkAccountsConfig | HttpNetworkAccountsConfig,
+    accounts: string[] | HttpNetworkAccountsConfig,
     useAnvil: boolean = false,
 ): string {
     if (Array.isArray(accounts)) {
@@ -110,7 +109,8 @@ function getPrivateKey(
         }
 
         if (typeof accounts[0] === "string") return accounts[0]
-        return accounts[0].privateKey
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (accounts[0] as any).privateKey
     }
     throw new PolkadotNodePluginError("Could not retrieve private key.")
 }

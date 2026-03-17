@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import picocolors from "picocolors"
 
-import { createProject } from "./project-creation"
-import { portProject } from "./port-project"
+import { createProject } from "./project-creation.js"
+import { portProject } from "./port-project.js"
 
 async function main() {
     try {

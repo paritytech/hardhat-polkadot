@@ -2,8 +2,8 @@ import { spawn, StdioOptions } from "child_process"
 import Docker from "dockerode"
 import chalk from "chalk"
 
-import { NODE_START_PORT } from "../constants"
-import { Service } from "./index"
+import { NODE_START_PORT } from "../constants.js"
+import { Service } from "./index.js"
 
 export class ChopsticksService extends Service {
     public port: number

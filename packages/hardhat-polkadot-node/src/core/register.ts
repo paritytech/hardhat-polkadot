@@ -1,3 +1,4 @@
+// @ts-nocheck — This file uses Hardhat v2 internal APIs and will be deleted in PR 7 (network hooks migration)
 import debug from "debug"
 
 import { HardhatContext } from "hardhat/internal/context"

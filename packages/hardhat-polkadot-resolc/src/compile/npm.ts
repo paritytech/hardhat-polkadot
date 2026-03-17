@@ -4,8 +4,8 @@ import { promisify } from "util"
 import semver from "semver"
 import { compile, resolveInputs, type SolcOutput } from "@parity/resolc"
 import type { CompilerInput } from "hardhat/types"
-import type { ResolcConfig } from "src/types"
-import { ResolcPluginError } from "../errors"
+import type { ResolcConfig } from "../types.js"
+import { ResolcPluginError } from "../errors.js"
 
 const _exec = promisify(execCb)
 

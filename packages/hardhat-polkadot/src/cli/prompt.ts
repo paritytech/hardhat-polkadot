@@ -1,4 +1,4 @@
-import type { Dependencies, PackageManager } from "./types"
+import type { Dependencies, PackageManager } from "./types.js"
 
 function createConfirmationPrompt(name: string, message: string) {
     return {

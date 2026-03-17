@@ -2,9 +2,9 @@ import { spawn, StdioOptions } from "child_process"
 import chalk from "chalk"
 import { run } from "run-container"
 import Docker from "dockerode"
-import { ETH_RPC_ADAPTER_START_PORT, RPC_ENDPOINT_PATH, NODE_RPC_URL_BASE_URL } from "../constants"
-import { waitForServiceToBeReady } from "../utils"
-import { Service } from "./index"
+import { ETH_RPC_ADAPTER_START_PORT, RPC_ENDPOINT_PATH, NODE_RPC_URL_BASE_URL } from "../constants.js"
+import { waitForServiceToBeReady } from "../utils.js"
+import { Service } from "./index.js"
 
 const ADAPTER_CONTAINER_NAME = "eth-rpc"
 

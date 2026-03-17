@@ -2,13 +2,13 @@ import picocolors from "picocolors"
 import fsExtra from "fs-extra"
 import path from "path"
 
-import { HARDHAT_POLKADOT_NAME } from "../constants"
-import { addOrMergeGitIgnore, getAllFilesMatching } from "./file-utils"
-import { fromEntries } from "./lang"
-import { getPackageJson, getPackageRoot, PackageJson } from "./packageInfo"
-import { pluralize } from "./strings"
-import { confirmRecommendedDepsInstallation, confirmProjectCreation } from "./prompt"
-import type { Dependencies, PackageManager } from "./types"
+import { HARDHAT_POLKADOT_NAME } from "../constants.js"
+import { addOrMergeGitIgnore, getAllFilesMatching } from "./file-utils.js"
+import { fromEntries } from "./lang.js"
+import { getPackageJson, getPackageRoot, PackageJson } from "./packageInfo.js"
+import { pluralize } from "./strings.js"
+import { confirmRecommendedDepsInstallation, confirmProjectCreation } from "./prompt.js"
+import type { Dependencies, PackageManager } from "./types.js"
 
 enum Action {
     CREATE_JAVASCRIPT_PROJECT_ACTION = "Create a JavaScript project",

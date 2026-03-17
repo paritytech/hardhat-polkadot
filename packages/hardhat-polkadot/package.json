@@ -68,7 +68,7 @@
         "ws": "^8.18.3"
     },
     "peerDependencies": {
-        "hardhat": "^2.26.0"
+        "hardhat": "^3.0.0"
     },
     "devDependencies": {
         "@eslint/js": "^9.34.0",

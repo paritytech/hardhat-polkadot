@@ -36,6 +36,6 @@ export abstract class Service {
     abstract from_docker(...args: unknown[]): Promise<void>
 }
 
-export { ChopsticksService } from "./chopsticks"
-export { EthRpcService } from "./eth-rpc"
-export { SubstrateNodeService } from "./substrate-node"
+export { ChopsticksService } from "./chopsticks.js"
+export { EthRpcService } from "./eth-rpc.js"
+export { SubstrateNodeService } from "./substrate-node.js"
