@@ -1,5 +1,5 @@
 import { HardhatPluginError } from "hardhat/plugins"
-import { PLUGIN_NAME } from "./constants"
+import { PLUGIN_NAME } from "./constants.js"
 
 export class PolkadotNodePluginError extends HardhatPluginError {
     constructor(message: string, parentError?: Error) {

@@ -1,8 +1,8 @@
 import { spawn } from "child_process"
 import type { CompilerInput } from "hardhat/types"
-import type { ResolcConfig } from "../types"
-import { extractCommands } from "../utils"
-import { ResolcPluginError } from "../errors"
+import type { ResolcConfig } from "../types.js"
+import { extractCommands } from "../utils.js"
+import { ResolcPluginError } from "../errors.js"
 
 export async function compileWithBinary(
     input: CompilerInput,

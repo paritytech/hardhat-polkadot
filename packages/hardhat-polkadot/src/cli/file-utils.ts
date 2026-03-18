@@ -4,7 +4,7 @@ import fsPromises from "fs/promises"
 import path from "path"
 import { structuredPatch } from "diff"
 
-import { getRecommendedGitIgnore } from "../project-structure"
+import { getRecommendedGitIgnore } from "../project-structure.js"
 
 /**
  * Returns an array of files (not dirs) that match a condition.

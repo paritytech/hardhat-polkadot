@@ -1,5 +1,5 @@
 import "hardhat/types/config"
-import type { TargetVM } from "./types"
+import type { TargetVM } from "./types.js"
 
 declare module "hardhat/types/config" {
     interface HardhatNetworkUserConfig {

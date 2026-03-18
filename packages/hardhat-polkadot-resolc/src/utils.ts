@@ -1,8 +1,8 @@
 import type { CompilerInput } from "hardhat/types"
 import { createHash } from "crypto"
-import { updateSolc } from "./compile/npm"
-import type { ResolcConfig, SolcConfigData } from "./types"
-import { ResolcPluginError } from "./errors"
+import { updateSolc } from "./compile/npm.js"
+import type { ResolcConfig, SolcConfigData } from "./types.js"
+import { ResolcPluginError } from "./errors.js"
 
 export function getVersionComponents(version: string): number[] {
     const versionComponents = version.split(".")

@@ -3,9 +3,8 @@ import path from "path"
 
 import axios from "axios"
 import { execSync } from "child_process"
-import { CompilerPlatform } from "hardhat/internal/solidity/compiler/downloader"
-import { CompilerName, type CompilerBuild, type CompilerList } from "./types"
-import { COMPILER_REPOSITORY_URL } from "./constants"
+import { CompilerPlatform, CompilerName, type CompilerBuild, type CompilerList } from "./types.js"
+import { COMPILER_REPOSITORY_URL } from "./constants.js"
 
 const TEMP_FILE_PREFIX = "tmp-"
 const request_headers: Record<string, string> = {

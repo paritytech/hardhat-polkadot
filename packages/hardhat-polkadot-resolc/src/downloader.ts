@@ -4,21 +4,23 @@ import fsExtra from "fs-extra"
 import debug from "debug"
 import os from "os"
 import { execFile } from "child_process"
-import { assertHardhatInvariant } from "hardhat/internal/core/errors"
-import { MultiProcessMutex } from "hardhat/internal/util/multi-process-mutex"
-import {
-    CompilerPlatform,
-    ICompilerDownloader,
-} from "hardhat/internal/solidity/compiler/downloader"
+import { assertHardhatInvariant } from "@nomicfoundation/hardhat-errors"
+import { MultiProcessMutex } from "@nomicfoundation/hardhat-utils/synchronization"
 import { listAttributesSync, removeAttributeSync } from "fs-xattr"
-import { download } from "./download"
-import { CompilerName, type ResolcCompiler, type CompilerBuild, type CompilerList } from "./types"
-import { ResolcPluginError } from "./errors"
-import { COMPILER_REPOSITORY_API_URL, COMPILER_REPOSITORY_URL } from "./constants"
+import { download } from "./download.js"
+import { CompilerPlatform, CompilerName, type ResolcCompiler, type CompilerBuild, type CompilerList } from "./types.js"
+import { ResolcPluginError } from "./errors.js"
+import { COMPILER_REPOSITORY_API_URL, COMPILER_REPOSITORY_URL } from "./constants.js"
 
 const log = debug("hardhat:core:resolc:downloader")
 
-export interface IResolcCompilerDownloader extends Omit<ICompilerDownloader, "getCompiler"> {
+export interface IResolcCompilerDownloader {
+    isCompilerDownloaded(version: string): Promise<boolean>
+    downloadCompiler(
+        version: string,
+        downloadStartedCb: (isCompilerDownloaded: boolean) => Promise<any>,
+        downloadEndedCb: (isCompilerDownloaded: boolean) => Promise<any>,
+    ): Promise<void>
     getCompiler(version: string): Promise<ResolcCompiler | undefined>
 }
 
@@ -245,7 +247,7 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
         build: CompilerBuild,
         downloadPath: string,
     ): Promise<boolean> {
-        const { sha256 } = await import("./utils")
+        const { sha256 } = await import("./utils.js")
 
         const expectedSha256 = build.sha256
         const compiler = await fsExtra.readFile(downloadPath)
