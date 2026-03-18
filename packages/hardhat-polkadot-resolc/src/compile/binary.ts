@@ -1,5 +1,5 @@
 import { spawn } from "child_process"
-import type { CompilerInput } from "hardhat/types"
+import type { CompilerInput } from "hardhat/types/solidity"
 import type { ResolcConfig } from "../types.js"
 import { extractCommands } from "../utils.js"
 import { ResolcPluginError } from "../errors.js"

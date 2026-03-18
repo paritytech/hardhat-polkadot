@@ -1,11 +1,10 @@
 import axios from "axios"
 import net from "net"
-import type { HardhatConfig } from "hardhat/types"
+import type { HardhatConfig, EdrNetworkConfig, EdrNetworkUserConfig } from "hardhat/types/config"
 import { LRUCache } from "lru-cache"
 import fs from "fs"
 import os from "os"
 import path from "path"
-import type { HardhatNetworkConfig, HardhatNetworkUserConfig } from "hardhat/types/config"
 
 import { createRpcServer } from "./rpc-server.js"
 import type { CommandArguments, SplitCommands } from "./types.js"
@@ -289,8 +288,8 @@ export async function getLatestImageName(containerName: string): Promise<string 
 }
 
 export function getDockerSocketPath(
-    docker?: HardhatNetworkUserConfig["docker"],
-): Extract<HardhatNetworkUserConfig["docker"], string> {
+    docker?: EdrNetworkUserConfig["docker"],
+): Extract<EdrNetworkUserConfig["docker"], string> {
     const customDockerSocketPath = typeof docker === "string" ? docker : undefined
     const dockerSocketPath =
         customDockerSocketPath ||
@@ -336,8 +335,8 @@ export async function waitForServiceToBeReady(
 }
 
 export function getPolkadotRpcUrl(
-    ethRpcUrl: HardhatNetworkConfig["url"],
-    polkadotRpcUrl: HardhatNetworkConfig["polkadotUrl"],
+    ethRpcUrl: EdrNetworkConfig["url"],
+    polkadotRpcUrl: EdrNetworkConfig["polkadotUrl"],
     useAnvil: boolean = false,
 ): string {
     // Case 1: we are using anvil as the node

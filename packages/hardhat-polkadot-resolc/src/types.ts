@@ -1,4 +1,5 @@
-import type { CompilerInput, SolcConfig } from "hardhat/types"
+import type { SolcConfig } from "hardhat/types/config"
+import type { CompilerInput } from "hardhat/types/solidity"
 
 /**
  * Compiler platform identifiers (local definition replacing hardhat v2's internal enum).

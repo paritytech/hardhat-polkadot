@@ -2,7 +2,7 @@ import "hardhat/types/config"
 import type { TargetVM } from "./types.js"
 
 declare module "hardhat/types/config" {
-    interface HardhatNetworkUserConfig {
+    interface EdrNetworkUserConfig {
         // Replace EVM-compatible node with polkadot-compatible node
         polkadot?: boolean | TargetVM
         // Configuration for polkadot-compatible node
@@ -46,7 +46,7 @@ declare module "hardhat/types/config" {
         polkadot?: boolean | TargetVM
     }
 
-    interface HardhatNetworkConfig {
+    interface EdrNetworkConfig {
         polkadot?: boolean | TargetVM
         url?: string
         polkadotUrl?: string
@@ -56,11 +56,5 @@ declare module "hardhat/types/config" {
         polkadot?: boolean | TargetVM
         ethNetwork?: string
         polkadotUrl?: string
-    }
-}
-
-declare module "hardhat/types/runtime" {
-    interface Network {
-        polkadot?: boolean | TargetVM
     }
 }
