@@ -3,9 +3,9 @@ import fs from "fs"
 import { glob } from "fast-glob"
 import chalk from "chalk"
 import type {
-    HardhatNetworkConfig,
+    EdrNetworkConfig,
     HttpNetworkAccountsConfig,
-} from "hardhat/types"
+} from "hardhat/types/config"
 import { createClient, Binary } from "polkadot-api"
 import { getWsProvider } from "polkadot-api/ws-provider/web"
 import path from "path"
@@ -29,8 +29,8 @@ type Contracts = Record<
  */
 export async function handleFactoryDependencies(
     pathToArtifacts: string,
-    ethRpcUrl: HardhatNetworkConfig["url"],
-    polkadotRpcUrl: HardhatNetworkConfig["polkadotUrl"],
+    ethRpcUrl: EdrNetworkConfig["url"],
+    polkadotRpcUrl: EdrNetworkConfig["polkadotUrl"],
     accounts: string[] | HttpNetworkAccountsConfig,
     useAnvil?: boolean,
 ) {

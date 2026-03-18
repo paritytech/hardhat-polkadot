@@ -11,7 +11,7 @@ declare module "hardhat/types/config" {
         resolc: ResolcConfig
     }
 
-    interface HardhatNetworkUserConfig {
+    interface EdrNetworkUserConfig {
         polkadot?: boolean | TargetVM
     }
 
@@ -19,15 +19,11 @@ declare module "hardhat/types/config" {
         polkadot?: boolean | TargetVM
     }
 
-    interface HardhatNetworkConfig {
+    interface EdrNetworkConfig {
         polkadot?: boolean | TargetVM
     }
 
     interface HttpNetworkConfig {
-        polkadot?: boolean | TargetVM
-    }
-
-    interface NetworksConfig {
         polkadot?: boolean | TargetVM
     }
 }

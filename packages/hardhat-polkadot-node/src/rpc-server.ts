@@ -1,4 +1,4 @@
-import { HardhatNetworkUserConfig } from "hardhat/types/config"
+import type { EdrNetworkUserConfig } from "hardhat/types/config"
 import Docker from "dockerode"
 
 import { PolkadotNodePluginError } from "./errors.js"
@@ -10,7 +10,7 @@ import { getDockerSocketPath } from "./utils.js"
 
 export function createRpcServer(opts: {
     useAnvil: boolean
-    docker?: HardhatNetworkUserConfig["docker"]
+    docker?: EdrNetworkUserConfig["docker"]
     nodePath?: string
     adapterPath?: string
     isForking?: boolean

@@ -1,4 +1,4 @@
-import type { CompilerInput } from "hardhat/types"
+import type { CompilerInput } from "hardhat/types/solidity"
 import type { ICompiler, ResolcConfig } from "../types.js"
 import { ResolcPluginError } from "../errors.js"
 import { compileWithBinary } from "./binary.js"
