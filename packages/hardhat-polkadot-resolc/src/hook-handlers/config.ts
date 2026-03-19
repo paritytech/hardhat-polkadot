@@ -22,7 +22,7 @@ function isTargetingEvm(config: HardhatUserConfig): boolean {
     )
 }
 
-function resolveResolcConfig(userConfig: HardhatUserConfig): ResolcConfig {
+export function resolveResolcConfig(userConfig: HardhatUserConfig): ResolcConfig {
     const isNpm = userConfig.resolc?.compilerSource === "npm"
     const defaultConfig = isNpm ? defaultNpmResolcConfig : defaultBinaryResolcConfig
     const customConfig = userConfig.resolc ?? {}
