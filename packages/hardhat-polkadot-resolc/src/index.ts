@@ -10,7 +10,11 @@ export { ResolcCompilerDownloader } from "./downloader.js"
 const hardhatPolkadotResolcPlugin: HardhatPlugin = {
     id: "hardhat-polkadot-resolc",
     npmPackage: "@parity/hardhat-polkadot-resolc",
-    hookHandlers: {},
+    hookHandlers: {
+        config: () => import("./hook-handlers/config.js"),
+        hre: () => import("./hook-handlers/hre.js"),
+        solidity: () => import("./hook-handlers/solidity.js"),
+    },
     tasks: [],
 }
 
