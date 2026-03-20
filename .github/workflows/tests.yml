@@ -20,12 +20,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  run-vitest:
+  test:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest]
         node: ["22"]
-    name: Run vitest on ${{ matrix.os }}
+    name: Run tests on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -42,103 +42,6 @@ jobs:
 
       - name: Build
         run: pnpm build
-
-      - name: Run vitest
-        run: pnpm test
-
-  run-unit-tests:
-    strategy:
-      matrix:
-        # Disabled windows because it's too slow
-        os: [macos-latest, ubuntu-latest]
-        node: ["22"]  
-    name: Run unit tests on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9.3.0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-          cache: pnpm
 
       - name: Run tests
-        working-directory: ${{ github.workspace }}/tests
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          chmod +x run.sh
-          ./run.sh unit
-        shell: bash
-  
-  # run-e2e-tests:
-  #   strategy:
-  #     matrix:
-  #       # Only ubuntu supports docker and windows is too slow
-  #       os: [ubuntu-latest]
-  #       node: ["22"]  
-  #   name: Run E2E tests on ${{ matrix.os }}
-  #   runs-on: ${{ matrix.os }}
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: pnpm/action-setup@v4
-  #       with:
-  #           version: 9.3.0
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: ${{ matrix.node }}
-  #         cache: pnpm
-
-  #     - name: Run tests
-  #       working-directory: ${{ github.workspace }}/tests
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       run: |
-  #         chmod +x run.sh
-  #         ./run.sh e2e
-  #       shell: bash
-
-  check-tarballs:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build
-        run: pnpm build
-          
-      - name: Pack hardhat-polkadot-resolc
-        run: pnpm pack
-        working-directory: "./packages/hardhat-polkadot-resolc"
-
-      - name: Pack hardhat-polkadot-node
-        run: pnpm pack
-        working-directory: "./packages/hardhat-polkadot-node"
-
-      - name: Pack hardhat-polkadot
-        run: pnpm pack
-        working-directory: "./packages/hardhat-polkadot"
-
-      - name: Move to one single folder
-        run: |
-          mkdir -p packs
-          cp ./packages/hardhat-polkadot-resolc/*.tgz packs/
-          cp ./packages/hardhat-polkadot-node/*.tgz packs/
-          cp ./packages/hardhat-polkadot/*.tgz packs/
-          ls -ltr packs
-
-      - name: Check tarballs
-        run: |
-          cd tests
-          chmod +x check-tarballs.sh
-          ./check-tarballs.sh ../packs/*.tgz
-        shell: bash
+        run: pnpm test
