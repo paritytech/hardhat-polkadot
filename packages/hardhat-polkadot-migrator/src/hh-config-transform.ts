@@ -10,6 +10,7 @@ import jscodeshiftFactory, {
     BooleanLiteral,
     NumericLiteral,
     StringLiteral,
+    ExportDefaultDeclaration,
 } from "jscodeshift"
 
 type JSONPrimitive = null | boolean | number | string
@@ -23,7 +24,10 @@ type ASTValue =
     | ObjectExpression
 
 /**
- * Adds import of provided `module` into the source code given by `root`
+ * Adds a default import of provided `module` into the source code.
+ *
+ * ESM:  `import polkadot from "@parity/hardhat-polkadot"`
+ * CJS:  `const polkadot = require("@parity/hardhat-polkadot")`
  */
 export function insertImport(
     root: Collection<ReturnType<typeof jscodeshiftFactory>>,
@@ -46,12 +50,106 @@ export function insertImport(
     // Insert import if missing
     if (!existingImports) {
         const stmt = isESM
-            ? j.importDeclaration([], j.stringLiteral(module))
-            : j.expressionStatement(
-                  j.callExpression(j.identifier("require"), [j.stringLiteral(module)]),
+            ? j.importDeclaration(
+                  [j.importDefaultSpecifier(j.identifier("polkadot"))],
+                  j.stringLiteral(module),
               )
+            : j.variableDeclaration("const", [
+                  j.variableDeclarator(
+                      j.identifier("polkadot"),
+                      j.callExpression(j.identifier("require"), [j.stringLiteral(module)]),
+                  ),
+              ])
         program.body.splice(0, 0, stmt)
     }
+}
+
+/**
+ * Extract an `ObjectExpression` from some generic `Expression` by
+ * deeply unwrapping. Returns null if there is no `ObjectExpression`.
+ */
+function extractObject(
+    root: Collection<ReturnType<typeof jscodeshiftFactory>>,
+    j: jscodeshiftFactory.JSCodeshift,
+    expr: Expression | null | undefined,
+): ObjectExpression | null {
+    if (j.Identifier.check(expr)) {
+        const varDecl = root.find(j.VariableDeclarator, { id: { name: expr.name } }).paths()[0]
+        if (varDecl) expr = varDecl.value.init
+    }
+    while (
+        expr &&
+        (j.TSAsExpression.check(expr) ||
+            j.TSSatisfiesExpression.check(expr) ||
+            j.ParenthesizedExpression.check(expr))
+    ) {
+        expr = expr.expression
+    }
+    if (
+        expr &&
+        j.CallExpression.check(expr) &&
+        j.Identifier.check(expr.callee) &&
+        expr.callee.name === "defineConfig" &&
+        expr.arguments[0]
+    ) {
+        return extractObject(root, j, expr.arguments[0])
+    }
+
+    return expr && j.ObjectExpression.check(expr) ? expr : null
+}
+
+/**
+ * Find the default export config object in source code
+ */
+function getDefaultExport(
+    root: Collection<ReturnType<typeof jscodeshiftFactory>>,
+    j: jscodeshiftFactory.JSCodeshift,
+): ObjectExpression | undefined {
+    const targets: ObjectExpression[] = []
+
+    // Handles [ESM] `export default cfg` or `export default { ... }`
+    root.find(j.ExportDefaultDeclaration).forEach((p) => {
+        const obj = extractObject(root, j, p.value.declaration)
+        if (obj) targets.push(obj)
+    })
+
+    // Handles [CJS] `module.exports = cfg` or `module.exports = { ... }`
+    root.find(j.AssignmentExpression, {
+        operator: "=",
+        left: {
+            type: "MemberExpression",
+            object: { name: "module" },
+            property: { name: "exports" },
+        },
+    }).forEach((p) => {
+        const obj = extractObject(root, j, p.value.right)
+        if (obj) targets.push(obj)
+    })
+
+    // Handles [TS CJS] `export = <expr>`
+    root.find(j.TSExportAssignment).forEach((p) => {
+        const obj = extractObject(root, j, p.value.expression)
+        if (obj) targets.push(obj)
+    })
+
+    return targets.at(-1)
+}
+
+/**
+ * Extract an `ObjectProperty` from an `ObjectExpression` by name
+ */
+function getProp(
+    j: jscodeshiftFactory.JSCodeshift,
+    obj: ObjectExpression,
+    name: string,
+): ObjectProperty | undefined {
+    return obj.properties.find((p): p is ObjectProperty => {
+        return (
+            j.ObjectProperty.check(p) &&
+            ((j.Identifier.check(p.key) && p.key.name === name) ||
+                (j.StringLiteral.check(p.key) && p.key.value === name))
+        )
+    })
 }
 
 /**
@@ -62,9 +160,6 @@ export function patchExportConfig(
     j: jscodeshiftFactory.JSCodeshift,
     patch: { [k: string]: JSONValue },
 ) {
-    /**
-     * Convert js/ts primitives into AST nodes
-     */
     function toAST(v: JSONValue): ASTValue {
         if (v === null) return j.nullLiteral()
         if (typeof v === "boolean") return j.booleanLiteral(v)
@@ -85,67 +180,14 @@ export function patchExportConfig(
         throw new Error(`Unsupported primitive: ${JSON.stringify(v)}`)
     }
 
-    /**
-     * Extract an `ObjectProperty` from an `ObjectExpression` by name
-     */
-    function getProp(obj: ObjectExpression, name: string): ObjectProperty | undefined {
-        return obj.properties.find((p): p is ObjectProperty => {
-            return (
-                j.ObjectProperty.check(p) &&
-                ((j.Identifier.check(p.key) && p.key.name === name) ||
-                    (j.StringLiteral.check(p.key) && p.key.value === name))
-            )
-        })
-    }
-
-    /**
-     * Extract an `ObjectExpression` from some generic `Expression` by
-     * deeply unwrapping
-     *
-     * returns null if no there is no `ObjectExpression`
-     */
-    function extractObject(expr: Expression | null | undefined): ObjectExpression | null {
-        if (j.Identifier.check(expr)) {
-            const varDecl = root.find(j.VariableDeclarator, { id: { name: expr.name } }).paths()[0]
-            if (varDecl) expr = varDecl.value.init
-        }
-        while (
-            expr &&
-            (j.TSAsExpression.check(expr) ||
-                j.TSSatisfiesExpression.check(expr) ||
-                j.ParenthesizedExpression.check(expr))
-        ) {
-            expr = expr.expression
-        }
-        if (
-            expr &&
-            j.CallExpression.check(expr) &&
-            j.Identifier.check(expr.callee) &&
-            expr.callee.name === "defineConfig" &&
-            expr.arguments[0]
-        ) {
-            return extractObject(expr.arguments[0])
-        }
-
-        return expr && j.ObjectExpression.check(expr) ? expr : null
-    }
-
-    /**
-     * Check if an existing value matches some JSONValue
-     */
     function isSamePrimitive(node: Literal, v: JSONValue) {
         if (!node) return false
         return node.value === v
     }
 
-    /**
-     * Ensures a property of some `ObjectExpression` to
-     * be an `ObjectExpression` itself
-     */
     function ensureObjectProperty(obj: ObjectExpression, name: string): ObjectExpression {
-        let prop = getProp(obj, name)
+        let prop = getProp(j, obj, name)
 
-        // If missing, set `name: {}`
         if (!prop) {
             prop = j.objectProperty(
                 /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name) ? j.identifier(name) : j.literal(name),
@@ -155,14 +197,11 @@ export function patchExportConfig(
             return prop.value as ObjectExpression
         }
 
-        // Clear shorthand: `{ name }` --> `{ name: name }`
         prop.shorthand = false
         if (j.ObjectExpression.check(prop.value)) return prop.value
-        const resolved = extractObject(prop.value)
+        const resolved = extractObject(root, j, prop.value)
         if (resolved) return resolved
 
-        // Coerce type & handle
-        // `propName: variable` --> `propName: { ...variable }`
         if (
             !j.RestElement.check(prop.value) &&
             !j.SpreadElementPattern.check(prop.value) &&
@@ -180,21 +219,16 @@ export function patchExportConfig(
         return prop.value as ObjectExpression
     }
 
-    /**
-     * Deeply merge some arbitrary `patch` into some `ObjectExpression`
-     */
     function deepMerge(obj: ObjectExpression, patch: { [k: string]: JSONValue }) {
         for (const [k, v] of Object.entries(patch)) {
-            const prop = getProp(obj, k)
+            const prop = getProp(j, obj, k)
 
-            // Recursively merge deeper objects
             if (v && typeof v === "object" && !Array.isArray(v)) {
                 const container = ensureObjectProperty(obj, k)
                 deepMerge(container as ObjectExpression, v)
                 continue
             }
 
-            // Assign value to new property
             if (!prop) {
                 obj.properties.push(
                     j.property(
@@ -203,49 +237,131 @@ export function patchExportConfig(
                         toAST(v),
                     ),
                 )
-            }
-            // Overwrite value of existing property
-            else if (!isSamePrimitive(prop.value as Literal, v)) {
+            } else if (!isSamePrimitive(prop.value as Literal, v)) {
                 prop.value = toAST(v)
             }
         }
     }
 
-    /**
-     * Find the default export object in source code
-     */
-    function getDefaultExport() {
-        const targets: ObjectExpression[] = []
-
-        // Handles [ESM] `export default cfg` or `export default { ... }`
-        root.find(j.ExportDefaultDeclaration).forEach((p) => {
-            const obj = extractObject(p.value.declaration)
-            if (obj) targets.push(obj)
-        })
-
-        // Handles [CJS] `module.exports = cfg` or `module.exports = { ... }`
-        root.find(j.AssignmentExpression, {
-            operator: "=",
-            left: {
-                type: "MemberExpression",
-                object: { name: "module" },
-                property: { name: "exports" },
-            },
-        }).forEach((p) => {
-            const obj = extractObject(p.value.right)
-            if (obj) targets.push(obj)
-        })
-
-        // Handles [TS CJS] `export = <expr>`
-        root.find(j.TSExportAssignment).forEach((p) => {
-            const obj = extractObject(p.value.expression)
-            if (obj) targets.push(obj)
-        })
-
-        return targets.at(-1)
-    }
-
-    // Apply patch to the default export
-    const target = getDefaultExport()
+    const target = getDefaultExport(root, j)
     if (target) deepMerge(target, patch)
+}
+
+/**
+ * Adds `plugins: [<identifier>]` to the default export config object
+ */
+export function addPluginsArray(
+    root: Collection<ReturnType<typeof jscodeshiftFactory>>,
+    j: jscodeshiftFactory.JSCodeshift,
+    identifier: string,
+) {
+    const target = getDefaultExport(root, j)
+    if (!target) return
+
+    // Skip if plugins property already exists
+    if (getProp(j, target, "plugins")) return
+
+    // Add plugins: [identifier] as first property
+    const pluginsProp = j.property(
+        "init",
+        j.identifier("plugins"),
+        j.arrayExpression([j.identifier(identifier)]),
+    )
+    target.properties.unshift(pluginsProp)
+}
+
+/**
+ * Wraps the default export in `defineConfig()` if not already wrapped,
+ * and adds the corresponding import.
+ */
+export function wrapWithDefineConfig(
+    root: Collection<ReturnType<typeof jscodeshiftFactory>>,
+    j: jscodeshiftFactory.JSCodeshift,
+) {
+    const isESM = root.find(j.ImportDeclaration).size() > 0
+
+    // Wrap ESM: export default <expr> → export default defineConfig(<expr>)
+    root.find(j.ExportDefaultDeclaration).forEach((p) => {
+        const decl = p.value.declaration
+        if (
+            j.CallExpression.check(decl) &&
+            j.Identifier.check(decl.callee) &&
+            decl.callee.name === "defineConfig"
+        ) {
+            return // already wrapped
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        p.value.declaration = j.callExpression(j.identifier("defineConfig"), [decl as any])
+    })
+
+    // Wrap CJS: module.exports = <expr> → module.exports = defineConfig(<expr>)
+    root.find(j.AssignmentExpression, {
+        operator: "=",
+        left: {
+            type: "MemberExpression",
+            object: { name: "module" },
+            property: { name: "exports" },
+        },
+    }).forEach((p) => {
+        const right = p.value.right
+        if (
+            j.CallExpression.check(right) &&
+            j.Identifier.check(right.callee) &&
+            right.callee.name === "defineConfig"
+        ) {
+            return // already wrapped
+        }
+        p.value.right = j.callExpression(j.identifier("defineConfig"), [right])
+    })
+
+    // Add defineConfig import/require if not present
+    const hasDefineConfig =
+        root
+            .find(j.ImportDeclaration, { source: { value: "hardhat/config" } })
+            .filter((p) =>
+                p.value.specifiers?.some(
+                    (s) => j.ImportSpecifier.check(s) && s.imported.name === "defineConfig",
+                ),
+            )
+            .size() > 0
+
+    if (!hasDefineConfig) {
+        const program: Program = root.get().node.program
+
+        if (isESM) {
+            // Check if there's an existing hardhat/config import to extend
+            const existing = root.find(j.ImportDeclaration, {
+                source: { value: "hardhat/config" },
+            })
+            if (existing.size() > 0) {
+                existing.forEach((p) => {
+                    p.value.specifiers = p.value.specifiers || []
+                    p.value.specifiers.push(j.importSpecifier(j.identifier("defineConfig")))
+                })
+            } else {
+                const stmt = j.importDeclaration(
+                    [j.importSpecifier(j.identifier("defineConfig"))],
+                    j.stringLiteral("hardhat/config"),
+                )
+                // Insert after last import
+                const lastImportIdx = program.body.reduce(
+                    (acc: number, node: Program["body"][number], i: number) =>
+                        j.ImportDeclaration.check(node) ? i : acc,
+                    -1,
+                )
+                program.body.splice(lastImportIdx + 1, 0, stmt)
+            }
+        } else {
+            // CJS: const { defineConfig } = require("hardhat/config")
+            const stmt = j.variableDeclaration("const", [
+                j.variableDeclarator(
+                    j.objectPattern([
+                        j.objectProperty(j.identifier("defineConfig"), j.identifier("defineConfig")),
+                    ]),
+                    j.callExpression(j.identifier("require"), [j.stringLiteral("hardhat/config")]),
+                ),
+            ])
+            program.body.splice(0, 0, stmt)
+        }
+    }
 }
