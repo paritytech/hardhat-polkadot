@@ -1,5 +1,6 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect } from "vitest"
 import os from "os"
+import path from "path"
 
 import { ResolcCompilerDownloader } from "../src/downloader.js"
 import { CompilerPlatform, CompilerName } from "../src/types.js"
@@ -31,13 +32,14 @@ describe("ResolcCompilerDownloader", () => {
 
     describe("getConcurrencySafeDownloader", () => {
         it("returns same instance for same platform+dir", () => {
+            const dir = path.join(os.tmpdir(), "resolc-test-same")
             const a = ResolcCompilerDownloader.getConcurrencySafeDownloader(
                 CompilerPlatform.LINUX,
-                "/tmp/test-a",
+                dir,
             )
             const b = ResolcCompilerDownloader.getConcurrencySafeDownloader(
                 CompilerPlatform.LINUX,
-                "/tmp/test-a",
+                dir,
             )
             expect(a).toBe(b)
         })
@@ -45,11 +47,11 @@ describe("ResolcCompilerDownloader", () => {
         it("returns different instances for different dirs", () => {
             const a = ResolcCompilerDownloader.getConcurrencySafeDownloader(
                 CompilerPlatform.LINUX,
-                "/tmp/test-b",
+                path.join(os.tmpdir(), "resolc-test-diff-a"),
             )
             const b = ResolcCompilerDownloader.getConcurrencySafeDownloader(
                 CompilerPlatform.LINUX,
-                "/tmp/test-c",
+                path.join(os.tmpdir(), "resolc-test-diff-b"),
             )
             expect(a).not.toBe(b)
         })
