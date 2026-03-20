@@ -3,25 +3,20 @@ import path from "path"
 import jscodeshiftFactory from "jscodeshift"
 import { coerce, minVersion, lt, gtr } from "semver"
 
-import { patchExportConfig, insertImport } from "./hh-config-transform.js"
+import {
+    patchExportConfig,
+    insertImport,
+    addPluginsArray,
+    wrapWithDefineConfig,
+} from "./hh-config-transform.js"
 
 const MODULE = "@parity/hardhat-polkadot"
 const PATCH = {
     networks: {
         hardhat: {
-            polkavm: true,
+            polkadot: true,
             nodeConfig: {
-                nodeBinaryPath: "./bin/revive-dev-node",
-                rpcPort: 8000,
-                dev: true,
-            },
-            adapterConfig: {
-                adapterBinaryPath: "./bin/eth-rpc",
-                dev: true,
-            },
-            localNode: {
-                polkavm: true,
-                url: `http://127.0.0.1:8545`,
+                nodeBinaryPath: "./bin/anvil-polkadot",
             },
         },
     },
@@ -102,6 +97,8 @@ export function updateHHConfig(projectPath: string): [string, string, string] {
     const root = j(fs.readFileSync(HHCJsonFile, "utf8"))
     insertImport(root, j, MODULE)
     patchExportConfig(root, j, PATCH)
+    addPluginsArray(root, j, "polkadot")
+    wrapWithDefineConfig(root, j)
 
     const prevHHConfig = fs.readFileSync(HHCJsonFile, "utf8")
     const newHHConfig = root.toSource()
