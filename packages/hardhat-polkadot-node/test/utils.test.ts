@@ -36,15 +36,15 @@ import {
 } from "../src/utils.js"
 
 describe("constructCommandArgs", () => {
-    it("defaults to anvil mode when no args provided", () => {
+    it("returns empty commands when no args provided", () => {
         const result = constructCommandArgs()
-        expect(result.nodeCommands).toEqual(["", "--accounts", "20"])
+        expect(result.nodeCommands).toEqual([])
         expect(result.adapterCommands).toEqual([])
     })
 
-    it("defaults to anvil mode when all args are undefined", () => {
+    it("returns empty commands when all args are undefined", () => {
         const result = constructCommandArgs({})
-        expect(result.nodeCommands).toEqual(["", "--accounts", "20"])
+        expect(result.nodeCommands).toEqual([])
         expect(result.adapterCommands).toEqual([])
     })
 

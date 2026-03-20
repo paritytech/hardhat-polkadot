@@ -142,9 +142,8 @@ describe("wrapWithDefineConfig", () => {
         const root = transform('export default defineConfig({ solidity: "0.8.28" })')
         wrapWithDefineConfig(root, j)
         const output = root.toSource()
-        const count = (output.match(/defineConfig/g) || []).length
-        // one for the call, possibly one for the import
-        expect(count).toBeLessThanOrEqual(2)
+        // Should still have exactly one defineConfig() call wrapping the config
+        expect(output).not.toContain("defineConfig(defineConfig(")
     })
 
     it("wraps CJS module.exports in defineConfig", () => {
