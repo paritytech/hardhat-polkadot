@@ -20,18 +20,23 @@ vi.mock("../src/services/index.js", async () => {
     return { Service }
 })
 
-const mockServer = {
-    listen: vi.fn().mockResolvedValue(undefined),
-    stop: vi.fn().mockResolvedValue(undefined),
-    services: () => ({
-        substrateNodeService: { waitForNodeToBeReady: vi.fn().mockResolvedValue(undefined) },
-        ethRpcService: { waitForEthRpcToBeReady: vi.fn().mockResolvedValue(undefined) },
-        chopsticksService: null,
-    }),
-}
+const { mockListen, mockStop, mockWaitNode, mockWaitEthRpc } = vi.hoisted(() => ({
+    mockListen: vi.fn().mockResolvedValue(undefined),
+    mockStop: vi.fn().mockResolvedValue(undefined),
+    mockWaitNode: vi.fn().mockResolvedValue(undefined),
+    mockWaitEthRpc: vi.fn().mockResolvedValue(undefined),
+}))
 
 vi.mock("../src/rpc-server.js", () => ({
-    createRpcServer: vi.fn().mockReturnValue(mockServer),
+    createRpcServer: vi.fn().mockReturnValue({
+        listen: mockListen,
+        stop: mockStop,
+        services: () => ({
+            substrateNodeService: { waitForNodeToBeReady: mockWaitNode },
+            ethRpcService: { waitForEthRpcToBeReady: mockWaitEthRpc },
+            chopsticksService: null,
+        }),
+    }),
 }))
 
 vi.mock("../src/core/factory-support.js", () => ({
@@ -116,7 +121,7 @@ describe("node-polkadot task action", () => {
         await nodePolkadotAction({}, hre as any)
 
         expect(createRpcServer).toHaveBeenCalled()
-        expect(mockServer.listen).toHaveBeenCalled()
+        expect(mockListen).toHaveBeenCalled()
     })
 })
 
@@ -161,10 +166,10 @@ describe("test task action", () => {
         await testAction({ noCompile: true }, hre as any, runSuper)
 
         expect(createRpcServer).toHaveBeenCalled()
-        expect(mockServer.listen).toHaveBeenCalled()
+        expect(mockListen).toHaveBeenCalled()
         expect(handleFactoryDependencies).toHaveBeenCalled()
         expect(runSuper).toHaveBeenCalled()
-        expect(mockServer.stop).toHaveBeenCalled()
+        expect(mockStop).toHaveBeenCalled()
     })
 })
 

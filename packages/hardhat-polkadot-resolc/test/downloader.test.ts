@@ -1,6 +1,11 @@
-import { describe, it, expect } from "vitest"
+import { describe, it, expect, vi } from "vitest"
 import os from "os"
-import path from "path"
+
+vi.mock("@nomicfoundation/hardhat-utils/synchronization", () => ({
+    MultiProcessMutex: class {
+        async use(fn: () => Promise<void>) { await fn() }
+    },
+}))
 
 import { ResolcCompilerDownloader } from "../src/downloader.js"
 import { CompilerPlatform, CompilerName } from "../src/types.js"
@@ -32,7 +37,7 @@ describe("ResolcCompilerDownloader", () => {
 
     describe("getConcurrencySafeDownloader", () => {
         it("returns same instance for same platform+dir", () => {
-            const dir = path.join(os.tmpdir(), "resolc-test-same")
+            const dir = "/tmp/resolc-test-same"
             const a = ResolcCompilerDownloader.getConcurrencySafeDownloader(
                 CompilerPlatform.LINUX,
                 dir,
@@ -47,11 +52,11 @@ describe("ResolcCompilerDownloader", () => {
         it("returns different instances for different dirs", () => {
             const a = ResolcCompilerDownloader.getConcurrencySafeDownloader(
                 CompilerPlatform.LINUX,
-                path.join(os.tmpdir(), "resolc-test-diff-a"),
+                "/tmp/resolc-test-diff-a",
             )
             const b = ResolcCompilerDownloader.getConcurrencySafeDownloader(
                 CompilerPlatform.LINUX,
-                path.join(os.tmpdir(), "resolc-test-diff-b"),
+                "/tmp/resolc-test-diff-b",
             )
             expect(a).not.toBe(b)
         })

@@ -1,7 +1,7 @@
-const { defineConfig } = require("hardhat/config")
-const polkadot = require("@parity/hardhat-polkadot")
+import { defineConfig } from "hardhat/config"
+import polkadot from "@parity/hardhat-polkadot"
 
-module.exports = defineConfig({
+export default defineConfig({
     plugins: [polkadot],
     solidity: {
         compilers: [
