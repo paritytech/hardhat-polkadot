@@ -10,7 +10,11 @@ export { PolkadotNodePluginError } from "./errors.js"
 const hardhatPolkadotNodePlugin: HardhatPlugin = {
     id: "hardhat-polkadot-node",
     npmPackage: "@parity/hardhat-polkadot-node",
-    hookHandlers: {},
+    hookHandlers: {
+        config: () => import("./hook-handlers/config.js"),
+        hre: () => import("./hook-handlers/hre.js"),
+        network: () => import("./hook-handlers/network.js"),
+    },
     tasks: [],
 }
 

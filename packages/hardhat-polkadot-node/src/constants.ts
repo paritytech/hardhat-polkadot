@@ -1,10 +1,5 @@
 export const PLUGIN_NAME = "hardhat-polkadot-node"
 
-export const TASK_NODE_POLKADOT = "node-polkadot"
-export const TASK_NODE_POLKADOT_CREATE_SERVER = "node-polkadot:create-server"
-export const TASK_NODE_POLKADOT_CREATE_ETH_ADAPTER = "node-polkadot:create-eth-adapter"
-export const TASK_RUN_POLKADOT_NODE_IN_SEPARATE_PROCESS = "node-polkadot:run-in-separate-process"
-
 export const PROCESS_TERMINATION_SIGNALS = ["SIGINT", "SIGTERM", "SIGKILL"]
 
 export const NODE_START_PORT = 9944
