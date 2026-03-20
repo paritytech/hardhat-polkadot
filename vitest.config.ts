@@ -8,5 +8,12 @@ export default defineConfig({
             "tests/e2e/**/*.test.ts",
         ],
         testTimeout: 10000,
+        pool: "forks",
+        poolOptions: {
+            forks: {
+                singleFork: true,
+            },
+        },
+        teardownTimeout: 30000,
     },
 })
