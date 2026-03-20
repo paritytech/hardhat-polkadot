@@ -4,7 +4,7 @@ import { runSimple } from "run-container"
 import Docker from "dockerode"
 
 import { NODE_START_PORT } from "../constants.js"
-import { waitForServiceToBeReady } from "../utils.js"
+import { waitForServiceToBeReady, getLatestImageName } from "../utils.js"
 import { Service } from "./service.js"
 
 const SUBSTRATE_NODE_CONTAINER_NAME = "substrate"
@@ -55,9 +55,7 @@ export class SubstrateNodeService extends Service {
     }
 
     public async from_docker(docker: Docker): Promise<void> {
-        // TODO: use latestImage once it is more stable
-        // const imageTag = await getLatestImageName(SUBSTRATE_NODE_CONTAINER_NAME)
-        const imageTag = "master-a209e590"
+        const imageTag = await getLatestImageName(SUBSTRATE_NODE_CONTAINER_NAME)
 
         const container = docker.getContainer(SUBSTRATE_NODE_CONTAINER_NAME)
         await container
