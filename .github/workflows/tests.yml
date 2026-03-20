@@ -4,15 +4,19 @@ on:
   push:
     branches:
       - main
+    paths:
       - 'packages/**'
       - 'tests/**'
       - 'pnpm-lock.yaml'
+      - 'vitest.config.ts'
+      - '.github/workflows/tests.yml'
   pull_request:
-    branches:
-      - main
+    paths:
       - 'packages/**'
       - 'tests/**'
       - 'pnpm-lock.yaml'
+      - 'vitest.config.ts'
+      - '.github/workflows/tests.yml'
 
 
 concurrency:
