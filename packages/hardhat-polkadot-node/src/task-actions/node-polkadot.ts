@@ -23,7 +23,7 @@ const nodePolkadotAction: NewTaskActionFunction = async (_taskArguments, hre) =>
     const adapterPath = networkConfig?.adapterConfig?.adapterBinaryPath
 
     const server = createRpcServer({
-        useAnvil: !!networkConfig?.nodeConfig?.useAnvil,
+        useAnvil: networkConfig?.nodeConfig?.useAnvil !== false,
         docker: networkConfig?.docker,
         nodePath,
         adapterPath,

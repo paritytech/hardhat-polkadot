@@ -15,7 +15,7 @@ export class SubstrateNodeService extends Service {
     constructor(
         commandArgs: string[] = [],
         blockProcess: boolean = true,
-        useAnvil: boolean = false,
+        useAnvil: boolean = true,
     ) {
         super(commandArgs.slice(1), blockProcess)
 

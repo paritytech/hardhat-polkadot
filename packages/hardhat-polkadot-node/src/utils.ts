@@ -33,7 +33,7 @@ export function constructCommandArgs(args?: CommandArguments): SplitCommands {
     const nodeCommands: string[] = []
     const adapterCommands: string[] = []
 
-    if (args?.nodeCommands?.useAnvil && !args.forking) {
+    if (args?.nodeCommands?.useAnvil !== false && !args?.forking) {
         nodeCommands.push("", "--accounts", "20")
         return {
             nodeCommands,
@@ -217,7 +217,7 @@ export async function startServer(
     nodePath?: string,
     adapterPath?: string,
 ) {
-    const useAnvil = !!commands.nodeCommands?.useAnvil
+    const useAnvil = commands.nodeCommands?.useAnvil !== false
     const currentNodePort = await getAvailablePort(
         commands.nodeCommands?.rpcPort ? commands.nodeCommands.rpcPort : NODE_START_PORT,
         MAX_PORT_ATTEMPTS,
@@ -335,7 +335,7 @@ export async function waitForServiceToBeReady(
 export function getPolkadotRpcUrl(
     ethRpcUrl: EdrNetworkConfig["url"],
     polkadotRpcUrl: EdrNetworkConfig["polkadotUrl"],
-    useAnvil: boolean = false,
+    useAnvil: boolean = true,
 ): string {
     // Case 1: we are using anvil as the node
     if (useAnvil) {
