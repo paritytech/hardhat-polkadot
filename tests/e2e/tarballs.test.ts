@@ -6,7 +6,7 @@ import fs from "fs"
 const ROOT_DIR = path.resolve(__dirname, "../..")
 const PACKAGES_DIR = path.join(ROOT_DIR, "packages")
 
-describe("tarball validation", () => {
+describe("tarball validation", { timeout: 120_000 }, () => {
     const packages = ["hardhat-polkadot-resolc", "hardhat-polkadot-node", "hardhat-polkadot"]
 
     for (const pkg of packages) {
@@ -44,4 +44,4 @@ describe("tarball validation", () => {
             }
         })
     }
-}, { timeout: 120_000 })
+})

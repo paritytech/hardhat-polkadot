@@ -3,7 +3,7 @@ import fs from "fs"
 import path from "path"
 import { createTestProject, TestProject } from "./helpers"
 
-describe("CLI port command", () => {
+describe("CLI port command", { timeout: 120_000 }, () => {
     let project: TestProject
 
     afterEach(() => {
@@ -16,7 +16,7 @@ describe("CLI port command", () => {
         const configBefore = safeRead(project.dir, "hardhat.config.ts")
         const pkgBefore = safeRead(project.dir, "package.json")
 
-        project.exec("npx hardhat-polkadot port ./hello -y")
+        project.exec("npx hardhat-polkadot port . -y")
 
         const configAfter = safeRead(project.dir, "hardhat.config.ts")
         const pkgAfter = safeRead(project.dir, "package.json")
@@ -31,7 +31,7 @@ describe("CLI port command", () => {
         const configBefore = safeRead(project.dir, "hardhat.config.js")
         const pkgBefore = safeRead(project.dir, "package.json")
 
-        project.exec("npx hardhat-polkadot port ./hello -y")
+        project.exec("npx hardhat-polkadot port . -y")
 
         const configAfter = safeRead(project.dir, "hardhat.config.js")
         const pkgAfter = safeRead(project.dir, "package.json")
@@ -39,7 +39,7 @@ describe("CLI port command", () => {
         expect(configAfter).not.toBe(configBefore)
         expect(pkgAfter).not.toBe(pkgBefore)
     })
-}, { timeout: 120_000 })
+})
 
 function safeRead(dir: string, file: string): string {
     const fullPath = path.join(dir, file)

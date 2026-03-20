@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from "vitest"
 import { createTestProject, TestProject } from "./helpers"
 
-describe("compilation", () => {
+describe("compilation", { timeout: 120_000 }, () => {
     let project: TestProject
 
     afterEach(() => {
@@ -27,4 +27,4 @@ describe("compilation", () => {
         expect(project.isNonEmpty("artifacts")).toBe(true)
         expect(project.isNonEmpty("cache")).toBe(true)
     })
-}, { timeout: 120_000 })
+})
