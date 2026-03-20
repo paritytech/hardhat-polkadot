@@ -11,11 +11,6 @@ export { PolkadotNodePluginError } from "./errors.js"
 const hardhatPolkadotNodePlugin: HardhatPlugin = {
     id: "hardhat-polkadot-node",
     npmPackage: "@parity/hardhat-polkadot-node",
-    dependencies: () => [
-        import(
-            "hardhat/internal/builtin-plugins/network-manager/index.js"
-        ) as unknown as Promise<{ default: HardhatPlugin }>,
-    ],
     hookHandlers: {
         config: () => import("./hook-handlers/config.js"),
         hre: () => import("./hook-handlers/hre.js"),

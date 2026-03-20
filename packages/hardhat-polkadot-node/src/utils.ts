@@ -210,8 +210,6 @@ export async function configureNetwork(
     network.config = networkConfig as any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     config.networks[networkName] = networkConfig as any
-    // TODO(v3): Provider creation will be handled via network hooks
-    // network.provider = await createProvider(config, networkName)
 }
 
 export async function startServer(
