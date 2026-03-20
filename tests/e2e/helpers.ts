@@ -5,54 +5,62 @@ import path from "path"
 
 const ROOT_DIR = path.resolve(__dirname, "../..")
 const FIXTURE_DIR = path.resolve(__dirname, "../fixture-projects")
+const PACKAGES_DIR = path.join(ROOT_DIR, "packages")
 
-let cachedTgzPath: string | undefined
+// Workspace packages to pack and install (order matters: deps first)
+const WORKSPACE_PACKAGES = [
+    "hardhat-polkadot-migrator",
+    "hardhat-polkadot-resolc",
+    "hardhat-polkadot-node",
+    "hardhat-polkadot",
+]
+
+let cachedTgzPaths: string[] | undefined
 
 /**
- * Build and pack the umbrella plugin once, returning the path to the .tgz.
- * Cached across calls within the same process.
+ * Build and pack all workspace packages once, returning paths to the .tgz files.
  */
-export function getPluginTarball(): string {
-    if (cachedTgzPath && fs.existsSync(cachedTgzPath)) return cachedTgzPath
+function getPluginTarballs(): string[] {
+    if (cachedTgzPaths) return cachedTgzPaths
 
-    // Build all packages
+    // Build all packages (includes clean)
     execSync("pnpm run build", { cwd: ROOT_DIR, stdio: "pipe" })
 
-    // Pack the umbrella package
-    const packOutput = execSync("pnpm pack --silent", {
-        cwd: path.join(ROOT_DIR, "packages/hardhat-polkadot"),
-        encoding: "utf-8",
-    }).trim()
+    // Pack each workspace package individually
+    cachedTgzPaths = WORKSPACE_PACKAGES.map((pkg) => {
+        const pkgDir = path.join(PACKAGES_DIR, pkg)
 
-    // The output is the filename of the tarball
-    const tgzName = packOutput.split("\n").pop()!.trim()
-    cachedTgzPath = path.join(ROOT_DIR, "packages/hardhat-polkadot", tgzName)
+        // Remove any existing tarballs
+        for (const f of fs.readdirSync(pkgDir)) {
+            if (f.endsWith(".tgz")) fs.unlinkSync(path.join(pkgDir, f))
+        }
 
-    if (!fs.existsSync(cachedTgzPath)) {
-        throw new Error(`Tarball not found at ${cachedTgzPath}`)
-    }
+        const tgzName = execSync("pnpm pack", {
+            cwd: pkgDir,
+            encoding: "utf-8",
+            stdio: ["pipe", "pipe", "pipe"],
+        })
+            .trim()
+            .split("\n")
+            .pop()!
+            .trim()
 
-    return cachedTgzPath
+        return path.join(pkgDir, tgzName)
+    })
+
+    return cachedTgzPaths
 }
 
 export interface TestProject {
-    /** Absolute path to the temp project directory */
     dir: string
-    /** Run a shell command inside the project directory */
     exec: (cmd: string, opts?: { env?: Record<string, string> }) => string
-    /** Check if a file or directory exists in the project */
     exists: (relativePath: string) => boolean
-    /** Check if a directory is non-empty */
     isNonEmpty: (relativePath: string) => boolean
-    /** Clean up the temp directory */
     cleanup: () => void
 }
 
 /**
- * Create a temporary test project from a fixture, with the plugin installed.
- *
- * @param fixtureName - Name of the fixture directory under tests/fixture-projects/
- * @param configFile  - Optional config file to copy as hardhat.config.js
+ * Create a temporary test project from a fixture, with all plugin packages installed.
  */
 export function createTestProject(fixtureName: string, configFile?: string): TestProject {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "hh-polkadot-test-"))
@@ -67,16 +75,23 @@ export function createTestProject(fixtureName: string, configFile?: string): Tes
         fs.copyFileSync(configSrc, path.join(tmpDir, "hardhat.config.js"))
     }
 
-    // Install the plugin tarball
-    const tgzPath = getPluginTarball()
     const execOpts: ExecSyncOptionsWithStringEncoding = {
         cwd: tmpDir,
         encoding: "utf-8",
         stdio: "pipe",
-        env: { ...process.env, npm_config_fund: "false", npm_config_audit: "false" },
+        env: {
+            ...process.env,
+            npm_config_fund: "false",
+            npm_config_audit: "false",
+            npm_config_legacy_peer_deps: "true",
+        },
     }
 
-    execSync(`npm add "${tgzPath}"`, execOpts)
+    // Install all workspace tarballs
+    const tgzPaths = getPluginTarballs()
+    for (const tgzPath of tgzPaths) {
+        execSync(`npm add "${tgzPath}"`, execOpts)
+    }
     execSync("npm install", execOpts)
 
     return {

@@ -11,6 +11,7 @@
         "url": "https://github.com/paritytech/hardhat-polkadot.git"
     },
     "description": "Use Hardhat with Polkadot all-in-one plugin",
+    "type": "module",
     "main": "dist/index.js",
     "publishConfig": {
         "access": "public"

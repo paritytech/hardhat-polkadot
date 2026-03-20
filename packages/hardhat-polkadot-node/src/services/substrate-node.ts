@@ -5,7 +5,7 @@ import Docker from "dockerode"
 
 import { NODE_START_PORT } from "../constants.js"
 import { waitForServiceToBeReady } from "../utils.js"
-import { Service } from "./index.js"
+import { Service } from "./service.js"
 
 const SUBSTRATE_NODE_CONTAINER_NAME = "substrate"
 

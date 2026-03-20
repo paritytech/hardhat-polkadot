@@ -9,7 +9,7 @@ describe("compilation", { timeout: 120_000 }, () => {
     })
 
     it("compiles a basic solidity contract", () => {
-        project = createTestProject("foo", "basic-compile.config.js")
+        project = createTestProject("foo", "multiple-compile.config.js")
 
         project.exec("npx hardhat build --show-stack-traces")
 

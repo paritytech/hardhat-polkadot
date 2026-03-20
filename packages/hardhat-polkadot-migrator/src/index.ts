@@ -1,7 +1,7 @@
 import fs from "fs"
 import path from "path"
 import jscodeshiftFactory from "jscodeshift"
-import { coerce, minVersion, lt, gtr } from "semver"
+import { coerce, minVersion, lt } from "semver"
 
 import {
     patchExportConfig,
@@ -57,19 +57,14 @@ export async function updatePackageJSON(projectPath: string): Promise<[string, s
     }
 
     const polkadotHHVersion: string = moduleMetadata.version
-    const HHVersionRange = moduleMetadata.peerDependencies.hardhat
-    const minHHVersion = minVersion(HHVersionRange)!
 
-    // Ensure `hardhat` is within expected range
+    // Ensure hardhat@^3.0.0 is present (required by this plugin)
+    const HH_MIN_VERSION = "3.0.0"
     const HHLocation = pkg.dependencies?.hardhat ? "dependencies" : "devDependencies"
     const currentHHVersion = coerce(pkg[HHLocation]?.hardhat ?? "0.0.0") ?? minVersion("0.0.0")!
     pkg[HHLocation] ??= {}
-    if (lt(currentHHVersion, minHHVersion)) {
-        pkg[HHLocation].hardhat = `^${minHHVersion.version}`
-    } else if (gtr(currentHHVersion, HHVersionRange)) {
-        throw new Error(
-            `Unsupported hardhat version ${currentHHVersion.version}. Please manually install a compatible version (${HHVersionRange})`,
-        )
+    if (lt(currentHHVersion, HH_MIN_VERSION)) {
+        pkg[HHLocation].hardhat = `^${HH_MIN_VERSION}`
     }
 
     // Add `@parity/hardhat-polkadot` dev-dependency

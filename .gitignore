@@ -19,3 +19,8 @@ logs
 .vscode/
 .DS_Store
 *.code-workspace
+# Test artifacts
+packages/hardhat-polkadot/parity-hardhat-polkadot-*.tgz
+packages/hardhat-polkadot-resolc/parity-hardhat-polkadot-resolc-*.tgz
+packages/hardhat-polkadot-node/parity-hardhat-polkadot-node-*.tgz
+packages/hardhat-polkadot-migrator/parity-hardhat-polkadot-migrator-*.tgz

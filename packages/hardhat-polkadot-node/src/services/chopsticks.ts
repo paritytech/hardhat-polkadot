@@ -3,7 +3,7 @@ import Docker from "dockerode"
 import chalk from "chalk"
 
 import { NODE_START_PORT } from "../constants.js"
-import { Service } from "./index.js"
+import { Service } from "./service.js"
 
 export class ChopsticksService extends Service {
     public port: number

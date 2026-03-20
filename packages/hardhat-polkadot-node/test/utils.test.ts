@@ -3,7 +3,7 @@ import net from "net"
 
 vi.mock("run-container", () => ({ runSimple: vi.fn(), run: vi.fn() }))
 
-vi.mock("../src/services/index.js", async () => {
+vi.mock("../src/services/service.js", async () => {
     abstract class Service {
         public process: unknown = null
         public container: unknown = null

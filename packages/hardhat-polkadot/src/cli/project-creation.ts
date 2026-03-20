@@ -459,8 +459,7 @@ async function getProjectPackageManager(): Promise<PackageManager> {
 }
 
 async function doesNpmAutoInstallPeerDependencies() {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { execSync } = require("child_process")
+    const { execSync } = await import("child_process")
     try {
         const version: string = execSync("npm --version").toString()
         return parseInt(version.split(".")[0], 10) >= 7
