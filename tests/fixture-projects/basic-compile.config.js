@@ -1,10 +1,12 @@
-require("@parity/hardhat-polkadot")
+const { defineConfig } = require("hardhat/config")
+const polkadot = require("@parity/hardhat-polkadot")
 
-module.exports = {
+module.exports = defineConfig({
+    plugins: [polkadot],
     solidity: "0.8.28",
     networks: {
         hardhat: {
             polkadot: true,
         },
     },
-}
+})
