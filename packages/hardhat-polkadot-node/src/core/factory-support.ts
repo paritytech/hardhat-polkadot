@@ -99,7 +99,7 @@ export async function handleFactoryDependencies(
 
 function getPrivateKey(
     accounts: string[] | HttpNetworkAccountsConfig,
-    useAnvil: boolean = false,
+    useAnvil: boolean = true,
 ): string {
     if (Array.isArray(accounts)) {
         if (accounts.length === 0) throw new PolkadotNodePluginError("Accounts array is empty.")

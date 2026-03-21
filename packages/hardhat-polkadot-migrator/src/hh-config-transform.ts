@@ -319,7 +319,7 @@ export function wrapWithDefineConfig(
         root
             .find(j.ImportDeclaration, { source: { value: "hardhat/config" } })
             .filter((p) =>
-                p.value.specifiers?.some(
+                !!p.value.specifiers?.some(
                     (s) => j.ImportSpecifier.check(s) && s.imported.name === "defineConfig",
                 ),
             )

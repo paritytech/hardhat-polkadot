@@ -30,7 +30,7 @@ const testAction: TaskOverrideActionFunction = async (taskArguments, hre, runSup
     }
 
     const userConfig = hre.config.networks[HARDHAT_NETWORK_NAME] as unknown as EdrNetworkUserConfig
-    const useAnvil = !!userConfig?.nodeConfig?.useAnvil
+    const useAnvil = userConfig?.nodeConfig?.useAnvil !== false
 
     // For remote polkadot networks, just handle factory deps and run tests
     if (!isHardhatNetwork) {

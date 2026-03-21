@@ -1,10 +1,12 @@
-require("@parity/hardhat-polkadot")
+import { defineConfig } from "hardhat/config"
+import polkadot from "@parity/hardhat-polkadot"
 
-module.exports = {
+export default defineConfig({
+    plugins: [polkadot],
     solidity: "0.8.28",
     networks: {
         hardhat: {
             polkadot: true,
         },
     },
-}
+})
