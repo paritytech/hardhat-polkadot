@@ -11,7 +11,7 @@
 </div>
 <div>
   <a href="https://hardhat.org" target="_blank">
-    <img width="250" alt="Hardhat Logo Light" src="https://hardhat.org/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhardhat-logo.5c5f687b.svg&w=384&q=75" />
+    <img width="250" alt="Hardhat Logo Light" src="https://hardhat.org/images/hardhat-logo.svg" />
   </a>
 </div>
 
@@ -21,13 +21,22 @@
 
 </div>
 
-Overview of currently available plugins and those on the roadmap.
+**Requires Hardhat v3.**
+
+Overview of currently available plugins:
 
 | 🔌 Plugin                     | 📄 Description                                                                                                                    |
 |-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| [hardhat-polkadot](https://github.com/paritytech/hardhat-polkadot/tree/main/packages/hardhat-polkadot)           | Umbrella plugin that provides full functionality and a convenient cli.                              |
-| [hardhat-polkadot-resolc](https://github.com/paritytech/hardhat-polkadot/tree/main/packages/hardhat-polkadot-resolc)           | Compiles solidity smart contracts for the Polkadot network, creating Polkadot compatible hardhat artifacts.                              |
-| [hardhat-polkadot-node](https://github.com/paritytech/hardhat-polkadot/blob/main/packages/hardhat-polkadot-node/README.md)         | Run a Polkadot node locally 
+| [hardhat-polkadot](https://github.com/paritytech/hardhat-polkadot/tree/main/packages/hardhat-polkadot)           | Umbrella plugin that provides full functionality and a convenient CLI.                              |
+| [hardhat-polkadot-resolc](https://github.com/paritytech/hardhat-polkadot/tree/main/packages/hardhat-polkadot-resolc)           | Compiles Solidity smart contracts for the Polkadot network, creating Polkadot-compatible Hardhat artifacts.                              |
+| [hardhat-polkadot-node](https://github.com/paritytech/hardhat-polkadot/tree/main/packages/hardhat-polkadot-node)         | Run a Polkadot node locally.                              |
+| [hardhat-polkadot-migrator](https://github.com/paritytech/hardhat-polkadot/tree/main/packages/hardhat-polkadot-migrator)         | Port existing Hardhat projects to Polkadot — upgrades to Hardhat v3 if needed and adds the Polkadot plugin and config.                              |
+
+## Quick Start
+
+```bash
+$ npx hardhat-polkadot init
+```
 
 ## Documentation
 
