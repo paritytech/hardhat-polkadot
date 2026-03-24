@@ -3,7 +3,7 @@ import path from "path"
 import fsExtra from "fs-extra"
 import debug from "debug"
 import os from "os"
-import { execFile, exec } from "child_process"
+import { execFileSync, exec } from "child_process"
 import { assertHardhatInvariant } from "hardhat/internal/core/errors"
 import { MultiProcessMutex } from "hardhat/internal/util/multi-process-mutex"
 import {
@@ -294,7 +294,7 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
         const resolcPath = this._getCompilerBinaryPathFromBuild(build)
 
         try {
-            execFile(resolcPath, ["--version"])
+            execFileSync(resolcPath, ["--version"])
             return true
         } catch {
             return false
