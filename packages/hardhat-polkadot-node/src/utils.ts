@@ -74,12 +74,6 @@ export function constructCommandArgs(args?: CommandArguments): SplitCommands {
             throw new PolkadotNodePluginError("Adapter and node cannot share the same port.")
         }
 
-        if (
-            args.adapterCommands?.adapterPort &&
-            args.adapterCommands?.adapterPort === args.nodeCommands?.rpcPort
-        ) {
-            throw new PolkadotNodePluginError("Adapter and node cannot share the same port.")
-        }
         if (args.forking) {
             nodeCommands.push(
                 `--build-block-mode=${args.adapterCommands?.buildBlockMode || "Instant"}`,
@@ -192,7 +186,7 @@ export async function configureNetwork(
     try {
         const response = await axios.post(url, payload)
 
-        if (response.status == 200) {
+        if (response.status === 200) {
             _chainId = parseInt(response.data.result)
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -261,7 +255,7 @@ export async function getLatestImageName(containerName: string): Promise<string 
         responseType: "json",
     })
 
-    if (imageResponse.status == 200) {
+    if (imageResponse.status === 200) {
         const imageList = imageResponse.data
 
         imageList.results
@@ -312,7 +306,7 @@ export async function waitForServiceToBeReady(
         try {
             const response = await axios.post(endpoint, payload)
 
-            if (response.status == 200) {
+            if (response.status === 200) {
                 return
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any

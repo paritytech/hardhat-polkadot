@@ -43,6 +43,14 @@ export async function compileWithBinary(
         let output = ""
         let error = ""
 
+        process.on("error", (err) => {
+            reject(new ResolcPluginError(`Failed to spawn resolc: ${err.message}`))
+        })
+
+        process.stdin.on("error", (err) => {
+            reject(new ResolcPluginError(`Failed to write to resolc stdin: ${err.message}`))
+        })
+
         process.stdin.write(inputs)
         process.stdin.end()
 
@@ -59,8 +67,8 @@ export async function compileWithBinary(
                 try {
                     const result = JSON.parse(output)
                     resolve(result)
-                } catch {
-                    reject(new ResolcPluginError(`Failed to parse output`))
+                } catch (e) {
+                    reject(new ResolcPluginError(`Failed to parse resolc output: ${(e as Error).message}`))
                 }
             } else {
                 reject(new ResolcPluginError(`Process exited with code ${code}: ${error}`))

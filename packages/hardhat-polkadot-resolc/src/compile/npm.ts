@@ -1,13 +1,10 @@
 import path from "path"
-import { exec as execCb, execSync } from "child_process"
-import { promisify } from "util"
+import { execSync } from "child_process"
 import semver from "semver"
 import { compile, resolveInputs, type SolcOutput } from "@parity/resolc"
 import type { CompilerInput } from "hardhat/types/solidity"
 import type { ResolcConfig } from "../types.js"
 import { ResolcPluginError } from "../errors.js"
-
-const _exec = promisify(execCb)
 
 export async function compileWithNpm(
     input: CompilerInput,

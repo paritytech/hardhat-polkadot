@@ -2,7 +2,6 @@ import fsExtra from "fs-extra"
 import path from "path"
 
 import axios from "axios"
-import { execSync } from "child_process"
 import { CompilerPlatform, CompilerName, type CompilerBuild, type CompilerList } from "./types.js"
 import { COMPILER_REPOSITORY_URL } from "./constants.js"
 
@@ -61,11 +60,11 @@ export async function download(
                 const longVersion = `${version}+commit.${commit}.llvm-18.1.8`
 
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const asset = release.assets.find((a: any) => a.name == name)
+                const asset = release.assets.find((a: any) => a.name === name)
                 if (!asset) continue
 
                 let sha256 = ""
-                if (!asset.digest || asset.digest == null) {
+                if (!asset.digest) {
                     const checksumResponse = await axios.get(
                         `${COMPILER_REPOSITORY_URL}v${version}/checksums.txt`,
                         {
@@ -74,18 +73,12 @@ export async function download(
                         },
                     )
 
-                    const tempFile = `./${TEMP_FILE_PREFIX}checksums.txt`
-                    fsExtra.writeFileSync(tempFile, checksumResponse.data)
-                    try {
-                        const checksum = execSync(`grep ${name} ${tempFile}`).toString()
-                        sha256 = checksum.trim().split(" ")[0]
-
-                        fsExtra.remove(tempFile, (removeErr) => {
-                            if (removeErr) console.error("Failed to delete temp file:", removeErr)
-                        })
-                    } catch (e) {
-                        return console.error("grep failed:", e)
+                    const checksumLines = (checksumResponse.data as string).split("\n")
+                    const matchingLine = checksumLines.find((line: string) => line.includes(name))
+                    if (!matchingLine) {
+                        throw new Error(`Checksum not found for ${name} in v${version}`)
                     }
+                    sha256 = matchingLine.trim().split(" ")[0]
                 } else {
                     sha256 = asset.digest.slice(7)
                 }
