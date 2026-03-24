@@ -2,7 +2,6 @@ import fsExtra from "fs-extra"
 import path from "path"
 
 import axios from "axios"
-import { execSync } from "child_process"
 import { CompilerPlatform } from "hardhat/internal/solidity/compiler/downloader"
 import { CompilerName, type CompilerBuild, type CompilerList } from "./types"
 import { COMPILER_REPOSITORY_URL } from "./constants"
