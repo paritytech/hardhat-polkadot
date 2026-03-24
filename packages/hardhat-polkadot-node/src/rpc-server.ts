@@ -29,7 +29,7 @@ export function createRpcServer(opts: {
             }
         },
 
-        listen(
+        async listen(
             nodeArgs: string[] = [],
             adapterArgs: string[] = [],
             blockProcess = true,
@@ -77,7 +77,7 @@ export function createRpcServer(opts: {
             if (opts.docker && opts.isForking) {
                 const docker = new Docker({ socketPath: getDockerSocketPath(opts.docker) })
 
-                chopsticksService.from_binary("")
+                await chopsticksService.from_binary("")
                 return ethRpcService.from_docker(docker, chopsticksService.port)
             }
 
