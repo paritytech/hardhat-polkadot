@@ -3,7 +3,7 @@ import path from "path"
 import fsExtra from "fs-extra"
 import debug from "debug"
 import os from "os"
-import { execFile } from "child_process"
+import { execFileSync } from "child_process"
 import { assertHardhatInvariant } from "@nomicfoundation/hardhat-errors"
 import { MultiProcessMutex } from "@nomicfoundation/hardhat-utils/synchronization"
 import { listAttributesSync, removeAttributeSync } from "fs-xattr"
@@ -296,7 +296,7 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
         const resolcPath = this._getCompilerBinaryPathFromBuild(build)
 
         try {
-            execFile(resolcPath, ["--version"])
+            execFileSync(resolcPath, ["--version"])
             return true
         } catch {
             return false
