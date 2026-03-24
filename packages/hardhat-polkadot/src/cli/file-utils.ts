@@ -49,10 +49,10 @@ async function readdir(absolutePathToDir: string) {
         }
 
         if (error.code === "ENOTDIR") {
-            throw new Error(absolutePathToDir, error)
+            throw new Error(absolutePathToDir, { cause: error })
         }
 
-        throw new Error(error.message, error)
+        throw new Error(error.message, { cause: error })
     }
 }
 
