@@ -11,7 +11,7 @@ export default defineConfig({
         hardhat: {
             polkadot: true,
             nodeConfig: {
-                useAnviL: true,
+                useAnvil: true,
                 nodeBinaryPath: "./bin/anvil-polkadot",
             },
         },
