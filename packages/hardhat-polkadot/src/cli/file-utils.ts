@@ -49,10 +49,10 @@ async function readdir(absolutePathToDir: string) {
         }
 
         if (error.code === "ENOTDIR") {
-            throw new Error(absolutePathToDir, error)
+            throw new Error(absolutePathToDir, { cause: error })
         }
 
-        throw new Error(error.message, error)
+        throw new Error(error.message, { cause: error })
     }
 }
 
@@ -75,7 +75,7 @@ export async function addOrMergeGitIgnore(projectRoot: string): Promise<[string,
     const newLines = newContent.split(/\r?\n/)
     let keepLines = newLines.filter(
         (line) =>
-            line == "" ||
+            line === "" ||
             line.startsWith("#") ||
             !(
                 existingLines.includes(line) ||
@@ -93,7 +93,7 @@ export async function addOrMergeGitIgnore(projectRoot: string): Promise<[string,
 
     // Merge old & new content
     let newGitIgnore = originalGitIgnore
-    if (originalGitIgnore != "") {
+    if (originalGitIgnore !== "") {
         newGitIgnore = newGitIgnore.trimEnd() + "\n\n"
     }
     if (keepLines.length > 0) {
