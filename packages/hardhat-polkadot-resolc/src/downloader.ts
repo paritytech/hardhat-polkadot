@@ -67,14 +67,16 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
     }
 
     public static defaultCompilerListCachePeriod = 3_600_00
-    private readonly _mutex = new MultiProcessMutex("compiler-download")
+    private readonly _mutex: MultiProcessMutex
 
     constructor(
         private readonly _platform: CompilerPlatform,
         private readonly _compilersDir: string,
         private readonly _compilerListCachePeriodMs = ResolcCompilerDownloader.defaultCompilerListCachePeriod,
         private readonly _downloadFunction: typeof download = download,
-    ) {}
+    ) {
+        this._mutex = new MultiProcessMutex(path.join(_compilersDir, "compiler-download"))
+    }
 
     public async isCompilerDownloaded(version: string): Promise<boolean> {
         const build = await this._getCompilerBuild(version)

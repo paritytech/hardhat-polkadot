@@ -1,6 +1,24 @@
 import type { ConfigHooks, HardhatUserConfigValidationError } from "hardhat/types/hooks"
 
 const configHookHandler: () => Promise<Partial<ConfigHooks>> = async () => ({
+    extendUserConfig: async (config, next) => {
+        const networks = config.networks ?? {}
+
+        // Ensure polkadot-enabled networks have the correct type for v3 validation.
+        // In v3, the default EDR network is "default" (not "hardhat"). If users
+        // define a "hardhat" network with polkadot config, we need to ensure it
+        // has a `type` field so the Zod discriminated union validates correctly.
+        for (const [, network] of Object.entries(networks)) {
+            if (!network || !("polkadot" in network) || !network.polkadot) continue
+            if (!("type" in network) || network.type === undefined) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                ;(network as any).type = "url" in network ? "http" : "edr-simulated"
+            }
+        }
+
+        return next({ ...config, networks })
+    },
+
     validateUserConfig: async (config) => {
         const errors: HardhatUserConfigValidationError[] = []
         const networks = config.networks ?? {}
