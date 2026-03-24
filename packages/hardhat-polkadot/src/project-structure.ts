@@ -2,7 +2,7 @@ import findUp from "find-up"
 import fsExtra from "fs-extra"
 import path from "path"
 
-import { getPackageRoot } from "./cli/packageInfo"
+import { getPackageRoot } from "./cli/packageInfo.js"
 
 const JS_CONFIG_FILENAME = "hardhat.config.js"
 const CJS_CONFIG_FILENAME = "hardhat.config.cjs"

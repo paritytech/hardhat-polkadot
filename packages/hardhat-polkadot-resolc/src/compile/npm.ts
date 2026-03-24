@@ -2,9 +2,9 @@ import path from "path"
 import { execSync } from "child_process"
 import semver from "semver"
 import { compile, resolveInputs, type SolcOutput } from "@parity/resolc"
-import type { CompilerInput } from "hardhat/types"
-import type { ResolcConfig } from "src/types"
-import { ResolcPluginError } from "../errors"
+import type { CompilerInput } from "hardhat/types/solidity"
+import type { ResolcConfig } from "../types.js"
+import { ResolcPluginError } from "../errors.js"
 
 export async function compileWithNpm(
     input: CompilerInput,

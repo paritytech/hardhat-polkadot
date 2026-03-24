@@ -1,4 +1,4 @@
-import type { CompilerInput } from "hardhat/types"
+import type { CompilerInput } from "hardhat/types/solidity"
 import { createHash } from "crypto"
 import { execSync } from "child_process"
 import { updateSolc } from "./compile/npm"

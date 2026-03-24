@@ -1,10 +1,9 @@
-import '@nomicfoundation/hardhat-chai-matchers';
-import '@parity/hardhat-polkadot';
-import '@nomicfoundation/hardhat-ignition';
-import { HardhatUserConfig } from 'hardhat/types';
+import { defineConfig } from "hardhat/config"
+import polkadot from "@parity/hardhat-polkadot"
 
-const config: HardhatUserConfig = {
-    solidity: '0.8.28',
+export default defineConfig({
+    plugins: [polkadot],
+    solidity: "0.8.28",
     networks: {
         hardhat: {
             polkadot: true,
@@ -12,6 +11,4 @@ const config: HardhatUserConfig = {
             docker: true,
         },
     },
-};
-
-export default config;
+})

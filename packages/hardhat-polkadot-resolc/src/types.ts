@@ -1,5 +1,16 @@
-import type { CompilerInput, SolcConfig } from "hardhat/types"
-import { CompilerPlatform } from "hardhat/internal/solidity/compiler/downloader"
+import type { SolcConfig } from "hardhat/types/config"
+import type { CompilerInput } from "hardhat/types/solidity"
+
+/**
+ * Compiler platform identifiers (local definition replacing hardhat v2's internal enum).
+ */
+export enum CompilerPlatform {
+    LINUX = "linux-amd64",
+    LINUX_ARM64 = "linux-arm64",
+    WINDOWS = "windows-amd64",
+    MACOS = "macosx-amd64",
+    WASM = "wasm",
+}
 
 export interface ResolcConfig {
     version: string

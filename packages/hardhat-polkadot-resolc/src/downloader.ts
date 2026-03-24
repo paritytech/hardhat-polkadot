@@ -66,14 +66,16 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
     }
 
     public static defaultCompilerListCachePeriod = 3_600_00
-    private readonly _mutex = new MultiProcessMutex("compiler-download")
+    private readonly _mutex: MultiProcessMutex
 
     constructor(
         private readonly _platform: CompilerPlatform,
         private readonly _compilersDir: string,
         private readonly _compilerListCachePeriodMs = ResolcCompilerDownloader.defaultCompilerListCachePeriod,
         private readonly _downloadFunction: typeof download = download,
-    ) {}
+    ) {
+        this._mutex = new MultiProcessMutex(path.join(_compilersDir, "compiler-download"))
+    }
 
     public async isCompilerDownloaded(version: string): Promise<boolean> {
         const build = await this._getCompilerBuild(version)
@@ -246,7 +248,7 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
         build: CompilerBuild,
         downloadPath: string,
     ): Promise<boolean> {
-        const { sha256 } = await import("./utils")
+        const { sha256 } = await import("./utils.js")
 
         const expectedSha256 = build.sha256
         const compiler = await fsExtra.readFile(downloadPath)
@@ -294,6 +296,7 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
         const resolcPath = this._getCompilerBinaryPathFromBuild(build)
 
         try {
+            execFileSync(resolcPath, ["--version"])
             execFileSync(resolcPath, ["--version"])
             return true
         } catch {

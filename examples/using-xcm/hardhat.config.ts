@@ -1,10 +1,12 @@
-import { HardhatUserConfig } from "hardhat/config"
-import "@nomicfoundation/hardhat-toolbox"
-import "@parity/hardhat-polkadot"
+import { defineConfig } from "hardhat/config"
+import polkadot from "@parity/hardhat-polkadot"
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY
 
-const config: HardhatUserConfig = {
+export const TEST_NETWORKS = ["polkadotHubTestnet"]
+
+export default defineConfig({
+    plugins: [polkadot],
     solidity: "0.8.28",
     networks: {
         polkadotHubTestnet: {
@@ -16,7 +18,4 @@ const config: HardhatUserConfig = {
             chainId: 420420422,
         },
     },
-}
-
-export const TEST_NETWORKS = ["polkadotHubTestnet"]
-export default config
+})

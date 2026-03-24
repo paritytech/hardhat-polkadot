@@ -1,6 +1,7 @@
 {
     "name": "foo",
+    "type": "module",
     "dependencies": {
-        "hardhat": "^2.26.0"
+        "hardhat": "^3.0.0"
     }
 }

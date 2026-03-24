@@ -2,9 +2,9 @@ import { spawn, StdioOptions } from "child_process"
 import chalk from "chalk"
 import { run } from "run-container"
 import Docker from "dockerode"
-import { ETH_RPC_ADAPTER_START_PORT, RPC_ENDPOINT_PATH, NODE_RPC_URL_BASE_URL } from "../constants"
-import { waitForServiceToBeReady } from "../utils"
-import { Service } from "./index"
+import { ETH_RPC_ADAPTER_START_PORT, RPC_ENDPOINT_PATH, NODE_RPC_URL_BASE_URL } from "../constants.js"
+import { waitForServiceToBeReady, getLatestImageName } from "../utils.js"
+import { Service } from "./service.js"
 
 const ADAPTER_CONTAINER_NAME = "eth-rpc"
 
@@ -46,9 +46,7 @@ export class EthRpcService extends Service {
     }
 
     public async from_docker(docker: Docker, nodePort: number): Promise<void> {
-        // TODO: use latestImage once it is more stable
-        // const imageTag = await getLatestImageName(ADAPTER_CONTAINER_NAME)
-        const imageTag = "master-87a8fb03"
+        const imageTag = await getLatestImageName(ADAPTER_CONTAINER_NAME)
 
         const container = docker.getContainer(ADAPTER_CONTAINER_NAME)
         await container

@@ -1,6 +1,9 @@
 import findup from "find-up"
 import fsExtra from "fs-extra"
 import path from "path"
+import { fileURLToPath } from "url"
+
+const __filename = fileURLToPath(import.meta.url)
 
 export function getPackageJsonPath(): string {
     return findClosestPackageJson(__filename)!

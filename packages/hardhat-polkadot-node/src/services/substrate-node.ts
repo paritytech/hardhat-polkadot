@@ -3,9 +3,9 @@ import chalk from "chalk"
 import { runSimple } from "run-container"
 import Docker from "dockerode"
 
-import { NODE_START_PORT } from "../constants"
-import { waitForServiceToBeReady } from "../utils"
-import { Service } from "./index"
+import { NODE_START_PORT } from "../constants.js"
+import { waitForServiceToBeReady, getLatestImageName } from "../utils.js"
+import { Service } from "./service.js"
 
 const ANVIL_POLKADOT_CONTAINER_NAME = "anvil-polkadot"
 
@@ -15,6 +15,7 @@ export class SubstrateNodeService extends Service {
     constructor(
         commandArgs: string[] = [],
         blockProcess: boolean = true,
+        useAnvil: boolean = true,
         useAnvil: boolean = true,
     ) {
         super(commandArgs.slice(1), blockProcess)

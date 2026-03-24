@@ -2,13 +2,13 @@ import picocolors from "picocolors"
 import fsExtra from "fs-extra"
 import path from "path"
 
-import { HARDHAT_POLKADOT_NAME } from "../constants"
-import { addOrMergeGitIgnore, getAllFilesMatching } from "./file-utils"
-import { fromEntries } from "./lang"
-import { getPackageJson, getPackageRoot, PackageJson } from "./packageInfo"
-import { pluralize } from "./strings"
-import { confirmRecommendedDepsInstallation, confirmProjectCreation } from "./prompt"
-import type { Dependencies, PackageManager } from "./types"
+import { HARDHAT_POLKADOT_NAME } from "../constants.js"
+import { addOrMergeGitIgnore, getAllFilesMatching } from "./file-utils.js"
+import { fromEntries } from "./lang.js"
+import { getPackageJson, getPackageRoot, PackageJson } from "./packageInfo.js"
+import { pluralize } from "./strings.js"
+import { confirmRecommendedDepsInstallation, confirmProjectCreation } from "./prompt.js"
+import type { Dependencies, PackageManager } from "./types.js"
 
 enum Action {
     CREATE_JAVASCRIPT_PROJECT_ACTION = "Create a JavaScript project",
@@ -36,12 +36,8 @@ const ETHERS_PROJECT_DEPENDENCIES: Dependencies = {
 }
 
 const PEER_DEPENDENCIES: Dependencies = {
-    hardhat: "<2.23.0",
-    "@nomicfoundation/hardhat-verify": "^2.0.0",
+    hardhat: "^3.0.0",
     chai: "^4.2.0",
-    "hardhat-gas-reporter": "^1.0.8",
-    "solidity-coverage": "^0.8.0",
-    "@nomicfoundation/hardhat-ignition": "^0.15.9",
 }
 
 const ETHERS_PEER_DEPENDENCIES: Dependencies = {
@@ -201,29 +197,18 @@ async function printRecommendedDepsInstallationInstructions(
 }
 
 // exported so we can test that it uses the latest supported version of solidity
-export const EMPTY_HARDHAT_CONFIG = `require('@parity/hardhat-polkadot');
+export const EMPTY_HARDHAT_CONFIG = `const { defineConfig } = require("hardhat/config");
+const polkadot = require("@parity/hardhat-polkadot");
 
-/** @type import('hardhat/config').HardhatUserConfig */
-module.exports = {
+module.exports = defineConfig({
+  plugins: [polkadot],
   solidity: "0.8.28",
-  resolc: {
-        compilerSource: 'npm',
+  networks: {
+    hardhat: {
+      polkadot: true,
     },
-    networks: {
-        hardhat: {
-            polkadot: true,
-            nodeConfig: {
-                nodeBinaryPath: './bin/dev-node',
-                dev: true,
-                rpcPort: 8000
-            },
-            adapterConfig: {
-                adapterBinaryPath: './bin/eth-rpc',
-                dev: true,
-            },
-        },
-    }
-};
+  },
+});
 `
 
 async function writeEmptyHardhatConfig(isEsm: boolean) {
@@ -474,8 +459,7 @@ async function getProjectPackageManager(): Promise<PackageManager> {
 }
 
 async function doesNpmAutoInstallPeerDependencies() {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { execSync } = require("child_process")
+    const { execSync } = await import("child_process")
     try {
         const version: string = execSync("npm --version").toString()
         return parseInt(version.split(".")[0], 10) >= 7

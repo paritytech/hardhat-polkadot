@@ -1,17 +1,14 @@
 import axios from "axios"
 import net from "net"
-import { createProvider } from "hardhat/internal/core/providers/construction"
-import type { HardhatConfig } from "hardhat/types"
+import type { HardhatConfig, EdrNetworkConfig, EdrNetworkUserConfig } from "hardhat/types/config"
 import { LRUCache } from "lru-cache"
 import fs from "fs"
 import os from "os"
 import path from "path"
-import type { HardhatNetworkConfig, HardhatNetworkUserConfig } from "hardhat/types/config"
 
-import { HARDHAT_NETWORK_NAME } from "hardhat/internal/constants"
-import { createRpcServer } from "./rpc-server"
-import type { CommandArguments, SplitCommands } from "./types"
-import { PolkadotNodePluginError } from "./errors"
+import { createRpcServer } from "./rpc-server.js"
+import type { CommandArguments, SplitCommands } from "./types.js"
+import { PolkadotNodePluginError } from "./errors.js"
 import {
     BASE_URL,
     MAX_PORT_ATTEMPTS,
@@ -20,7 +17,9 @@ import {
     POLKADOT_TEST_NODE_NETWORK_NAME,
     RPC_ENDPOINT_PATH,
     ETH_RPC_TO_SUBSTRATE_RPC,
-} from "./constants"
+} from "./constants.js"
+
+const HARDHAT_NETWORK_NAME = "hardhat"
 
 export const PARITYPR_DOCKER_REGISTRY = "https://registry.hub.docker.com/v2/repositories/paritypr/"
 const DOCKER_SOCKET_DEFAULT_PATH = "/var/run/docker.sock"
@@ -34,6 +33,7 @@ export function constructCommandArgs(args?: CommandArguments): SplitCommands {
     const nodeCommands: string[] = []
     const adapterCommands: string[] = []
 
+    if (args?.nodeCommands?.useAnvil !== false && !args?.forking) {
     if (args?.nodeCommands?.useAnvil !== false && !args?.forking) {
         nodeCommands.push("", "--accounts", "20")
         return {
@@ -159,6 +159,7 @@ export function adjustTaskArgsForPort(taskArgs: string[], currentPort: number): 
 
 export function getNetworkConfig(url: string) {
     return {
+        type: "http" as const,
         accounts: "remote" as const,
         gas: "auto" as const,
         gasPrice: "auto" as const,
@@ -200,9 +201,10 @@ export async function configureNetwork(
     const networkConfig = getNetworkConfig(url)
 
     network.name = networkName
-    network.config = networkConfig
-    config.networks[networkName] = networkConfig
-    network.provider = await createProvider(config, networkName)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    network.config = networkConfig as any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    config.networks[networkName] = networkConfig as any
 }
 
 export async function startServer(
@@ -210,6 +212,7 @@ export async function startServer(
     nodePath?: string,
     adapterPath?: string,
 ) {
+    const useAnvil = commands.nodeCommands?.useAnvil !== false
     const useAnvil = commands.nodeCommands?.useAnvil !== false
     const currentNodePort = await getAvailablePort(
         commands.nodeCommands?.rpcPort ? commands.nodeCommands.rpcPort : NODE_START_PORT,
@@ -279,8 +282,8 @@ export async function getLatestImageName(containerName: string): Promise<string 
 }
 
 export function getDockerSocketPath(
-    docker?: HardhatNetworkUserConfig["docker"],
-): Extract<HardhatNetworkUserConfig["docker"], string> {
+    docker?: EdrNetworkUserConfig["docker"],
+): Extract<EdrNetworkUserConfig["docker"], string> {
     const customDockerSocketPath = typeof docker === "string" ? docker : undefined
     const dockerSocketPath =
         customDockerSocketPath ||

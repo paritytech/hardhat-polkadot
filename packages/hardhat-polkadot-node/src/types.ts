@@ -1,13 +1,22 @@
-import { HardhatNetworkForkingUserConfig } from "hardhat/types"
-import { HardhatNetworkUserConfig } from "hardhat/types/config"
-import { ChopsticksService, EthRpcService, SubstrateNodeService } from "./services"
+import type { EdrNetworkUserConfig } from "hardhat/types/config"
+import { ChopsticksService, EthRpcService, SubstrateNodeService } from "./services/index.js"
+
+/**
+ * Forking config (defined locally since HardhatNetworkForkingUserConfig
+ * was removed in Hardhat v3).
+ */
+export interface ForkingUserConfig {
+    enabled?: boolean
+    url?: string
+    blockNumber?: string | number
+}
 
 export interface CommandArguments {
-    forking?: HardhatNetworkForkingUserConfig
+    forking?: ForkingUserConfig
     forkBlockNumber?: string | number
-    nodeCommands?: HardhatNetworkUserConfig["nodeConfig"]
-    adapterCommands?: HardhatNetworkUserConfig["adapterConfig"]
-    docker?: HardhatNetworkUserConfig["docker"]
+    nodeCommands?: EdrNetworkUserConfig["nodeConfig"]
+    adapterCommands?: EdrNetworkUserConfig["adapterConfig"]
+    docker?: EdrNetworkUserConfig["docker"]
 }
 
 export interface RpcServer {

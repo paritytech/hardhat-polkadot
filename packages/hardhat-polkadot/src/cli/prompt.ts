@@ -1,4 +1,4 @@
-import type { Dependencies, PackageManager } from "./types"
+import type { Dependencies, PackageManager } from "./types.js"
 
 function createConfirmationPrompt(name: string, message: string) {
     return {
@@ -70,8 +70,7 @@ export async function confirmProjectCreation(): Promise<{
     projectRoot: string
     shouldAddGitIgnore: boolean
 }> {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const enquirer = require("enquirer")
+    const { default: enquirer } = await import("enquirer")
     return enquirer.prompt([
         {
             name: "projectRoot",
@@ -111,8 +110,8 @@ async function confirmationPromptWithTimeout(
     timeoutMilliseconds: number = 10_000,
 ): Promise<boolean | undefined> {
     try {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const enquirer = require("enquirer")
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const enquirer = (await import("enquirer")) as any
 
         const prompt = new enquirer.prompts.Confirm(createConfirmationPrompt(name, message))
 

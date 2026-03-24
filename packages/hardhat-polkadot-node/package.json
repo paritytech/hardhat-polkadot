@@ -10,6 +10,7 @@
     "type": "git",
     "url": "https://github.com/paritytech/hardhat-polkadot.git"
   },
+  "type": "module",
   "main": "dist/index.js",
   "publishConfig": {
     "access": "public"
@@ -64,6 +65,6 @@
     "typescript-eslint": "^8.31.0"
   },
   "peerDependencies": {
-    "hardhat": "^2.26.0"
+    "hardhat": "^3.0.0"
   }
 }

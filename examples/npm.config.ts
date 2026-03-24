@@ -1,7 +1,8 @@
-import { HardhatUserConfig } from "hardhat/config"
-import "@parity/hardhat-polkadot"
+import { defineConfig } from "hardhat/config"
+import polkadot from "@parity/hardhat-polkadot"
 
-const config: HardhatUserConfig = {
+export default defineConfig({
+    plugins: [polkadot],
     solidity: "0.8.28",
     networks: {
         hardhat: {
@@ -11,6 +12,4 @@ const config: HardhatUserConfig = {
     resolc: {
         compilerSource: "npm",
     },
-}
-
-export default config
+})

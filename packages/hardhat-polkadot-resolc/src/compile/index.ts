@@ -1,8 +1,8 @@
-import type { CompilerInput } from "hardhat/types"
-import type { ICompiler, ResolcConfig } from "../types"
-import { ResolcPluginError } from "../errors"
-import { compileWithBinary } from "./binary"
-import { compileWithNpm } from "./npm"
+import type { CompilerInput } from "hardhat/types/solidity"
+import type { ICompiler, ResolcConfig } from "../types.js"
+import { ResolcPluginError } from "../errors.js"
+import { compileWithBinary } from "./binary.js"
+import { compileWithNpm } from "./npm.js"
 
 export async function compile(resolcConfig: ResolcConfig, input: CompilerInput) {
     let compiler: ICompiler
