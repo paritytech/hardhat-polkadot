@@ -28,7 +28,7 @@ export function createRpcServer(opts: {
             }
         },
 
-        async listen(
+        listen(
             nodeArgs: string[] = [],
             adapterArgs: string[] = [],
             blockProcess = true,
@@ -67,8 +67,9 @@ export function createRpcServer(opts: {
             if (opts.docker && opts.isForking) {
                 const docker = new Docker({ socketPath: getDockerSocketPath(opts.docker) })
 
-                await chopsticksService.from_binary("")
-                return ethRpcService.from_docker(docker, chopsticksService.port)
+                return chopsticksService
+                    .from_binary("")
+                    .then(() => ethRpcService.from_docker(docker, chopsticksService.port))
             }
 
             throw new PolkadotNodePluginError(
