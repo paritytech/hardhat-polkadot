@@ -1,5 +1,5 @@
 <div align="center">
-  
+
   # Build on Polkadot with Hardhat Plugin
 
   <div>
@@ -9,7 +9,7 @@
   </div>
   <div>
     <a href="https://hardhat.org" target="_blank">
-      <img width="250" alt="Hardhat Logo Light" src="https://hardhat.org/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhardhat-logo.5c5f687b.svg&w=384&q=75" />
+      <img width="250" alt="Hardhat Logo Light" src="https://hardhat.org/images/hardhat-logo.svg" />
     </a>
   </div>
   <br>
@@ -17,7 +17,8 @@
 
 ## Compatibility
 
-- Not compatible with solidity versions lower than `0.8.0`.
+- Requires Hardhat v3 (`hardhat@^3.0.0`).
+- Not compatible with Solidity versions lower than `0.8.0`.
 
 ## Installation
 
@@ -30,52 +31,74 @@ $ npm install -D @parity/hardhat-polkadot
 Using yarn:
 
 ```bash
-$ yarn add -D @parity/hardhat-polkadot 
+$ yarn add -D @parity/hardhat-polkadot
 ```
 
 Using pnpm:
 
 ```bash
-$ pnpm add -D @parity/hardhat-polkadot 
+$ pnpm add -D @parity/hardhat-polkadot
 ```
 
 ## Configuration
 
-1. Import the package in the `hardhat.config.ts` file:
+1. Import the plugin and use `defineConfig` in your `hardhat.config.ts`:
 
-```js
-...
-import "@parity/hardhat-polkadot";
-...
+```ts
+import { defineConfig } from "hardhat/config"
+import polkadot from "@parity/hardhat-polkadot"
+
+export default defineConfig({
+    plugins: [polkadot],
+    solidity: "0.8.28",
+    networks: {
+        hardhat: {
+            polkadot: true,
+            nodeConfig: {
+                useAnvil: true,
+                nodeBinaryPath: "./bin/anvil-polkadot",
+            },
+        },
+    },
+})
 ```
 
-2. Create 2 binaries - One for the node and another for the ETH-RPC adapter. See step **1.** of [Deploying with a Local Node](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#deploying-with-a-local-node).
-
-3. Example configuration in `hardhat.config.ts`
+Or for CommonJS projects:
 
 ```js
-const config: HardhatUserConfig = {
-  networks: {
-    hardhat: {
-      polkadot: true,
-      nodeConfig: {
-        useAnvil: true,
-        nodeBinaryPath: 'INSERT_PATH_TO_ANVIL_NODE',
-      },
+const { defineConfig } = require("hardhat/config")
+const polkadot = require("@parity/hardhat-polkadot")
+
+module.exports = defineConfig({
+    plugins: [polkadot],
+    solidity: "0.8.28",
+    networks: {
+        hardhat: {
+            polkadot: true,
+            nodeConfig: {
+                useAnvil: true,
+                nodeBinaryPath: "./bin/anvil-polkadot",
+            },
+        },
     },
-  },
-};
+})
 ```
 
 ## Usage
 
-Get started from a boilerplate.
+Get started from a boilerplate:
 
 ```bash
 $ npx hardhat-polkadot init
 ```
 
-Compile solidity smart contracts for the Polkadot network, creating Polkadot compatible hardhat artifacts.
+Port an existing Hardhat project to Polkadot (upgrades to Hardhat v3 if needed):
+
+```bash
+$ npx hardhat-polkadot port <project-dir>
+```
+
+Compile Solidity smart contracts for the Polkadot network:
 
 ```bash
 $ npx hardhat compile
@@ -87,13 +110,13 @@ Test smart contracts locally. See more in [Testing Your Contract](https://paperm
 $ npx hardhat test
 ```
 
-Deploy smart contracts locally or to a Live Network. See more in [Deploying with a Local Node](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#deploying-with-a-local-node) and [Deploying to a live Network](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#deploying-to-a-live-network).
+Deploy smart contracts locally or to a live network. See more in [Deploying with a Local Node](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#deploying-with-a-local-node) and [Deploying to a Live Network](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#deploying-to-a-live-network).
 
 ```bash
 $ npx hardhat ignition deploy ./ignition/modules/deploy.js
 ```
 
-Run custom scripts locally or on a Live Network. See more in [Interacting with Your Contract](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#interacting-with-your-contract).
+Run custom scripts locally or on a live network. See more in [Interacting with Your Contract](https://papermoonio.github.io/polkadot-mkdocs/develop/smart-contracts/dev-environments/hardhat/#interacting-with-your-contract).
 
 ```bash
 $ npx hardhat run scripts/interact.js
