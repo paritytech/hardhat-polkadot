@@ -88,6 +88,7 @@ export class EthRpcService extends Service {
         // remove container when process exits
         for (const sig of ["SIGINT", "SIGTERM"] as const) {
             process.once(sig, () => {
+                console.info(chalk.yellow(`Received ${sig}, stopping Eth RPC container...`))
                 this.container?.stop({ t: 2 }).catch(() => {}).finally(() => process.exit(0))
             })
         }
