@@ -20,7 +20,7 @@ export class ChopsticksService extends Service {
             if (this.blockProcess) {
                 console.info(chalk.green(`Starting server at 127.0.0.1:${this.port}`))
                 console.info(
-                    chalk.green(`Running command: ${pathToBinary} ${this.commandArgs.join(" ")}`),
+                    chalk.green(`Running command: ${this.commandArgs.join(" ")}`),
                 )
             }
 

@@ -5,6 +5,7 @@ import type { EdrNetworkUserConfig } from "hardhat/types/config"
 import { createRpcServer } from "../rpc-server.js"
 import { configureNetwork, constructCommandArgs, getAvailablePort } from "../utils.js"
 import { PolkadotNodePluginError } from "../errors.js"
+import type { ForkingUserConfig } from "../types.js"
 import { handleFactoryDependencies } from "../core/factory-support.js"
 import {
     NODE_START_PORT,
@@ -69,7 +70,7 @@ const testAction: TaskOverrideActionFunction = async (taskArguments, hre, runSup
     const adapterCommands = Object.assign({}, userConfig?.adapterConfig, { adapterPort })
 
     const commandArgs = constructCommandArgs({
-        forking: userConfig?.forking,
+        forking: userConfig?.forking as ForkingUserConfig | undefined,
         forkBlockNumber: userConfig?.forking?.blockNumber,
         nodeCommands,
         adapterCommands,

@@ -1,5 +1,5 @@
 import "hardhat/types/config"
-import type { TargetVM } from "./types.js"
+import type { ForkingUserConfig, TargetVM } from "./types.js"
 
 declare module "hardhat/types/config" {
     interface EdrNetworkUserConfig {
@@ -41,6 +41,7 @@ declare module "hardhat/types/config" {
          * - false: disable
          */
         docker?: boolean | string
+        forking?: ForkingUserConfig
     }
 
     interface HttpNetworkUserConfig {

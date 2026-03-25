@@ -4,13 +4,14 @@ import type { EdrNetworkUserConfig } from "hardhat/types/config"
 import { createRpcServer } from "../rpc-server.js"
 import { constructCommandArgs } from "../utils.js"
 import { PolkadotNodePluginError } from "../errors.js"
+import type { ForkingUserConfig } from "../types.js"
 import { DEFAULT_NETWORK_NAME } from "../constants.js"
 
 const nodePolkadotAction: NewTaskActionFunction = async (_taskArguments, hre) => {
     const networkConfig = hre.config.networks[DEFAULT_NETWORK_NAME] as unknown as EdrNetworkUserConfig
 
     const commandArgs = constructCommandArgs({
-        forking: networkConfig?.forking,
+        forking: networkConfig?.forking as ForkingUserConfig | undefined,
         forkBlockNumber: networkConfig?.forking?.blockNumber,
         nodeCommands: networkConfig?.nodeConfig,
         adapterCommands: networkConfig?.adapterConfig,
