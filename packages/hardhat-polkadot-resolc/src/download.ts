@@ -74,14 +74,20 @@ export async function download(
                     )
 
                     const checksumLines = (checksumResponse.data as string).split("\n")
+                    // Checksum files use two formats:
+                    //   text mode:   "hash  filename"  (two spaces)
+                    //   binary mode:  "hash *filename"  (space + asterisk)
                     const matchingLine = checksumLines.find((line: string) => {
-                        const parts = line.trim().split(/\s+/)
-                        return parts.length >= 2 && parts[parts.length - 1] === name
+                        const trimmed = line.trim()
+                        // Strip the hash prefix, then match the filename
+                        // accounting for both " filename" and " *filename"
+                        const filename = trimmed.replace(/^[0-9a-fA-F]+\s+\*?/, "")
+                        return filename === name
                     })
                     if (!matchingLine) {
                         throw new Error(`Checksum not found for ${name} in v${version}`)
                     }
-                    sha256 = matchingLine.trim().split(" ")[0]
+                    sha256 = matchingLine.trim().split(/\s/)[0]
                 } else {
                     sha256 = asset.digest.slice(7)
                 }
