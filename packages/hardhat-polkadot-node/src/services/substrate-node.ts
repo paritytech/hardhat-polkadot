@@ -51,7 +51,7 @@ export class SubstrateNodeService extends Service {
             this.process.on("exit", this._handleOnExit("substrate node"))
 
             if (!this.blockProcess) {
-                resolve()
+                this.process.once("spawn", () => resolve())
             }
         })
     }

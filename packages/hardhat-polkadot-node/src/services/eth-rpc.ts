@@ -40,7 +40,7 @@ export class EthRpcService extends Service {
             this.process.on("exit", this._handleOnExit("Eth RPC Adapter"))
 
             if (!this.blockProcess) {
-                resolve()
+                this.process.once("spawn", () => resolve())
             }
         })
     }
