@@ -61,7 +61,9 @@ export class SubstrateNodeService extends Service {
         await container
             .inspect()
             .then(() => container.remove({ force: true }))
-            .catch(() => {})
+            .catch((err: any) => {
+                if (err.statusCode !== 404) throw err
+            })
 
         this.container = await runSimple({
             name: SUBSTRATE_NODE_CONTAINER_NAME,
@@ -75,9 +77,11 @@ export class SubstrateNodeService extends Service {
         })
 
         // remove container when process exits
-        ;["exit", "SIGINT", "SIGUSR1", "SIGUSR2", "uncaughtException", "SIGTERM"].forEach((e) => {
-            process.on(e, async () => await this.container!.remove({ force: true }))
-        })
+        for (const sig of ["SIGINT", "SIGTERM"] as const) {
+            process.once(sig, () => {
+                this.container?.stop({ t: 2 }).catch(() => {}).finally(() => process.exit(0))
+            })
+        }
 
         if (this.blockProcess) {
             // show docker logs in client console
