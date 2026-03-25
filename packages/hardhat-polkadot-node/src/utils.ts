@@ -33,7 +33,13 @@ export function constructCommandArgs(args?: CommandArguments): SplitCommands {
     const adapterCommands: string[] = []
 
     if (args?.nodeCommands?.useAnvil !== false && !args?.forking) {
+        // anvil-polkadot bundles the substrate node and eth-rpc adapter into
+        // a single process.  It uses --port (not --rpc-port) for the
+        // Ethereum JSON-RPC listener (default 8545).
         nodeCommands.push("", "--accounts", "20")
+        if (args?.adapterCommands?.adapterPort) {
+            nodeCommands.push("--port", `${args.adapterCommands.adapterPort}`)
+        }
         return {
             nodeCommands,
             adapterCommands,
