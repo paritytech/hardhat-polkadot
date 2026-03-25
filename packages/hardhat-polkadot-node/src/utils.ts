@@ -15,7 +15,6 @@ import {
     NODE_START_PORT,
     ETH_RPC_ADAPTER_START_PORT,
     POLKADOT_TEST_NODE_NETWORK_NAME,
-    RPC_ENDPOINT_PATH,
     ETH_RPC_TO_SUBSTRATE_RPC,
     DEFAULT_NETWORK_NAME,
 } from "./constants.js"
@@ -187,23 +186,6 @@ export async function configureNetwork(
     port: number,
 ) {
     const url = `${BASE_URL}:${port}`
-    const payload = {
-        jsonrpc: "2.0",
-        method: RPC_ENDPOINT_PATH,
-        params: [],
-        id: 1,
-    }
-    let _chainId = 0
-    try {
-        const response = await axios.post(url, payload)
-
-        if (response.status === 200) {
-            _chainId = parseInt(response.data.result)
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (_e: any) {
-        // If it fails, it will just try again
-    }
 
     const networkName =
         network.name === DEFAULT_NETWORK_NAME ? POLKADOT_TEST_NODE_NETWORK_NAME : network.name
