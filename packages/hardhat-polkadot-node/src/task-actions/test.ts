@@ -5,7 +5,6 @@ import type { EdrNetworkUserConfig } from "hardhat/types/config"
 import { createRpcServer } from "../rpc-server.js"
 import { configureNetwork, constructCommandArgs, getAvailablePort } from "../utils.js"
 import { PolkadotNodePluginError } from "../errors.js"
-import type { ForkingUserConfig } from "../types.js"
 import { handleFactoryDependencies } from "../core/factory-support.js"
 import {
     NODE_START_PORT,
@@ -58,20 +57,23 @@ const testAction: TaskOverrideActionFunction = async (taskArguments, hre, runSup
     const nodePath = userConfig?.nodeConfig?.nodeBinaryPath
     const adapterPath = userConfig?.adapterConfig?.adapterBinaryPath
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const forking = (userConfig as any)?.forking as { enabled?: boolean; url?: string; blockNumber?: number } | undefined
+
     const server = createRpcServer({
         useAnvil,
         docker: userConfig?.docker,
         nodePath,
         adapterPath,
-        isForking: !!userConfig?.forking?.enabled,
+        isForking: !!forking?.enabled,
     })
 
     const nodeCommands = Object.assign({}, userConfig?.nodeConfig, { rpcPort: nodePort })
     const adapterCommands = Object.assign({}, userConfig?.adapterConfig, { adapterPort })
 
     const commandArgs = constructCommandArgs({
-        forking: userConfig?.forking as ForkingUserConfig | undefined,
-        forkBlockNumber: userConfig?.forking?.blockNumber,
+        forking,
+        forkBlockNumber: forking?.blockNumber,
         nodeCommands,
         adapterCommands,
     })

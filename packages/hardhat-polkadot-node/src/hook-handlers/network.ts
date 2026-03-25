@@ -52,11 +52,12 @@ const networkHookHandler: () => Promise<Partial<NetworkHooks>> = async () => ({
         const nodeConfig = edrConfig.nodeConfig
         const adapterConfig = edrConfig.adapterConfig
         const docker = edrConfig.docker
-        const forking = edrConfig.forking
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const forking = (edrConfig as any).forking as { enabled?: boolean; url?: string } | undefined
 
         const { commandArgs, server, port } = await startServer(
             {
-                forking: forking as { enabled?: boolean; url?: string } | undefined,
+                forking,
                 nodeCommands: nodeConfig,
                 adapterCommands: adapterConfig,
                 docker,
