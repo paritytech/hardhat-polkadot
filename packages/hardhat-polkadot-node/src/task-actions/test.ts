@@ -10,15 +10,14 @@ import {
     ETH_RPC_ADAPTER_START_PORT,
     MAX_PORT_ATTEMPTS,
     POLKADOT_NETWORK_ACCOUNTS,
+    DEFAULT_NETWORK_NAME,
 } from "../constants.js"
 
-const HARDHAT_NETWORK_NAME = "hardhat"
-
 const testAction: TaskOverrideActionFunction = async (taskArguments, hre, runSuper) => {
-    const networkName = hre.globalOptions.network ?? HARDHAT_NETWORK_NAME
+    const networkName = hre.globalOptions.network ?? DEFAULT_NETWORK_NAME
     const networkConfig = hre.config.networks[networkName]
     const isPolkadot = networkConfig && "polkadot" in networkConfig && !!networkConfig.polkadot
-    const isHardhatNetwork = networkName === HARDHAT_NETWORK_NAME
+    const isHardhatNetwork = networkName === DEFAULT_NETWORK_NAME
 
     if (!isPolkadot) {
         return runSuper(taskArguments)
@@ -29,7 +28,7 @@ const testAction: TaskOverrideActionFunction = async (taskArguments, hre, runSup
         await hre.tasks.getTask("build").run({ quiet: true, noTests: true })
     }
 
-    const userConfig = hre.config.networks[HARDHAT_NETWORK_NAME] as unknown as EdrNetworkUserConfig
+    const userConfig = hre.config.networks[DEFAULT_NETWORK_NAME] as unknown as EdrNetworkUserConfig
     const useAnvil = userConfig?.nodeConfig?.useAnvil !== false
 
     // For remote polkadot networks, just handle factory deps and run tests
@@ -62,18 +61,15 @@ const testAction: TaskOverrideActionFunction = async (taskArguments, hre, runSup
         docker: userConfig?.docker,
         nodePath,
         adapterPath,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        isForking: !!(networkConfig as any)?.forking?.enabled,
+        isForking: !!userConfig?.forking?.enabled,
     })
 
     const nodeCommands = Object.assign({}, userConfig?.nodeConfig, { rpcPort: nodePort })
     const adapterCommands = Object.assign({}, userConfig?.adapterConfig, { adapterPort })
 
     const commandArgs = constructCommandArgs({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        forking: (networkConfig as any)?.forking,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        forkBlockNumber: (networkConfig as any)?.forking?.blockNumber,
+        forking: userConfig?.forking,
+        forkBlockNumber: userConfig?.forking?.blockNumber,
         nodeCommands,
         adapterCommands,
     })
@@ -85,7 +81,7 @@ const testAction: TaskOverrideActionFunction = async (taskArguments, hre, runSup
 
         await configureNetwork(
             hre.config,
-            { name: HARDHAT_NETWORK_NAME, config: networkConfig },
+            { name: DEFAULT_NETWORK_NAME, config: networkConfig },
             useAnvil ? adapterPort : adapterPort || nodePort,
         )
 

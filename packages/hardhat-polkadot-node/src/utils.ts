@@ -17,9 +17,8 @@ import {
     POLKADOT_TEST_NODE_NETWORK_NAME,
     RPC_ENDPOINT_PATH,
     ETH_RPC_TO_SUBSTRATE_RPC,
+    DEFAULT_NETWORK_NAME,
 } from "./constants.js"
-
-const HARDHAT_NETWORK_NAME = "hardhat"
 
 export const PARITYPR_DOCKER_REGISTRY = "https://registry.hub.docker.com/v2/repositories/paritypr/"
 const DOCKER_SOCKET_DEFAULT_PATH = "/var/run/docker.sock"
@@ -195,15 +194,23 @@ export async function configureNetwork(
     }
 
     const networkName =
-        network.name === HARDHAT_NETWORK_NAME ? POLKADOT_TEST_NODE_NETWORK_NAME : network.name
+        network.name === DEFAULT_NETWORK_NAME ? POLKADOT_TEST_NODE_NETWORK_NAME : network.name
 
     const networkConfig = getNetworkConfig(url)
 
+    try {
     network.name = networkName
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     network.config = networkConfig as any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     config.networks[networkName] = networkConfig as any
+    } catch {
+        // Config may be frozen in HH3's resolved config; if so, the caller
+        // must handle network configuration differently.
+        throw new PolkadotNodePluginError(
+            `Failed to configure network "${networkName}": config object may be frozen.`,
+        )
+    }
 }
 
 export async function startServer(

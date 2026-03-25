@@ -1,5 +1,7 @@
 export const PLUGIN_NAME = "hardhat-polkadot-node"
 
+export const DEFAULT_NETWORK_NAME = "default"
+
 export const PROCESS_TERMINATION_SIGNALS = ["SIGINT", "SIGTERM", "SIGKILL"]
 
 export const NODE_START_PORT = 9944
