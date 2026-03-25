@@ -162,6 +162,7 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
         )
 
         if (await fsExtra.pathExists(this._getCompilerDoesntWorkFile(build))) {
+            log("Native resolc binary for %s is marked as non-working, skipping", version)
             return undefined
         }
 

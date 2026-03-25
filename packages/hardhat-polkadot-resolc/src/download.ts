@@ -74,7 +74,10 @@ export async function download(
                     )
 
                     const checksumLines = (checksumResponse.data as string).split("\n")
-                    const matchingLine = checksumLines.find((line: string) => line.includes(name))
+                    const matchingLine = checksumLines.find((line: string) => {
+                        const parts = line.trim().split(/\s+/)
+                        return parts.length >= 2 && parts[parts.length - 1] === name
+                    })
                     if (!matchingLine) {
                         throw new Error(`Checksum not found for ${name} in v${version}`)
                     }

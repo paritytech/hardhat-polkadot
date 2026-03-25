@@ -1,5 +1,4 @@
 import type { ConfigHooks, HardhatUserConfigValidationError } from "hardhat/types/hooks"
-import type { HardhatUserConfig } from "hardhat/types/config"
 
 const configHookHandler: () => Promise<Partial<ConfigHooks>> = async () => ({
     extendUserConfig: async (config, next) => {
@@ -73,7 +72,7 @@ const configHookHandler: () => Promise<Partial<ConfigHooks>> = async () => ({
 
     resolveUserConfig: async (userConfig, resolveConfigurationVariable, next) => {
         const resolvedConfig = await next(userConfig, resolveConfigurationVariable)
-        const userNetworks = (userConfig as HardhatUserConfig).networks ?? {}
+        const userNetworks = userConfig.networks ?? {}
 
         for (const [name, network] of Object.entries(userNetworks)) {
             if (!network || !("polkadot" in network) || !network.polkadot) continue

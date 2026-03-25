@@ -82,24 +82,31 @@ async function getResolcBuild(resolcConfig: ResolcConfig): Promise<ResolcBuild> 
 function normalizeCompilerOutput(compOut: any): CompilerOutput {
     if (!compOut.contracts) return compOut
 
-    for (const file of Object.keys(compOut.contracts)) {
-        for (const contract of Object.keys(compOut.contracts[file])) {
-            const bytecode = compOut.contracts[file][contract].evm?.bytecode
-                ? compOut.contracts[file][contract].evm.bytecode.object
-                : ""
-            if (compOut.contracts[file][contract].evm) {
-                compOut.contracts[file][contract].evm.bytecode = {
-                    functionDebugData: {},
-                    generatedSources: [],
-                    linkReferences: {},
-                    object: bytecode,
-                    opcodes: "",
-                    sourceMap: "",
+    const result = { ...compOut, contracts: { ...compOut.contracts } }
+    for (const file of Object.keys(result.contracts)) {
+        result.contracts[file] = { ...result.contracts[file] }
+        for (const contract of Object.keys(result.contracts[file])) {
+            const original = result.contracts[file][contract]
+            const bytecode = original.evm?.bytecode?.object ?? ""
+            if (original.evm) {
+                result.contracts[file][contract] = {
+                    ...original,
+                    evm: {
+                        ...original.evm,
+                        bytecode: {
+                            functionDebugData: {},
+                            generatedSources: [],
+                            linkReferences: {},
+                            object: bytecode,
+                            opcodes: "",
+                            sourceMap: "",
+                        },
+                    },
                 }
             }
         }
     }
-    return compOut
+    return result
 }
 
 // SolidityHooks is augmented onto HardhatHooks by the solidity plugin

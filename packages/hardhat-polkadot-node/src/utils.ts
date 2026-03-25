@@ -168,6 +168,12 @@ export function getNetworkConfig(url: string) {
     }
 }
 
+/**
+ * Mutates `config` and `network` in-place to point at the local RPC server.
+ * In-place mutation is intentional: Hardhat's resolved config object is shared
+ * across the process, and downstream code (tests, plugins) reads from the same
+ * reference. Returning a new object would leave stale URLs in the shared config.
+ */
 export async function configureNetwork(
     config: HardhatConfig,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -199,11 +205,11 @@ export async function configureNetwork(
     const networkConfig = getNetworkConfig(url)
 
     try {
-    network.name = networkName
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    network.config = networkConfig as any
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    config.networks[networkName] = networkConfig as any
+        network.name = networkName
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        network.config = networkConfig as any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        config.networks[networkName] = networkConfig as any
     } catch {
         // Config may be frozen in HH3's resolved config; if so, the caller
         // must handle network configuration differently.
@@ -266,10 +272,10 @@ export async function getLatestImageName(containerName: string): Promise<string>
         const imageList = imageResponse.data
 
         imageList.results.sort(
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                (a: any, b: any) =>
-                    new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime(),
-            )
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (a: any, b: any) =>
+                new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime(),
+        )
 
         const latestImageName = imageList.results[0]?.name
 
@@ -279,7 +285,7 @@ export async function getLatestImageName(containerName: string): Promise<string>
             )
         }
 
-            cache.set(containerName, latestImageName)
+        cache.set(containerName, latestImageName)
 
         return latestImageName
     } else {
