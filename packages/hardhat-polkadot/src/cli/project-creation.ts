@@ -494,12 +494,12 @@ async function installDependencies(packageManager: string, args: string[]): Prom
                 return
             }
 
-            reject(false)
+            reject(new Error(`Process ${packageManager} exited with code ${status}`))
         })
 
-        childProcess.once("error", (_status) => {
+        childProcess.once("error", (err) => {
             childProcess.removeAllListeners("close")
-            reject(false)
+            reject(new Error(`Failed to spawn ${packageManager}: ${err.message}`))
         })
     })
 }

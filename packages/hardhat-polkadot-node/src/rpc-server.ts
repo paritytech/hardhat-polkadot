@@ -45,7 +45,7 @@ export function createRpcServer(opts: {
                 return Promise.all([
                     substrateNodeService.from_binary(opts.nodePath),
                     ethRpcService.from_binary(opts.adapterPath),
-                ]).then(() => {})
+                ]).then((): void => {})
             }
 
             if (opts.docker && !opts.isForking) {
@@ -54,14 +54,14 @@ export function createRpcServer(opts: {
                 return Promise.all([
                     substrateNodeService.from_docker(docker),
                     ethRpcService.from_docker(docker, substrateNodeService.port),
-                ]).then(() => {})
+                ]).then((): void => {})
             }
 
             if (!!opts.adapterPath && opts.isForking) {
                 return Promise.all([
                     chopsticksService.from_binary(""),
                     ethRpcService.from_binary(opts.adapterPath),
-                ]).then(() => {})
+                ]).then((): void => {})
             }
 
             if (opts.docker && opts.isForking) {

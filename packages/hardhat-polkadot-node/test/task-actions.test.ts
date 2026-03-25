@@ -64,7 +64,7 @@ function makeHre(overrides: Record<string, unknown> = {}) {
         globalOptions: { network: undefined },
         config: {
             networks: {
-                hardhat: { polkadot: true, ...overrides },
+                default: { polkadot: true, ...overrides },
             },
             paths: { artifacts: "/tmp/artifacts" },
         },
@@ -81,7 +81,7 @@ describe("node task action", () => {
 
     it("delegates to runSuper for non-polkadot networks", async () => {
         const hre = makeHre()
-        hre.config.networks.hardhat = {} as any
+        hre.config.networks.default = {} as any
         const runSuper = vi.fn().mockResolvedValue("super")
 
         const result = await nodeAction({}, hre as any, runSuper)
@@ -130,7 +130,7 @@ describe("test task action", () => {
 
     it("delegates to runSuper for non-polkadot networks", async () => {
         const hre = makeHre()
-        hre.config.networks.hardhat = {} as any
+        hre.config.networks.default = {} as any
         const runSuper = vi.fn().mockResolvedValue(0)
 
         await testAction({ noCompile: true }, hre as any, runSuper)

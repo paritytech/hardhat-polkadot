@@ -69,6 +69,25 @@ const configHookHandler: () => Promise<Partial<ConfigHooks>> = async () => ({
 
         return errors
     },
+
+    resolveUserConfig: async (userConfig, resolveConfigurationVariable, next) => {
+        const resolvedConfig = await next(userConfig, resolveConfigurationVariable)
+        const userNetworks = userConfig.networks ?? {}
+
+        for (const [name, network] of Object.entries(userNetworks)) {
+            if (!network || !("polkadot" in network) || !network.polkadot) continue
+            if (!resolvedConfig.networks?.[name]) continue
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const resolved = resolvedConfig.networks[name] as any
+            resolved.polkadot = network.polkadot
+            if ("nodeConfig" in network) resolved.nodeConfig = network.nodeConfig
+            if ("adapterConfig" in network) resolved.adapterConfig = network.adapterConfig
+            if ("docker" in network) resolved.docker = network.docker
+            if ("forking" in network) resolved.forking = network.forking
+        }
+
+        return resolvedConfig
+    },
 })
 
 export default configHookHandler

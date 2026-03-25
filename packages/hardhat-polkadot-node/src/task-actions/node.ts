@@ -1,13 +1,13 @@
 import type { TaskOverrideActionFunction } from "hardhat/types/tasks"
 
-const HARDHAT_NETWORK_NAME = "hardhat"
+import { DEFAULT_NETWORK_NAME } from "../constants.js"
 
 const nodeAction: TaskOverrideActionFunction = async (taskArguments, hre, runSuper) => {
-    const networkName = hre.globalOptions.network ?? HARDHAT_NETWORK_NAME
+    const networkName = hre.globalOptions.network ?? DEFAULT_NETWORK_NAME
     const networkConfig = hre.config.networks[networkName]
     const isPolkadot = networkConfig && "polkadot" in networkConfig && !!networkConfig.polkadot
 
-    if (!isPolkadot || networkName !== HARDHAT_NETWORK_NAME) {
+    if (!isPolkadot || networkName !== DEFAULT_NETWORK_NAME) {
         return runSuper(taskArguments)
     }
 

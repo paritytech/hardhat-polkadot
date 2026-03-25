@@ -1,6 +1,9 @@
 import chalk from "chalk"
+import debug from "debug"
 import Docker from "dockerode"
 import { ChildProcess } from "child_process"
+
+const log = debug("hardhat:polkadot:node:service")
 
 export abstract class Service {
     public process: ChildProcess | null = null
@@ -17,7 +20,9 @@ export abstract class Service {
                 console.info(
                     chalk.yellow(`Received ${signal} signal. The ${name} process has exited.`),
                 )
-            } else if (code !== 0) {
+            } else if (code === 0) {
+                log("The %s process exited cleanly", name)
+            } else {
                 console.info(chalk.red(`The ${name} process exited with code: ${code}`))
             }
         }

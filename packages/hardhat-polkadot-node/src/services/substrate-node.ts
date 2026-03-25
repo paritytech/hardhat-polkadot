@@ -3,7 +3,7 @@ import chalk from "chalk"
 import { runSimple } from "run-container"
 import Docker from "dockerode"
 
-import { NODE_START_PORT } from "../constants.js"
+import { NODE_START_PORT, RPC_ENDPOINT_PATH } from "../constants.js"
 import { waitForServiceToBeReady, getLatestImageName } from "../utils.js"
 import { Service } from "./service.js"
 
@@ -11,6 +11,7 @@ const SUBSTRATE_NODE_CONTAINER_NAME = "substrate"
 
 export class SubstrateNodeService extends Service {
     public port: number
+    private useAnvil: boolean
 
     constructor(
         commandArgs: string[] = [],
@@ -18,6 +19,7 @@ export class SubstrateNodeService extends Service {
         useAnvil: boolean = true,
     ) {
         super(commandArgs.slice(1), blockProcess)
+        this.useAnvil = useAnvil
 
         const portArg = commandArgs.find((arg) => arg.startsWith("--rpc-port="))
         this.port = portArg
@@ -49,7 +51,7 @@ export class SubstrateNodeService extends Service {
             this.process.on("exit", this._handleOnExit("substrate node"))
 
             if (!this.blockProcess) {
-                resolve()
+                this.process.once("spawn", () => resolve())
             }
         })
     }
@@ -61,7 +63,9 @@ export class SubstrateNodeService extends Service {
         await container
             .inspect()
             .then(() => container.remove({ force: true }))
-            .catch(() => {})
+            .catch((err: any) => {
+                if (err.statusCode !== 404) throw err
+            })
 
         this.container = await runSimple({
             name: SUBSTRATE_NODE_CONTAINER_NAME,
@@ -75,9 +79,12 @@ export class SubstrateNodeService extends Service {
         })
 
         // remove container when process exits
-        ;["exit", "SIGINT", "SIGUSR1", "SIGUSR2", "uncaughtException", "SIGTERM"].forEach((e) => {
-            process.on(e, async () => await this.container!.remove({ force: true }))
-        })
+        for (const sig of ["SIGINT", "SIGTERM"] as const) {
+            process.once(sig, () => {
+                console.info(chalk.yellow(`Received ${sig}, stopping substrate node container...`))
+                this.container?.stop({ t: 2 }).catch(() => {}).finally(() => process.exit(0))
+            })
+        }
 
         if (this.blockProcess) {
             // show docker logs in client console
@@ -108,9 +115,14 @@ export class SubstrateNodeService extends Service {
     }
 
     public async waitForNodeToBeReady(maxAttempts = 20): Promise<void> {
+        // anvil-polkadot bundles the substrate node and eth-rpc adapter into
+        // a single process that exposes only Ethereum JSON-RPC (eth_chainId).
+        // A standalone substrate node (revive-dev-node) exposes Substrate RPC
+        // (state_getRuntimeVersion) on its websocket port.
+        const method = this.useAnvil ? RPC_ENDPOINT_PATH : "state_getRuntimeVersion"
         const payload = {
             jsonrpc: "2.0",
-            method: "state_getRuntimeVersion",
+            method,
             params: [],
             id: 1,
         }

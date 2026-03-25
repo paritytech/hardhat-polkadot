@@ -15,11 +15,9 @@ import {
     NODE_START_PORT,
     ETH_RPC_ADAPTER_START_PORT,
     POLKADOT_TEST_NODE_NETWORK_NAME,
-    RPC_ENDPOINT_PATH,
     ETH_RPC_TO_SUBSTRATE_RPC,
+    DEFAULT_NETWORK_NAME,
 } from "./constants.js"
-
-const HARDHAT_NETWORK_NAME = "hardhat"
 
 export const PARITYPR_DOCKER_REGISTRY = "https://registry.hub.docker.com/v2/repositories/paritypr/"
 const DOCKER_SOCKET_DEFAULT_PATH = "/var/run/docker.sock"
@@ -34,7 +32,13 @@ export function constructCommandArgs(args?: CommandArguments): SplitCommands {
     const adapterCommands: string[] = []
 
     if (args?.nodeCommands?.useAnvil !== false && !args?.forking) {
+        // anvil-polkadot bundles the substrate node and eth-rpc adapter into
+        // a single process.  It uses --port (not --rpc-port) for the
+        // Ethereum JSON-RPC listener (default 8545).
         nodeCommands.push("", "--accounts", "20")
+        if (args?.adapterCommands?.adapterPort) {
+            nodeCommands.push("--port", `${args.adapterCommands.adapterPort}`)
+        }
         return {
             nodeCommands,
             adapterCommands,
@@ -169,6 +173,12 @@ export function getNetworkConfig(url: string) {
     }
 }
 
+/**
+ * Mutates `config` and `network` in-place to point at the local RPC server.
+ * In-place mutation is intentional: Hardhat's resolved config object is shared
+ * across the process, and downstream code (tests, plugins) reads from the same
+ * reference. Returning a new object would leave stale URLs in the shared config.
+ */
 export async function configureNetwork(
     config: HardhatConfig,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -176,34 +186,25 @@ export async function configureNetwork(
     port: number,
 ) {
     const url = `${BASE_URL}:${port}`
-    const payload = {
-        jsonrpc: "2.0",
-        method: RPC_ENDPOINT_PATH,
-        params: [],
-        id: 1,
-    }
-    let _chainId = 0
-    try {
-        const response = await axios.post(url, payload)
-
-        if (response.status === 200) {
-            _chainId = parseInt(response.data.result)
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (_e: any) {
-        // If it fails, it will just try again
-    }
 
     const networkName =
-        network.name === HARDHAT_NETWORK_NAME ? POLKADOT_TEST_NODE_NETWORK_NAME : network.name
+        network.name === DEFAULT_NETWORK_NAME ? POLKADOT_TEST_NODE_NETWORK_NAME : network.name
 
     const networkConfig = getNetworkConfig(url)
 
-    network.name = networkName
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    network.config = networkConfig as any
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    config.networks[networkName] = networkConfig as any
+    try {
+        network.name = networkName
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        network.config = networkConfig as any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        config.networks[networkName] = networkConfig as any
+    } catch {
+        // Config may be frozen in HH3's resolved config; if so, the caller
+        // must handle network configuration differently.
+        throw new PolkadotNodePluginError(
+            `Failed to configure network "${networkName}": config object may be frozen.`,
+        )
+    }
 }
 
 export async function startServer(
@@ -242,7 +243,7 @@ export async function startServer(
  * This function retrieves a list of the latest images available in the Docker registry
  * sortes them from newest to oldest, and returns the newest one, in order to be used by the DockerServer.
  */
-export async function getLatestImageName(containerName: string): Promise<string | undefined> {
+export async function getLatestImageName(containerName: string): Promise<string> {
     const cachedResult = cache.get(containerName)
     if (cachedResult) {
         return cachedResult
@@ -258,20 +259,21 @@ export async function getLatestImageName(containerName: string): Promise<string 
     if (imageResponse.status === 200) {
         const imageList = imageResponse.data
 
-        imageList.results
-            .sort(
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                (a: any, b: any) =>
-                    new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime(),
-            )
+        imageList.results.sort(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .map((tag: any) => tag.name)
+            (a: any, b: any) =>
+                new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime(),
+        )
 
-        const latestImageName = imageList.results[0].name
+        const latestImageName = imageList.results[0]?.name
 
-        if (latestImageName) {
-            cache.set(containerName, latestImageName)
+        if (!latestImageName) {
+            throw new PolkadotNodePluginError(
+                `No image tags found for container "${containerName}"`,
+            )
         }
+
+        cache.set(containerName, latestImageName)
 
         return latestImageName
     } else {

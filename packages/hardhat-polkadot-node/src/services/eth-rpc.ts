@@ -40,7 +40,7 @@ export class EthRpcService extends Service {
             this.process.on("exit", this._handleOnExit("Eth RPC Adapter"))
 
             if (!this.blockProcess) {
-                resolve()
+                this.process.once("spawn", () => resolve())
             }
         })
     }
@@ -52,7 +52,9 @@ export class EthRpcService extends Service {
         await container
             .inspect()
             .then(() => container.remove({ force: true }))
-            .catch(() => {})
+            .catch((err: any) => {
+                if (err.statusCode !== 404) throw err
+            })
 
         this.container = await run({
             Image: `paritypr/eth-rpc:${imageTag}`,
@@ -84,13 +86,12 @@ export class EthRpcService extends Service {
         })
 
         // remove container when process exits
-        ;["exit", "SIGINT", "SIGUSR1", "SIGUSR2", "uncaughtException", "SIGTERM"].forEach((e) => {
-            process.on(
-                e,
-                async () =>
-                    await this.container!.remove({ force: true }).then(() => process.exit(0)),
-            )
-        })
+        for (const sig of ["SIGINT", "SIGTERM"] as const) {
+            process.once(sig, () => {
+                console.info(chalk.yellow(`Received ${sig}, stopping Eth RPC container...`))
+                this.container?.stop({ t: 2 }).catch(() => {}).finally(() => process.exit(0))
+            })
+        }
 
         if (this.blockProcess) {
             console.info(chalk.green(`Starting the Eth RPC Adapter at 127.0.0.1:${this.port}`))

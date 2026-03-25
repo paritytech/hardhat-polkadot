@@ -15,12 +15,12 @@ export class ChopsticksService extends Service {
         this.port = portArg ? parseInt(portArg.split("=")[1], 10) : NODE_START_PORT
     }
 
-    public async from_binary(pathToBinary: string): Promise<void> {
+    public async from_binary(_pathToBinary: string): Promise<void> {
         return new Promise((resolve, reject) => {
             if (this.blockProcess) {
                 console.info(chalk.green(`Starting server at 127.0.0.1:${this.port}`))
                 console.info(
-                    chalk.green(`Running command: ${pathToBinary} ${this.commandArgs.join(" ")}`),
+                    chalk.green(`Running command: ${this.commandArgs.join(" ")}`),
                 )
             }
 
@@ -37,7 +37,7 @@ export class ChopsticksService extends Service {
             this.process.on("exit", this._handleOnExit("chopsticks server"))
 
             if (!this.blockProcess) {
-                resolve()
+                this.process.once("spawn", () => resolve())
             }
         })
     }

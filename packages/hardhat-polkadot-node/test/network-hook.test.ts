@@ -37,12 +37,11 @@ vi.mock("../src/utils.js", async (importOriginal) => {
             },
             port: 8545,
         }),
-        configureNetwork: vi.fn().mockResolvedValue(undefined),
     }
 })
 
 import networkHookHandler from "../src/hook-handlers/network.js"
-import { startServer, configureNetwork } from "../src/utils.js"
+import { startServer } from "../src/utils.js"
 
 describe("network hook handler", () => {
     beforeEach(() => {
@@ -71,10 +70,10 @@ describe("network hook handler", () => {
             const conn = makeConnection()
             const next = vi.fn().mockResolvedValue(conn)
 
-            await handler.newConnection!(ctx as any, next)
+            const result = await handler.newConnection!(ctx as any, next)
 
             expect(startServer).toHaveBeenCalled()
-            expect(configureNetwork).toHaveBeenCalled()
+            expect((result as any).localPolkadotUrl).toBe("http://127.0.0.1:8545")
         })
 
         it("skips non-polkadot networks", async () => {
