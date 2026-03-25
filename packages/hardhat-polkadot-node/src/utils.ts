@@ -249,7 +249,7 @@ export async function startServer(
  * This function retrieves a list of the latest images available in the Docker registry
  * sortes them from newest to oldest, and returns the newest one, in order to be used by the DockerServer.
  */
-export async function getLatestImageName(containerName: string): Promise<string | undefined> {
+export async function getLatestImageName(containerName: string): Promise<string> {
     const cachedResult = cache.get(containerName)
     if (cachedResult) {
         return cachedResult
@@ -265,20 +265,21 @@ export async function getLatestImageName(containerName: string): Promise<string 
     if (imageResponse.status === 200) {
         const imageList = imageResponse.data
 
-        imageList.results
-            .sort(
+        imageList.results.sort(
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (a: any, b: any) =>
                     new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime(),
             )
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .map((tag: any) => tag.name)
 
-        const latestImageName = imageList.results[0].name
+        const latestImageName = imageList.results[0]?.name
 
-        if (latestImageName) {
-            cache.set(containerName, latestImageName)
+        if (!latestImageName) {
+            throw new PolkadotNodePluginError(
+                `No image tags found for container "${containerName}"`,
+            )
         }
+
+            cache.set(containerName, latestImageName)
 
         return latestImageName
     } else {
