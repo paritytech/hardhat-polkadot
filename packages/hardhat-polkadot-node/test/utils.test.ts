@@ -143,7 +143,7 @@ describe("constructCommandArgs", () => {
                 consensus: { seal: "Manual", period: "invalid" },
             },
         })
-        expect(result.nodeCommands).toContain("--consensus=manual-seal")
+        expect(result.nodeCommands).toContain("--consensus=manual-seal-50")
     })
 
     it("adds dev and pruning flags when dev mode enabled", () => {

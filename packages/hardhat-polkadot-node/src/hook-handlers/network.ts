@@ -1,6 +1,9 @@
 import type { HookContext } from "hardhat/types/hooks"
 import type { NetworkConnection, ChainType } from "hardhat/types/network"
 import type { EdrNetworkUserConfig } from "hardhat/types/config"
+import type { JsonRpcRequest, JsonRpcResponse } from "hardhat/types/providers"
+
+import axios from "axios"
 
 import { startServer } from "../utils.js"
 import { BASE_URL } from "../constants.js"
@@ -22,38 +25,70 @@ interface NetworkHooks {
             nextNetworkConnection: NetworkConnection<ChainTypeT>,
         ) => Promise<void>,
     ) => Promise<void>
+    onRequest: <ChainTypeT extends ChainType | string>(
+        context: HookContext,
+        networkConnection: NetworkConnection<ChainTypeT>,
+        jsonRpcRequest: JsonRpcRequest,
+        next: (
+            nextContext: HookContext,
+            nextNetworkConnection: NetworkConnection<ChainTypeT>,
+            nextJsonRpcRequest: JsonRpcRequest,
+        ) => Promise<JsonRpcResponse>,
+    ) => Promise<JsonRpcResponse>
 }
 
-// Track active servers per connection so we can clean up on close
-const activeServers = new Map<number, RpcServer>()
+// Per-network server state
+interface PolkadotServer {
+    server: RpcServer
+    url: string
+    refCount: number
+}
 
-const networkHookHandler: () => Promise<Partial<NetworkHooks>> = async () => ({
-    newConnection: async (context, next) => {
-        const connection = await next(context)
+const polkadotServers = new Map<string, PolkadotServer>()
+const pendingStarts = new Map<string, Promise<PolkadotServer>>()
+// Map connection IDs to their network name for cleanup
+const connectionNetworks = new Map<number, string>()
 
-        const networkConfig = connection.networkConfig
-        if (!("polkadot" in networkConfig) || !networkConfig.polkadot) {
-            return connection
-        }
+function isPolkadotNetwork(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    network: Record<string, any> | undefined,
+): boolean {
+    if (!network || !("polkadot" in network) || !network.polkadot) return false
+    const polkadot = network.polkadot
+    if (typeof polkadot !== "boolean" && polkadot?.target === "evm") return false
+    return true
+}
 
-        // Skip if targeting EVM
-        const polkadot = networkConfig.polkadot
-        if (typeof polkadot !== "boolean" && polkadot?.target === "evm") {
-            return connection
-        }
+async function ensureServerStarted(
+    networkName: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    userNetworkConfig: Record<string, any>,
+): Promise<PolkadotServer> {
+    // Already running
+    const existing = polkadotServers.get(networkName)
+    if (existing) {
+        existing.refCount++
+        return existing
+    }
 
-        // Get the user config for this network to read nodeConfig/adapterConfig
-        const networkName = connection.networkName
-        const userNetworkConfig = context.userConfig.networks?.[networkName]
-        if (!userNetworkConfig) return connection
+    // Another connection is already starting this server — wait for it
+    const pending = pendingStarts.get(networkName)
+    if (pending) {
+        const result = await pending
+        result.refCount++
+        return result
+    }
 
-        // Cast to EdrNetworkUserConfig to access our augmented fields
+    // Start the server
+    const startPromise = (async (): Promise<PolkadotServer> => {
         const edrConfig = userNetworkConfig as EdrNetworkUserConfig
         const nodeConfig = edrConfig.nodeConfig
         const adapterConfig = edrConfig.adapterConfig
         const docker = edrConfig.docker
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const forking = (edrConfig as any).forking as { enabled?: boolean; url?: string } | undefined
+        const forking = (edrConfig as any).forking as
+            | { enabled?: boolean; url?: string }
+            | undefined
 
         const { commandArgs, server, port } = await startServer(
             {
@@ -69,31 +104,82 @@ const networkHookHandler: () => Promise<Partial<NetworkHooks>> = async () => ({
         await server.listen(commandArgs.nodeCommands, commandArgs.adapterCommands, false)
         await server.services().substrateNodeService?.waitForNodeToBeReady()
 
-        // Track the server for cleanup
-        activeServers.set(connection.id, server)
+        const polkadotServer: PolkadotServer = {
+            server,
+            url: `${BASE_URL}:${port}`,
+            refCount: 1,
+        }
+        polkadotServers.set(networkName, polkadotServer)
+        return polkadotServer
+    })()
 
-        // Store the local URL on the resolved config so downstream code (e.g.
-        // factory-deps) can discover it.  The connection's own provider was
-        // already created by `next()`, so this does NOT redirect the provider;
-        // the task-actions path (test.ts) remains the primary integration
-        // point where the URL is wired up before the provider is created.
-        // TODO: To fully integrate with HH3's connection model, polkadot
-        // networks should resolve as type:"http" pointing at the local server
-        // URL, so the provider is created with the correct endpoint. This
-        // requires starting the server in resolveUserConfig or using the
-        // onRequest hook to proxy requests.
-        const localUrl = `${BASE_URL}:${port}`
+    pendingStarts.set(networkName, startPromise)
+    try {
+        return await startPromise
+    } finally {
+        pendingStarts.delete(networkName)
+    }
+}
+
+const networkHookHandler: () => Promise<Partial<NetworkHooks>> = async () => ({
+    newConnection: async (context, next) => {
+        // Identify which polkadot networks need servers started.
+        // We do this before next() so the server is ready, but the provider
+        // is redirected via the onRequest hook (not by mutating config).
+        const userNetworks = context.userConfig.networks ?? {}
+        for (const [name, network] of Object.entries(userNetworks)) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            if (!isPolkadotNetwork(network as any)) continue
+            if (polkadotServers.has(name) || pendingStarts.has(name)) continue
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await ensureServerStarted(name, network as any)
+            // Decrement refCount since ensureServerStarted incremented it,
+            // but this pre-start isn't tied to a connection yet
+            polkadotServers.get(name)!.refCount--
+        }
+
+        const connection = await next(context)
+
+        const networkName = connection.networkName
+        const userNetworkConfig = userNetworks[networkName]
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(connection as any).localPolkadotUrl = localUrl
+        if (userNetworkConfig && isPolkadotNetwork(userNetworkConfig as any)) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const ps = await ensureServerStarted(networkName, userNetworkConfig as any)
+            connectionNetworks.set(connection.id, networkName)
+            // Store URL on connection for downstream code (e.g. factory-deps)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ;(connection as any).localPolkadotUrl = ps.url
+        }
 
         return connection
     },
 
+    onRequest: async (context, networkConnection, jsonRpcRequest, next) => {
+        const networkName = networkConnection.networkName
+        const ps = polkadotServers.get(networkName)
+        if (!ps) {
+            // Not a polkadot network — pass through to EDR/HTTP
+            return next(context, networkConnection, jsonRpcRequest)
+        }
+
+        // Proxy the JSON-RPC request to the local polkadot server
+        const response = await axios.post(ps.url, jsonRpcRequest)
+        return response.data as JsonRpcResponse
+    },
+
     closeConnection: async (context, networkConnection, next) => {
-        const server = activeServers.get(networkConnection.id)
-        if (server) {
-            await server.stop()
-            activeServers.delete(networkConnection.id)
+        const networkName = connectionNetworks.get(networkConnection.id)
+        if (networkName) {
+            connectionNetworks.delete(networkConnection.id)
+            const ps = polkadotServers.get(networkName)
+            if (ps) {
+                ps.refCount--
+                if (ps.refCount <= 0) {
+                    await ps.server.stop()
+                    polkadotServers.delete(networkName)
+                }
+            }
         }
 
         return next(context, networkConnection)

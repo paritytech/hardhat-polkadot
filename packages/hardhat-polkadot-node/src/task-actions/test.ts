@@ -1,4 +1,3 @@
-// TODO: Refactor to delegate server lifecycle to network hooks instead of managing it here
 import type { TaskOverrideActionFunction } from "hardhat/types/tasks"
 import type { EdrNetworkUserConfig } from "hardhat/types/config"
 
