@@ -47,6 +47,18 @@ export class EthRpcService extends Service {
 
     public async from_docker(docker: Docker, nodePort: number): Promise<void> {
         const imageTag = await getLatestImageName(ADAPTER_CONTAINER_NAME)
+        const imageName = `paritypr/eth-rpc:${imageTag}`
+
+        // Always pull the latest image to avoid running a stale cached version
+        await new Promise<void>((resolve, reject) => {
+            docker.pull(imageName, (err: Error | null, stream: NodeJS.ReadableStream) => {
+                if (err) return reject(err)
+                docker.modem.followProgress(stream, (err: Error | null) => {
+                    if (err) return reject(err)
+                    resolve()
+                })
+            })
+        })
 
         const container = docker.getContainer(ADAPTER_CONTAINER_NAME)
         await container
@@ -57,7 +69,7 @@ export class EthRpcService extends Service {
             })
 
         this.container = await run({
-            Image: `paritypr/eth-rpc:${imageTag}`,
+            Image: imageName,
             name: ADAPTER_CONTAINER_NAME,
             HostConfig: {
                 NetworkMode: process.env.CI ? "host" : undefined,
