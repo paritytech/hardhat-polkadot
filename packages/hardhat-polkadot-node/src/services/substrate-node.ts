@@ -58,6 +58,18 @@ export class SubstrateNodeService extends Service {
 
     public async from_docker(docker: Docker): Promise<void> {
         const imageTag = await getLatestImageName(SUBSTRATE_NODE_CONTAINER_NAME)
+        const imageName = `paritypr/substrate:${imageTag}`
+
+        // Always pull the latest image to avoid running a stale cached version
+        await new Promise<void>((resolve, reject) => {
+            docker.pull(imageName, (err: Error | null, stream: NodeJS.ReadableStream) => {
+                if (err) return reject(err)
+                docker.modem.followProgress(stream, (err: Error | null) => {
+                    if (err) return reject(err)
+                    resolve()
+                })
+            })
+        })
 
         const container = docker.getContainer(SUBSTRATE_NODE_CONTAINER_NAME)
         await container
@@ -69,7 +81,7 @@ export class SubstrateNodeService extends Service {
 
         this.container = await runSimple({
             name: SUBSTRATE_NODE_CONTAINER_NAME,
-            image: `paritypr/substrate:${imageTag}`,
+            image: imageName,
             autoRemove: true,
             ports: {
                 [`${this.port}/tcp`]: `${this.port}`,
