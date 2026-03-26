@@ -2,8 +2,8 @@ import type { EdrNetworkUserConfig } from "hardhat/types/config"
 import { ChopsticksService, EthRpcService, SubstrateNodeService } from "./services/index.js"
 
 /**
- * Forking config — compatible with both HH2 and HH3.
- * In HH3, EdrNetworkForkingUserConfig has `url: SensitiveString`
+ * Forking config for internal use.
+ * HH3's EdrNetworkForkingUserConfig has `url: SensitiveString`
  * (string | ConfigurationVariable). We keep `url` as `string` here
  * and cast at the boundary where HH3's forking config is assigned.
  */

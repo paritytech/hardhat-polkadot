@@ -85,6 +85,7 @@ export function constructCommandArgs(args?: CommandArguments): SplitCommands {
         }
 
         if (args.nodeCommands?.nodeBinaryPath && args.nodeCommands?.consensus) {
+            // revive-dev-node accepts: "instant-seal", "manual-seal-{N}", "none"
             if (args.nodeCommands.consensus.seal === "Manual") {
                 const period: number = parseInt(`${args.nodeCommands.consensus.period}`, 10)
                 const manualSealTag: string = Number.isNaN(period)
@@ -92,10 +93,10 @@ export function constructCommandArgs(args?: CommandArguments): SplitCommands {
                     : "manual-seal-" + (period || 50)
 
                 nodeCommands.push(`--consensus=${manualSealTag}`)
+            } else if (args.nodeCommands.consensus.seal === "Instant") {
+                nodeCommands.push(`--consensus=instant-seal`)
             } else {
-                nodeCommands.push(
-                    `--consensus=${(args.nodeCommands.consensus.seal || "None").toLowerCase()}`,
-                )
+                nodeCommands.push(`--consensus=none`)
             }
         }
 
