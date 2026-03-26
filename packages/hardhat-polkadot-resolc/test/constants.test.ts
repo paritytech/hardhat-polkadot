@@ -33,8 +33,8 @@ describe("defaultNpmResolcConfig", () => {
         expect(defaultNpmResolcConfig.compilerSource).toBe("npm")
     })
 
-    it("has a version", () => {
-        expect(defaultNpmResolcConfig.version).toMatch(/^\d+\.\d+\.\d+$/)
+    it("has a version defaulting to latest", () => {
+        expect(defaultNpmResolcConfig.version).toBe("latest")
     })
 
     it("has empty settings", () => {
@@ -47,8 +47,8 @@ describe("defaultBinaryResolcConfig", () => {
         expect(defaultBinaryResolcConfig.compilerSource).toBe("binary")
     })
 
-    it("has a version", () => {
-        expect(defaultBinaryResolcConfig.version).toMatch(/^\d+\.\d+\.\d+$/)
+    it("has a version defaulting to latest", () => {
+        expect(defaultBinaryResolcConfig.version).toBe("latest")
     })
 
     it("enables optimizer by default", () => {

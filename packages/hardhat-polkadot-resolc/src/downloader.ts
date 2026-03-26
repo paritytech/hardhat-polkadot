@@ -199,6 +199,27 @@ export class ResolcCompilerDownloader implements IResolcCompilerDownloader {
         return age > this._compilerListCachePeriodMs
     }
 
+    public async getLatestVersion(): Promise<string> {
+        if (await this._shouldDownloadCompilerList()) {
+            await this._downloadCompilerList()
+        }
+
+        const listPath = this._getCompilerListPath()
+        if (!(await fsExtra.pathExists(listPath))) {
+            throw new ResolcPluginError("Could not fetch resolc compiler list to determine latest version")
+        }
+
+        const list = await this._readCompilerList(listPath)
+        // The builds list is populated from non-prerelease GitHub releases
+        // that have the matching platform binary. Pick the highest version.
+        if (list.builds.length === 0) {
+            throw new ResolcPluginError("No resolc compiler builds found in the release list")
+        }
+
+        // Builds are in insertion order from the releases API (newest first)
+        return list.builds[0].version
+    }
+
     private async _getCompilerBuild(version: string): Promise<CompilerBuild | undefined> {
         const listPath = this._getCompilerListPath()
         if (!(await fsExtra.pathExists(listPath))) {

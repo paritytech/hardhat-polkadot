@@ -7,14 +7,16 @@ export const DEFAULT_TIMEOUT_MILISECONDS = 30000
 export const COMPILER_REPOSITORY_URL = "https://github.com/paritytech/revive/releases/download/"
 export const COMPILER_REPOSITORY_API_URL = "https://api.github.com/repos/paritytech/revive/releases"
 
+export const RESOLC_VERSION_LATEST = "latest"
+
 export const defaultNpmResolcConfig: ResolcConfig = {
-    version: "0.5.0",
+    version: RESOLC_VERSION_LATEST,
     compilerSource: "npm",
     settings: {},
 }
 
 export const defaultBinaryResolcConfig: ResolcConfig = {
-    version: "0.5.0",
+    version: RESOLC_VERSION_LATEST,
     compilerSource: "binary",
     settings: {
         optimizer: {
