@@ -6,7 +6,7 @@ export default defineConfig({
     solidity: "0.8.28",
     networks: {
         // npx hardhat node
-        hardhat: {
+        default: {
             polkadot: {
                 target: "evm",
             },
