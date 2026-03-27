@@ -141,11 +141,6 @@ describe("createRpcServer", () => {
     })
 
     describe("listen - throws on invalid config", () => {
-        it("throws when no paths or docker provided", () => {
-            const server = createRpcServer({ useAnvil: false })
-            expect(() => server.listen()).toThrow("Wrong hardhat network configuration")
-        })
-
         it("throws when only nodePath provided without adapterPath", () => {
             const server = createRpcServer({
                 useAnvil: false,

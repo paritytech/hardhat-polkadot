@@ -6,7 +6,8 @@ import { RpcServer } from "./types.js"
 import { EthRpcService } from "./services/eth-rpc.js"
 import { SubstrateNodeService } from "./services/substrate-node.js"
 import { ChopsticksService } from "./services/chopsticks.js"
-import { getDockerSocketPath } from "./utils.js"
+import { getDockerSocketPath, getAvailablePort } from "./utils.js"
+import { NODE_START_PORT, ETH_RPC_ADAPTER_START_PORT, MAX_PORT_ATTEMPTS } from "./constants.js"
 
 export function createRpcServer(opts: {
     useAnvil: boolean
@@ -37,6 +38,7 @@ export function createRpcServer(opts: {
             ethRpcService = new EthRpcService(adapterArgs, blockProcess)
             chopsticksService = new ChopsticksService(nodeArgs, blockProcess)
 
+            // Binary paths provided — use local binaries
             if (!!opts.nodePath && !!opts.useAnvil) {
                 return substrateNodeService.from_binary(opts.nodePath)
             }
@@ -48,15 +50,6 @@ export function createRpcServer(opts: {
                 ]).then((): void => {})
             }
 
-            if (opts.docker && !opts.isForking) {
-                const docker = new Docker({ socketPath: getDockerSocketPath(opts.docker) })
-
-                return Promise.all([
-                    substrateNodeService.from_docker(docker),
-                    ethRpcService.from_docker(docker, substrateNodeService.port),
-                ]).then((): void => {})
-            }
-
             if (!!opts.adapterPath && opts.isForking) {
                 return Promise.all([
                     chopsticksService.from_binary(""),
@@ -64,12 +57,33 @@ export function createRpcServer(opts: {
                 ]).then((): void => {})
             }
 
-            if (opts.docker && opts.isForking) {
-                const docker = new Docker({ socketPath: getDockerSocketPath(opts.docker) })
+            // Docker — explicit or fallback when no binary paths given
+            const useDocker = opts.docker || (!opts.nodePath && !opts.adapterPath)
+            if (useDocker && !opts.isForking) {
+                const docker = new Docker({
+                    socketPath: getDockerSocketPath(opts.docker || true),
+                })
 
-                return chopsticksService
-                    .from_binary("")
-                    .then(() => ethRpcService.from_docker(docker, chopsticksService.port))
+                return (async () => {
+                    substrateNodeService.port = await getAvailablePort(substrateNodeService.port || NODE_START_PORT, MAX_PORT_ATTEMPTS)
+                    ethRpcService.port = await getAvailablePort(ethRpcService.port || ETH_RPC_ADAPTER_START_PORT, MAX_PORT_ATTEMPTS)
+                    await Promise.all([
+                        substrateNodeService.from_docker(docker),
+                        ethRpcService.from_docker(docker, substrateNodeService.port),
+                    ])
+                })()
+            }
+
+            if (useDocker && opts.isForking) {
+                const docker = new Docker({
+                    socketPath: getDockerSocketPath(opts.docker || true),
+                })
+
+                return (async () => {
+                    ethRpcService.port = await getAvailablePort(ethRpcService.port || ETH_RPC_ADAPTER_START_PORT, MAX_PORT_ATTEMPTS)
+                    await chopsticksService.from_binary("")
+                    await ethRpcService.from_docker(docker, chopsticksService.port)
+                })()
             }
 
             throw new PolkadotNodePluginError(
