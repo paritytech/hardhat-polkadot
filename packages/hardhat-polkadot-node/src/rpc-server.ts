@@ -2,7 +2,6 @@ import { HardhatNetworkUserConfig } from "hardhat/types/config"
 import Docker from "dockerode"
 
 import { PolkadotNodePluginError } from "./errors"
-import { ANVIL_POLKADOT_DEFAULT_BINARY } from "./constants"
 import { RpcServer } from "./types"
 import { EthRpcService } from "./services/eth-rpc"
 import { SubstrateNodeService } from "./services/substrate-node"
