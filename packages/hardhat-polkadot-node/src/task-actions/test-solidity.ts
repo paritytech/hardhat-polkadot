@@ -47,20 +47,31 @@ async function rpcCall(url: string, method: string, params: unknown[]): Promise<
     return response.data.result
 }
 
-async function waitForReceipt(
+async function sendTransaction(
     url: string,
-    txHash: string,
-    maxAttempts = 30,
+    params: Record<string, unknown>,
 ): Promise<Record<string, unknown>> {
-    for (let i = 0; i < maxAttempts; i++) {
-        const receipt = (await rpcCall(url, "eth_getTransactionReceipt", [txHash])) as Record<
+    // Use eth_sendTransactionSync which waits for the block to be mined
+    // and returns the receipt directly (anvil-polkadot specific)
+    try {
+        const receipt = (await rpcCall(url, "eth_sendTransactionSync", [params])) as Record<
             string,
             unknown
-        > | null
-        if (receipt !== null) return receipt
-        await new Promise((r) => setTimeout(r, 500))
+        >
+        return receipt
+    } catch {
+        // Fallback to async send + poll for non-anvil nodes
+        const txHash = (await rpcCall(url, "eth_sendTransaction", [params])) as string
+        for (let i = 0; i < 30; i++) {
+            const receipt = (await rpcCall(url, "eth_getTransactionReceipt", [txHash])) as Record<
+                string,
+                unknown
+            > | null
+            if (receipt !== null) return receipt
+            await new Promise((r) => setTimeout(r, 100))
+        }
+        throw new Error(`Transaction ${txHash} not mined after 30 attempts`)
     }
-    throw new Error(`Transaction ${txHash} not mined after ${maxAttempts} attempts`)
 }
 
 async function getFunctionSelector(abi: AbiEntry[], funcName: string): Promise<string | null> {
@@ -236,6 +247,8 @@ const testSolidityAction: TaskOverrideActionFunction = async (taskArguments, hre
             throw new PolkadotNodePluginError("No accounts available on the node")
         }
 
+        const testStartTime = Date.now()
+
         console.log()
         console.log("Running Solidity tests against polkadot node")
         console.log()
@@ -265,12 +278,11 @@ const testSolidityAction: TaskOverrideActionFunction = async (taskArguments, hre
                 // Deploy a fresh instance
                 let contractAddress: string
                 try {
-                    const txHash = (await rpcCall(localUrl, "eth_sendTransaction", [
-                        { from: sender, data: artifact.bytecode, value: "0x0" },
-                    ])) as string
-                    const receipt = await waitForReceipt(localUrl, txHash)
+                    const receipt = await sendTransaction(localUrl, {
+                        from: sender, data: artifact.bytecode, value: "0x0",
+                    })
                     if (!receipt || receipt.status !== "0x1" || !receipt.contractAddress) {
-                        throw new Error(`deployment reverted (status=${receipt?.status}, logs=${JSON.stringify(receipt)})`)
+                        throw new Error(`deployment reverted (status=${receipt?.status})`)
                     }
                     contractAddress = receipt.contractAddress as string
                 } catch (err) {
@@ -284,10 +296,9 @@ const testSolidityAction: TaskOverrideActionFunction = async (taskArguments, hre
                     const sel = await getFunctionSelector(abi, "setUp")
                     if (sel) {
                         try {
-                            const txHash = (await rpcCall(localUrl, "eth_sendTransaction", [
-                                { from: sender, to: contractAddress, data: sel, value: "0x0" },
-                            ])) as string
-                            const receipt = await waitForReceipt(localUrl, txHash)
+                            const receipt = await sendTransaction(localUrl, {
+                                from: sender, to: contractAddress, data: sel, value: "0x0",
+                            })
                             if (receipt.status !== "0x1") throw new Error("reverted")
                         } catch (err) {
                             results.push({ contract: label, test: testName, passed: false, error: `setUp() failed: ${err}` })
@@ -306,10 +317,9 @@ const testSolidityAction: TaskOverrideActionFunction = async (taskArguments, hre
                 }
 
                 try {
-                    const txHash = (await rpcCall(localUrl, "eth_sendTransaction", [
-                        { from: sender, to: contractAddress, data: sel, value: "0x0" },
-                    ])) as string
-                    const receipt = await waitForReceipt(localUrl, txHash)
+                    const receipt = await sendTransaction(localUrl, {
+                        from: sender, to: contractAddress, data: sel, value: "0x0",
+                    })
 
                     if (receipt.status === "0x1") {
                         results.push({ contract: label, test: testName, passed: true })
@@ -342,10 +352,11 @@ const testSolidityAction: TaskOverrideActionFunction = async (taskArguments, hre
             console.log()
         }
 
+        const elapsed = ((Date.now() - testStartTime) / 1000).toFixed(1)
         const parts = []
         if (passed > 0) parts.push(chalk.green(`${passed} passing`))
         if (failed > 0) parts.push(chalk.red(`${failed} failing`))
-        console.log(`${parts.join(" ")} (${results.length} solidity)`)
+        console.log(`${parts.join(" ")} (${results.length} solidity, ${elapsed}s)`)
 
         if (failed > 0) {
             process.exitCode = 1
