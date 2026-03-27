@@ -13,7 +13,7 @@ import {
 const MODULE = "@parity/hardhat-polkadot"
 const PATCH = {
     networks: {
-        hardhat: {
+        default: {
             polkadot: true,
             nodeConfig: {
                 nodeBinaryPath: "./bin/anvil-polkadot",

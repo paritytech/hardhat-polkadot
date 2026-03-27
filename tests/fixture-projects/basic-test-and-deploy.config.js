@@ -5,7 +5,7 @@ export default defineConfig({
     plugins: [polkadot],
     solidity: "0.8.28",
     networks: {
-        hardhat: {
+        default: {
             polkadot: true,
             docker: true,
         },
