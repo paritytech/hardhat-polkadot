@@ -9,6 +9,7 @@ import { getCacheDir } from "@nomicfoundation/hardhat-utils/global-dir"
 import { compile } from "../compile/index.js"
 import { ResolcCompilerDownloader } from "../downloader.js"
 import { ResolcPluginError } from "../errors.js"
+import { RESOLC_VERSION_LATEST } from "../constants.js"
 import { getVersionComponents, pluralize } from "../utils.js"
 import type { CompilerPlatform, ResolcBuild, ResolcConfig } from "../types.js"
 
@@ -19,7 +20,18 @@ const logDebug = debug("hardhat:core:tasks:compile")
  * Falls back to WASM if the native binary doesn't work.
  */
 async function getResolcBuild(resolcConfig: ResolcConfig): Promise<ResolcBuild> {
-    const resolcVersion = resolcConfig.version
+    let resolcVersion = resolcConfig.version
+
+    // Resolve "latest" to an actual version number
+    if (resolcVersion === RESOLC_VERSION_LATEST) {
+        const nativePlatform = ResolcCompilerDownloader.getCompilerPlatform()
+        const compilersCache = await getCacheDir()
+        const downloader = ResolcCompilerDownloader.getConcurrencySafeDownloader(
+            nativePlatform,
+            compilersCache,
+        )
+        resolcVersion = await downloader.getLatestVersion()
+    }
     const compilersCache = await getCacheDir()
 
     const downloadAndGet = async (
@@ -131,10 +143,10 @@ interface SolidityHooks {
 }
 
 const solidityHookHandler: () => Promise<Partial<SolidityHooks>> = async () => ({
-    invokeSolc: async (context, _compiler, solcInput, solcConfig, next) => {
+    invokeSolc: async (context, compiler, solcInput, solcConfig, next) => {
         const resolcConfig: ResolcConfig | undefined = context.config.resolc
         if (!resolcConfig) {
-            return next(context, _compiler, solcInput, solcConfig)
+            return next(context, compiler, solcInput, solcConfig)
         }
 
         // Validate solidity version
@@ -156,13 +168,25 @@ const solidityHookHandler: () => Promise<Partial<SolidityHooks>> = async () => (
             ...resolcConfig,
             settings: {
                 resolcPath: resolcBuild.resolcPath,
-                solcPath: solcConfig.path,
+                solcPath: compiler.compilerPath,
                 ...resolcConfig.settings,
             },
         }
 
         const compOut = await compile(config, solcInput)
         const output = normalizeCompilerOutput(compOut)
+
+        // Embed resolc metadata in the output so it appears in build-info
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ;(output as any).resolc = {
+            version: resolcBuild.version,
+            longVersion: resolcBuild.longVersion,
+            isWasm: resolcBuild.isJs,
+            resolcPath: resolcBuild.resolcPath,
+            solcVersion: solcConfig.version,
+            solcPath: compiler.compilerPath,
+            optimizer: resolcConfig.settings?.optimizer ?? null,
+        }
 
         if (count > 0) {
             console.info(
