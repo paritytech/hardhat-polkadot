@@ -11,7 +11,10 @@ const nodeAction: TaskOverrideActionFunction = async (taskArguments, hre, runSup
         return runSuper(taskArguments)
     }
 
-    return hre.tasks.getTask("node-polkadot").run(taskArguments)
+    return hre.tasks.getTask("node-polkadot").run({
+        hostname: taskArguments.hostname,
+        port: taskArguments.port,
+    })
 }
 
 export default nodeAction

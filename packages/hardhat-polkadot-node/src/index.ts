@@ -1,4 +1,5 @@
 import type { HardhatPlugin } from "hardhat/types/plugins"
+import { ArgumentType } from "hardhat/types/arguments"
 import { overrideTask, task } from "hardhat/config"
 
 import "./type-extensions.js"
@@ -30,6 +31,18 @@ const hardhatPolkadotNodePlugin: HardhatPlugin = {
             .build(),
 
         task("node-polkadot", "Start a Polkadot JSON-RPC server")
+            .addOption({
+                name: "hostname",
+                description: "The host to bind to for new connections",
+                type: ArgumentType.STRING_WITHOUT_DEFAULT,
+                defaultValue: undefined,
+            })
+            .addOption({
+                name: "port",
+                description: "The port on which to listen for new connections",
+                type: ArgumentType.INT,
+                defaultValue: 8545,
+            })
             .setAction(async () => import("./task-actions/node-polkadot.js"))
             .build(),
     ],

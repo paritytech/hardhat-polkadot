@@ -1,6 +1,6 @@
 import { Wallet, JsonRpcProvider } from "ethers"
 import fs from "fs"
-import { glob } from "fast-glob"
+import fg from "fast-glob"
 import chalk from "chalk"
 import type {
     EdrNetworkConfig,
@@ -35,7 +35,7 @@ export async function handleFactoryDependencies(
     useAnvil?: boolean,
 ) {
     // get last build info file
-    const files = await glob(`${pathToArtifacts}/build-info/*.json`)
+    const files = await fg.glob(`${pathToArtifacts}/build-info/*.json`)
     if (files.length === 0) return
     files.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs)
     const lastBuildInfo = JSON.parse(fs.readFileSync(files[0], "utf8"))
