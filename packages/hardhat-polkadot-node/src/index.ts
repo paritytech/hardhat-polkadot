@@ -16,10 +16,15 @@ const hardhatPolkadotNodePlugin: HardhatPlugin = {
         config: () => import("./hook-handlers/config.js"),
         hre: () => import("./hook-handlers/hre.js"),
         network: () => import("./hook-handlers/network.js"),
+        test: () => import("./hook-handlers/test.js"),
     },
     tasks: [
         overrideTask("test")
             .setAction(async () => import("./task-actions/test.js"))
+            .build(),
+
+        overrideTask(["test", "solidity"])
+            .setAction(async () => import("./task-actions/test-solidity.js"))
             .build(),
 
         overrideTask("run")
