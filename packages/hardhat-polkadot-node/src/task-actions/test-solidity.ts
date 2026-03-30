@@ -148,11 +148,10 @@ const testSolidityAction: TaskOverrideActionFunction = async (taskArguments, hre
         await server.services().substrateNodeService?.waitForNodeToBeReady()
         if (!useAnvil) await server.services().ethRpcService?.waitForEthRpcToBeReady()
 
-        const rpcPort = useAnvil ? adapterPort : adapterPort || nodePort
-        const localUrl = `${BASE_URL}:${rpcPort}`
-        // Substrate RPC (WS) — anvil-polkadot exposes it on 9944 by default,
-        // standalone node uses nodePort (also defaults to 9944)
-        const wsUrl = `ws://localhost:${NODE_START_PORT}`
+        const localUrl = `${BASE_URL}:${adapterPort}`
+        const wsUrl = useAnvil
+            ? `ws://localhost:${NODE_START_PORT}`
+            : `ws://localhost:${nodePort}`
 
         // Build test sources first so resolc compiles them to PVM/EVM
         // HH3's test build uses hre.solidity.build() for test files
