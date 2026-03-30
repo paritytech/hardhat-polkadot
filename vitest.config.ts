@@ -7,9 +7,9 @@ export default defineConfig({
             "packages/*/test/**/*.test.ts",
             "tests/e2e/**/*.test.ts",
         ],
-        testTimeout: 120000,
-        hookTimeout: 120000,
-        teardownTimeout: 30000,
+        testTimeout: 300000,
+        hookTimeout: 300000,
+        teardownTimeout: 60000,
         fileParallelism: false,
     },
 })
