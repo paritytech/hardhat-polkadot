@@ -51,6 +51,23 @@ declare module "hardhat/types/config" {
         polkadot?: boolean | TargetVM
         url?: string
         polkadotUrl?: string
+        nodeConfig?: {
+            useAnvil?: boolean
+            nodeBinaryPath?: string
+            rpcPort?: number
+            dev?: boolean
+            consensus?: {
+                seal?: "Instant" | "Manual" | "None"
+                period?: string | number
+            }
+        }
+        adapterConfig?: {
+            adapterBinaryPath?: string
+            adapterPort?: number
+            dev?: boolean
+            buildBlockMode?: "Instant" | "Manual" | "Batch"
+        }
+        docker?: boolean | string
     }
 
     interface HttpNetworkConfig {

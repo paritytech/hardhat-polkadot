@@ -77,13 +77,12 @@ const configHookHandler: () => Promise<Partial<ConfigHooks>> = async () => ({
         for (const [name, network] of Object.entries(userNetworks)) {
             if (!network || !("polkadot" in network) || !network.polkadot) continue
             if (!resolvedConfig.networks?.[name]) continue
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const resolved = resolvedConfig.networks[name] as any
+            const resolved = resolvedConfig.networks[name] as import("hardhat/types/config").EdrNetworkConfig
             resolved.polkadot = network.polkadot
-            if ("nodeConfig" in network) resolved.nodeConfig = network.nodeConfig
-            if ("adapterConfig" in network) resolved.adapterConfig = network.adapterConfig
-            if ("docker" in network) resolved.docker = network.docker
-            if ("forking" in network) resolved.forking = network.forking
+            if ("nodeConfig" in network) resolved.nodeConfig = (network as import("hardhat/types/config").EdrNetworkUserConfig).nodeConfig
+            if ("adapterConfig" in network) resolved.adapterConfig = (network as import("hardhat/types/config").EdrNetworkUserConfig).adapterConfig
+            if ("docker" in network) resolved.docker = (network as import("hardhat/types/config").EdrNetworkUserConfig).docker
+            if ("forking" in network) resolved.forking = (network as unknown as Record<string, unknown>).forking as import("hardhat/types/config").EdrNetworkConfig["forking"]
         }
 
         return resolvedConfig
