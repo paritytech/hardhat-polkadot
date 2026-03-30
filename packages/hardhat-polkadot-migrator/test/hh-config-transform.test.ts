@@ -6,6 +6,8 @@ import {
     patchExportConfig,
     addPluginsArray,
     wrapWithDefineConfig,
+    renameHardhatNetwork,
+    updateDefaultNetworkProperty,
 } from "../src/hh-config-transform.js"
 
 const j = jscodeshiftFactory.withParser("tsx")
@@ -174,6 +176,90 @@ describe("wrapWithDefineConfig", () => {
     })
 })
 
+describe("renameHardhatNetwork", () => {
+    it("renames hardhat network key to default in ESM export", () => {
+        const root = transform('export default { networks: { hardhat: { chainId: 31337 } } }')
+        renameHardhatNetwork(root, j)
+        const output = root.toSource()
+        expect(output).toContain("default:")
+        expect(output).not.toContain("hardhat:")
+    })
+
+    it("renames hardhat network key in CJS export", () => {
+        const root = transform('module.exports = { networks: { hardhat: { chainId: 31337 } } }')
+        renameHardhatNetwork(root, j)
+        const output = root.toSource()
+        expect(output).toContain("default:")
+        expect(output).not.toContain("hardhat:")
+    })
+
+    it("does nothing when no hardhat network exists", () => {
+        const root = transform('export default { networks: { sepolia: {} } }')
+        renameHardhatNetwork(root, j)
+        const output = root.toSource()
+        expect(output).toContain("sepolia")
+        // "default" only appears in "export default", not as a network key
+        expect(output).not.toMatch(/networks:.*default:/)
+    })
+
+    it("does nothing when default network already exists", () => {
+        const root = transform(
+            'export default { networks: { hardhat: { a: 1 }, default: { b: 2 } } }',
+        )
+        renameHardhatNetwork(root, j)
+        const output = root.toSource()
+        // Both should still be present — no rename when default already exists
+        expect(output).toContain("hardhat")
+        expect(output).toContain("default")
+    })
+
+    it("renames string-literal hardhat key", () => {
+        const root = transform('export default { networks: { "hardhat": { chainId: 31337 } } }')
+        renameHardhatNetwork(root, j)
+        const output = root.toSource()
+        expect(output).toContain("default")
+        expect(output).not.toMatch(/"hardhat"/)
+    })
+
+    it("does nothing when no networks property exists", () => {
+        const source = 'export default { solidity: "0.8.28" }'
+        const root = transform(source)
+        renameHardhatNetwork(root, j)
+        expect(root.toSource()).toBe(source)
+    })
+})
+
+describe("updateDefaultNetworkProperty", () => {
+    it("updates defaultNetwork from hardhat to default", () => {
+        const root = transform('export default { defaultNetwork: "hardhat" }')
+        updateDefaultNetworkProperty(root, j)
+        const output = root.toSource()
+        expect(output).toContain('defaultNetwork: "default"')
+        expect(output).not.toContain('"hardhat"')
+    })
+
+    it("does not change other defaultNetwork values", () => {
+        const root = transform('export default { defaultNetwork: "sepolia" }')
+        updateDefaultNetworkProperty(root, j)
+        const output = root.toSource()
+        expect(output).toContain('defaultNetwork: "sepolia"')
+    })
+
+    it("does nothing when no defaultNetwork exists", () => {
+        const source = 'export default { solidity: "0.8.28" }'
+        const root = transform(source)
+        updateDefaultNetworkProperty(root, j)
+        expect(root.toSource()).toBe(source)
+    })
+
+    it("updates CJS config", () => {
+        const root = transform('module.exports = { defaultNetwork: "hardhat" }')
+        updateDefaultNetworkProperty(root, j)
+        const output = root.toSource()
+        expect(output).toContain('defaultNetwork: "default"')
+    })
+})
+
 describe("full transform pipeline", () => {
     it("transforms v2 ESM config to v3", () => {
         const source = `import { HardhatUserConfig } from "hardhat/config"
@@ -214,5 +300,80 @@ module.exports = {
         expect(output).toContain("plugins: [polkadot]")
         expect(output).toContain("polkadot: true")
         expect(output).toContain("defineConfig")
+    })
+
+    it("migrates v2 config with hardhat network and defaultNetwork to v3", () => {
+        const source = `import { HardhatUserConfig } from "hardhat/config"
+import "@nomicfoundation/hardhat-toolbox"
+
+const config: HardhatUserConfig = {
+    solidity: "0.8.28",
+    defaultNetwork: "hardhat",
+    networks: {
+        hardhat: {
+            chainId: 31337,
+        },
+        sepolia: {
+            url: "https://sepolia.example.com",
+        },
+    },
+}
+
+export default config`
+
+        const root = j(source)
+        renameHardhatNetwork(root, j)
+        updateDefaultNetworkProperty(root, j)
+        insertImport(root, j, "@parity/hardhat-polkadot")
+        patchExportConfig(root, j, {
+            networks: { default: { polkadot: true, nodeConfig: { nodeBinaryPath: "./bin/anvil-polkadot" } } },
+        })
+        addPluginsArray(root, j, "polkadot")
+        wrapWithDefineConfig(root, j)
+        const output = root.toSource()
+
+        // hardhat network renamed to default
+        expect(output).not.toMatch(/networks:.*hardhat:/)
+        expect(output).toContain("default:")
+        // defaultNetwork updated
+        expect(output).toContain('defaultNetwork: "default"')
+        // polkadot config merged into the renamed default network
+        expect(output).toContain("polkadot: true")
+        expect(output).toContain("nodeBinaryPath")
+        // sepolia still present
+        expect(output).toContain("sepolia")
+        // plugins and defineConfig added
+        expect(output).toContain("plugins: [polkadot]")
+        expect(output).toContain("defineConfig")
+    })
+
+    it("migrates v2 CJS config with hardhat network to v3", () => {
+        const source = `require("@nomicfoundation/hardhat-toolbox")
+
+module.exports = {
+    solidity: "0.8.28",
+    defaultNetwork: "hardhat",
+    networks: {
+        hardhat: {
+            chainId: 31337,
+        },
+    },
+}`
+
+        const root = j(source)
+        renameHardhatNetwork(root, j)
+        updateDefaultNetworkProperty(root, j)
+        insertImport(root, j, "@parity/hardhat-polkadot")
+        patchExportConfig(root, j, {
+            networks: { default: { polkadot: true } },
+        })
+        addPluginsArray(root, j, "polkadot")
+        wrapWithDefineConfig(root, j)
+        const output = root.toSource()
+
+        expect(output).toContain('defaultNetwork: "default"')
+        expect(output).toContain("polkadot: true")
+        expect(output).toContain("defineConfig")
+        expect(output).not.toMatch(/networks[\s\S]*hardhat:/)
     })
 })
