@@ -85,8 +85,7 @@ async function ensureServerStarted(
         const nodeConfig = edrConfig.nodeConfig
         const adapterConfig = edrConfig.adapterConfig
         const docker = edrConfig.docker
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const forking = (edrConfig as any).forking as
+        const forking = (edrConfig as unknown as Record<string, unknown>).forking as
             | { enabled?: boolean; url?: string }
             | undefined
 

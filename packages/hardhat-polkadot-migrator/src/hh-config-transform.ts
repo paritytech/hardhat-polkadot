@@ -271,6 +271,50 @@ export function addPluginsArray(
 }
 
 /**
+ * Renames the `hardhat` network key to `default` inside `networks: { ... }`.
+ * In Hardhat 3 the built-in development network was renamed from "hardhat" to "default".
+ */
+export function renameHardhatNetwork(
+    root: Collection<ReturnType<typeof jscodeshiftFactory>>,
+    j: jscodeshiftFactory.JSCodeshift,
+) {
+    const target = getDefaultExport(root, j)
+    if (!target) return
+
+    const networksProp = getProp(j, target, "networks")
+    if (!networksProp || !j.ObjectExpression.check(networksProp.value)) return
+
+    const networksObj = networksProp.value
+    const hardhatProp = getProp(j, networksObj, "hardhat")
+    if (!hardhatProp) return
+
+    // Also skip if "default" already exists
+    if (getProp(j, networksObj, "default")) return
+
+    hardhatProp.key = j.identifier("default")
+}
+
+/**
+ * Updates `defaultNetwork: "hardhat"` to `defaultNetwork: "default"`.
+ */
+export function updateDefaultNetworkProperty(
+    root: Collection<ReturnType<typeof jscodeshiftFactory>>,
+    j: jscodeshiftFactory.JSCodeshift,
+) {
+    const target = getDefaultExport(root, j)
+    if (!target) return
+
+    const prop = getProp(j, target, "defaultNetwork")
+    if (
+        prop &&
+        j.StringLiteral.check(prop.value) &&
+        prop.value.value === "hardhat"
+    ) {
+        prop.value = j.stringLiteral("default")
+    }
+}
+
+/**
  * Wraps the default export in `defineConfig()` if not already wrapped,
  * and adds the corresponding import.
  */
