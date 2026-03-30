@@ -121,7 +121,9 @@ function normalizeCompilerOutput(compOut: any): CompilerOutput {
     return result
 }
 
-// SolidityHooks is augmented onto HardhatHooks by the solidity plugin
+// SolidityHooks is augmented onto HardhatHooks by the solidity builtin plugin.
+// Not re-exported from a public path; duplicated here. Keep in sync with
+// hardhat/src/internal/builtin-plugins/solidity/type-extensions/hooks.ts
 interface SolidityHooks {
     invokeSolc: (
         context: HookContext,
