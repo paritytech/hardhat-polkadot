@@ -123,23 +123,9 @@ async function ensureServerStarted(
 
 const networkHookHandler: () => Promise<Partial<NetworkHooks>> = async () => ({
     newConnection: async (context, next) => {
-        // Identify which polkadot networks need servers started.
-        // We do this before next() so the server is ready, but the provider
-        // is redirected via the onRequest hook (not by mutating config).
-        const userNetworks = context.userConfig.networks ?? {}
-        for (const [name, network] of Object.entries(userNetworks)) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            if (!isPolkadotNetwork(network as any)) continue
-            if (polkadotServers.has(name) || pendingStarts.has(name)) continue
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await ensureServerStarted(name, network as any)
-            // Decrement refCount since ensureServerStarted incremented it,
-            // but this pre-start isn't tied to a connection yet
-            polkadotServers.get(name)!.refCount--
-        }
-
         const connection = await next(context)
 
+        const userNetworks = context.userConfig.networks ?? {}
         const networkName = connection.networkName
         const userNetworkConfig = userNetworks[networkName]
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

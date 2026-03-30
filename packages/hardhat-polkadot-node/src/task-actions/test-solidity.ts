@@ -273,8 +273,9 @@ const testSolidityAction: TaskOverrideActionFunction = async (taskArguments, hre
 
             // Each test function gets a fresh contract deployment to
             // isolate state (same as forge/EDR behaviour).
+            let failCount = 0
+
             for (const testName of matchingTests) {
-                // Deploy a fresh instance
                 let contractAddress: string
                 try {
                     const receipt = await sendTransaction(localUrl, {
@@ -284,13 +285,13 @@ const testSolidityAction: TaskOverrideActionFunction = async (taskArguments, hre
                         throw new Error(`deployment reverted (status=${receipt?.status})`)
                     }
                     contractAddress = receipt.contractAddress as string
-                } catch (err) {
-                    results.push({ contract: label, test: testName, passed: false, error: `Deploy failed: ${err}` })
-                    console.log(chalk.red(`    ${results.filter((r) => !r.passed).length}) ${testName}()`))
+                } catch (err: unknown) {
+                    const msg = err instanceof Error ? err.message : String(err)
+                    results.push({ contract: label, test: testName, passed: false, error: `Deploy failed: ${msg}` })
+                    console.log(chalk.red(`    ${++failCount}) ${testName}()`))
                     continue
                 }
 
-                // setUp()
                 if (hasSetUp(abi)) {
                     const sel = await getFunctionSelector(abi, "setUp")
                     if (sel) {
@@ -299,19 +300,19 @@ const testSolidityAction: TaskOverrideActionFunction = async (taskArguments, hre
                                 from: sender, to: contractAddress, data: sel, value: "0x0",
                             })
                             if (receipt.status !== "0x1") throw new Error("reverted")
-                        } catch (err) {
-                            results.push({ contract: label, test: testName, passed: false, error: `setUp() failed: ${err}` })
-                            console.log(chalk.red(`    ${results.filter((r) => !r.passed).length}) ${testName}()`))
+                        } catch (err: unknown) {
+                            const msg = err instanceof Error ? err.message : String(err)
+                            results.push({ contract: label, test: testName, passed: false, error: `setUp() failed: ${msg}` })
+                            console.log(chalk.red(`    ${++failCount}) ${testName}()`))
                             continue
                         }
                     }
                 }
 
-                // Run the test
                 const sel = await getFunctionSelector(abi, testName)
                 if (!sel) {
                     results.push({ contract: label, test: testName, passed: false, error: "Cannot compute selector" })
-                    console.log(chalk.red(`    ${results.filter((r) => !r.passed).length}) ${testName}()`))
+                    console.log(chalk.red(`    ${++failCount}) ${testName}()`))
                     continue
                 }
 
@@ -325,12 +326,12 @@ const testSolidityAction: TaskOverrideActionFunction = async (taskArguments, hre
                         console.log(chalk.green(`    ${CHECK} ${testName}()`))
                     } else {
                         results.push({ contract: label, test: testName, passed: false, error: "Transaction reverted" })
-                        console.log(chalk.red(`    ${results.filter((r) => !r.passed).length}) ${testName}()`))
+                        console.log(chalk.red(`    ${++failCount}) ${testName}()`))
                     }
                 } catch (err: unknown) {
                     const msg = err instanceof Error ? err.message : String(err)
                     results.push({ contract: label, test: testName, passed: false, error: msg })
-                    console.log(chalk.red(`    ${results.filter((r) => !r.passed).length}) ${testName}()`))
+                    console.log(chalk.red(`    ${++failCount}) ${testName}()`))
                 }
             }
 
