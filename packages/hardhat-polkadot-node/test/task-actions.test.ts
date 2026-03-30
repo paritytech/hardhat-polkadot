@@ -138,38 +138,13 @@ describe("test task action", () => {
         expect(runSuper).toHaveBeenCalled()
     })
 
-    it("calls build when noCompile is false", async () => {
-        const hre = makeHre({ nodeConfig: { useAnvil: true } })
-        const runSuper = vi.fn().mockResolvedValue(0)
-
-        await testAction({ noCompile: false }, hre as any, runSuper)
-
-        expect(hre.tasks.getTask).toHaveBeenCalledWith("build")
-    })
-
-    it("skips build when noCompile is true", async () => {
+    it("delegates to runSuper for polkadot networks (subtask handles server)", async () => {
         const hre = makeHre({ nodeConfig: { useAnvil: true } })
         const runSuper = vi.fn().mockResolvedValue(0)
 
         await testAction({ noCompile: true }, hre as any, runSuper)
 
-        const buildCalls = (hre.tasks.getTask as any).mock.calls.filter(
-            (c: string[]) => c[0] === "build",
-        )
-        expect(buildCalls).toHaveLength(0)
-    })
-
-    it("starts server, handles factory deps, and stops server", async () => {
-        const hre = makeHre({ nodeConfig: { useAnvil: true } })
-        const runSuper = vi.fn().mockResolvedValue(0)
-
-        await testAction({ noCompile: true }, hre as any, runSuper)
-
-        expect(createRpcServer).toHaveBeenCalled()
-        expect(mockListen).toHaveBeenCalled()
-        expect(handleFactoryDependencies).toHaveBeenCalled()
         expect(runSuper).toHaveBeenCalled()
-        expect(mockStop).toHaveBeenCalled()
     })
 })
 

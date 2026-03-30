@@ -34,13 +34,38 @@ export async function handleFactoryDependencies(
     accounts: string[] | HttpNetworkAccountsConfig,
     useAnvil?: boolean,
 ) {
-    // get last build info file
-    const files = await fg.glob(`${pathToArtifacts}/build-info/*.json`)
+    // Scan all build-info output files from both artifacts/ and cache/test-artifacts/
+    // HH3 splits build-info into .json (input) and .output.json (output)
+    const artifactsDir = path.dirname(pathToArtifacts.endsWith("/") ? pathToArtifacts.slice(0, -1) : pathToArtifacts)
+    let files = await fg.glob([
+        `${pathToArtifacts}/build-info/*.output.json`,
+        `${artifactsDir}/cache/test-artifacts/build-info/*.output.json`,
+    ])
+    if (files.length === 0) {
+        // Fallback for HH2 format where output is in the main .json file
+        files = await fg.glob(`${pathToArtifacts}/build-info/*.json`)
+    }
     if (files.length === 0) return
-    files.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs)
-    const lastBuildInfo = JSON.parse(fs.readFileSync(files[0], "utf8"))
 
-    for (const [_, contracts] of Object.entries(lastBuildInfo.output.contracts)) {
+    // Process all build-info files to find factory dependencies
+    for (const file of files) {
+        const buildInfoRaw = JSON.parse(fs.readFileSync(file, "utf8"))
+        const output = buildInfoRaw.output ?? buildInfoRaw
+        if (!output.contracts) continue
+        await processFactoryDeps(output, pathToArtifacts, ethRpcUrl, polkadotRpcUrl, accounts, useAnvil)
+    }
+}
+
+async function processFactoryDeps(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    output: any,
+    pathToArtifacts: string,
+    ethRpcUrl: EdrNetworkConfig["url"],
+    polkadotRpcUrl: EdrNetworkConfig["polkadotUrl"],
+    accounts: string[] | HttpNetworkAccountsConfig,
+    useAnvil?: boolean,
+) {
+    for (const [_, contracts] of Object.entries(output.contracts)) {
         for (const [parentContractName, artifact] of Object.entries(contracts as Contracts)) {
             const factoryDependencies = artifact.factoryDependencies
             if (!factoryDependencies || Object.keys(factoryDependencies).length === 0) continue
@@ -64,11 +89,13 @@ export async function handleFactoryDependencies(
                     chalk.yellow(`Uploading factory dependency in ${parentContractName}...`),
                 )
                 // get the bytecode from the artifact
-                const artifactPath = path.join(
-                    pathToArtifacts,
-                    sourcePath,
-                    `${childContractName}.json`,
-                )
+                // The sourcePath may have a "project/" prefix from the build-info
+                const cleanSourcePath = sourcePath.replace(/^project\//, "")
+                let artifactPath = path.join(pathToArtifacts, cleanSourcePath, `${childContractName}.json`)
+                if (!fs.existsSync(artifactPath)) {
+                    // Fallback: try with original path
+                    artifactPath = path.join(pathToArtifacts, sourcePath, `${childContractName}.json`)
+                }
                 const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf8"))
                 const bytecode = artifact.bytecode?.object ?? artifact.bytecode
 
