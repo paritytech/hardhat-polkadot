@@ -8,7 +8,7 @@ declare module "hardhat/types/config" {
     }
 
     interface HardhatConfig {
-        resolc: ResolcConfig
+        resolc?: ResolcConfig
     }
 
     interface EdrNetworkUserConfig {

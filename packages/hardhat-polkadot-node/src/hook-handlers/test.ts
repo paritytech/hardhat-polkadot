@@ -4,7 +4,8 @@ import path from "path"
 import { DEFAULT_NETWORK_NAME } from "../constants.js"
 
 // TestHooks is augmented onto HardhatHooks by the test builtin plugin.
-// It is not re-exported from a public path; we duplicate the subset we need.
+// Not re-exported from a public path; duplicated here. Keep in sync with
+// hardhat/src/internal/builtin-plugins/test/type-extensions/hooks.ts
 interface TestHooks {
     registerFileForTestRunner: (
         context: HookContext,

@@ -9,9 +9,9 @@ import { startServer } from "../utils.js"
 import { BASE_URL } from "../constants.js"
 import type { RpcServer } from "../types.js"
 
-// NetworkHooks is augmented onto HardhatHooks by the network-manager builtin plugin
-// (v-next/hardhat/src/internal/builtin-plugins/network-manager/type-extensions/hooks.ts).
-// It is not re-exported from a public path; we duplicate the subset we need here.
+// NetworkHooks is augmented onto HardhatHooks by the network-manager builtin plugin.
+// Not re-exported from a public path; duplicated here. Keep in sync with
+// hardhat/src/internal/builtin-plugins/network-manager/type-extensions/hooks.ts
 interface NetworkHooks {
     newConnection: <ChainTypeT extends ChainType | string>(
         context: HookContext,
@@ -85,8 +85,7 @@ async function ensureServerStarted(
         const nodeConfig = edrConfig.nodeConfig
         const adapterConfig = edrConfig.adapterConfig
         const docker = edrConfig.docker
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const forking = (edrConfig as any).forking as
+        const forking = (edrConfig as unknown as Record<string, unknown>).forking as
             | { enabled?: boolean; url?: string }
             | undefined
 

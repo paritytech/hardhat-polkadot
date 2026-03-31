@@ -8,6 +8,8 @@ import {
     insertImport,
     addPluginsArray,
     wrapWithDefineConfig,
+    renameHardhatNetwork,
+    updateDefaultNetworkProperty,
 } from "./hh-config-transform.js"
 
 const MODULE = "@parity/hardhat-polkadot"
@@ -93,13 +95,15 @@ export function updateHHConfig(projectPath: string): [string, string, string] {
 
     // Apply transformations
     const j = jscodeshiftFactory.withParser("tsx")
-    const root = j(fs.readFileSync(HHCJsonFile, "utf8"))
+    const prevHHConfig = fs.readFileSync(HHCJsonFile, "utf8")
+    const root = j(prevHHConfig)
+    renameHardhatNetwork(root, j)
+    updateDefaultNetworkProperty(root, j)
     insertImport(root, j, MODULE)
     patchExportConfig(root, j, PATCH)
     addPluginsArray(root, j, "polkadot")
     wrapWithDefineConfig(root, j)
 
-    const prevHHConfig = fs.readFileSync(HHCJsonFile, "utf8")
     const newHHConfig = root.toSource()
     return [HHCJsonFile, newHHConfig, prevHHConfig]
 }

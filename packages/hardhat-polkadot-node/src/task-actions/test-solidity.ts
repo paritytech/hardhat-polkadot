@@ -1,5 +1,5 @@
 import type { TaskOverrideActionFunction } from "hardhat/types/tasks"
-import type { EdrNetworkUserConfig } from "hardhat/types/config"
+import type { EdrNetworkConfig } from "hardhat/types/config"
 import chalk from "chalk"
 import axios from "axios"
 import fs from "fs"
@@ -10,6 +10,7 @@ import { createRpcServer } from "../rpc-server.js"
 import { constructCommandArgs, getAvailablePort } from "../utils.js"
 import { PolkadotNodePluginError } from "../errors.js"
 import { handleFactoryDependencies } from "../core/factory-support.js"
+import type { ForkingUserConfig } from "../types.js"
 import {
     NODE_START_PORT,
     ETH_RPC_ADAPTER_START_PORT,
@@ -112,30 +113,30 @@ const testSolidityAction: TaskOverrideActionFunction = async (taskArguments, hre
         return runSuper(taskArguments)
     }
 
-    const userConfig = networkConfig as unknown as EdrNetworkUserConfig
-    const useAnvil = userConfig?.nodeConfig?.useAnvil !== false
+    const edrConfig = networkConfig as EdrNetworkConfig
+    const useAnvil = edrConfig?.nodeConfig?.useAnvil !== false
 
     // Start the polkadot node
-    let nodePort = userConfig?.nodeConfig?.rpcPort || NODE_START_PORT
-    let adapterPort = userConfig?.adapterConfig?.adapterPort || ETH_RPC_ADAPTER_START_PORT
+    let nodePort = edrConfig?.nodeConfig?.rpcPort || NODE_START_PORT
+    let adapterPort = edrConfig?.adapterConfig?.adapterPort || ETH_RPC_ADAPTER_START_PORT
     nodePort = await getAvailablePort(nodePort, MAX_PORT_ATTEMPTS)
     adapterPort = await getAvailablePort(adapterPort, MAX_PORT_ATTEMPTS)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const forking = (userConfig as any)?.forking as
-        | { enabled?: boolean; url?: string; blockNumber?: number }
-        | undefined
+    // HH3's resolved forking config uses ResolvedConfigurationVariable/bigint,
+    // but the plugin's config hook copies the raw user config values (string/number).
+    // Cast through the internal ForkingUserConfig to match the runtime values.
+    const forking = edrConfig?.forking as unknown as ForkingUserConfig | undefined
 
     const server = createRpcServer({
         useAnvil,
-        docker: userConfig?.docker,
-        nodePath: userConfig?.nodeConfig?.nodeBinaryPath,
-        adapterPath: userConfig?.adapterConfig?.adapterBinaryPath,
+        docker: edrConfig?.docker,
+        nodePath: edrConfig?.nodeConfig?.nodeBinaryPath,
+        adapterPath: edrConfig?.adapterConfig?.adapterBinaryPath,
         isForking: !!forking?.enabled,
     })
 
-    const nodeCommands = Object.assign({}, userConfig?.nodeConfig, { rpcPort: nodePort })
-    const adapterCommands = Object.assign({}, userConfig?.adapterConfig, { adapterPort })
+    const nodeCommands = Object.assign({}, edrConfig?.nodeConfig, { rpcPort: nodePort })
+    const adapterCommands = Object.assign({}, edrConfig?.adapterConfig, { adapterPort })
     const commandArgs = constructCommandArgs({
         forking,
         forkBlockNumber: forking?.blockNumber,
@@ -180,10 +181,8 @@ const testSolidityAction: TaskOverrideActionFunction = async (taskArguments, hre
         rootFilePaths = Array.from(new Set(rootFilePaths))
 
         // Build test sources through HH3's solidity build system (triggers resolc)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (rootFilePaths.length > 0 && (hre as any).solidity?.build) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await (hre as any).solidity.build(rootFilePaths, {
+        if (rootFilePaths.length > 0) {
+            await hre.solidity.build(rootFilePaths, {
                 force: false,
                 buildProfile: hre.globalOptions.buildProfile ?? "default",
                 quiet: true,

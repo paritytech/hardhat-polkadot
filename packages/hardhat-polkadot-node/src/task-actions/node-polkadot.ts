@@ -1,9 +1,10 @@
 import type { NewTaskActionFunction } from "hardhat/types/tasks"
-import type { EdrNetworkUserConfig } from "hardhat/types/config"
+import type { EdrNetworkConfig } from "hardhat/types/config"
 
 import { createRpcServer } from "../rpc-server.js"
 import { constructCommandArgs, getAvailablePort } from "../utils.js"
 import { PolkadotNodePluginError } from "../errors.js"
+import type { ForkingUserConfig } from "../types.js"
 import {
     DEFAULT_NETWORK_NAME,
     ETH_RPC_ADAPTER_START_PORT,
@@ -17,10 +18,12 @@ interface NodePolkadotArgs {
 }
 
 const nodePolkadotAction: NewTaskActionFunction<NodePolkadotArgs> = async (taskArguments, hre) => {
-    const networkConfig = hre.config.networks[DEFAULT_NETWORK_NAME] as unknown as EdrNetworkUserConfig
+    const networkConfig = hre.config.networks[DEFAULT_NETWORK_NAME] as EdrNetworkConfig
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const forking = (networkConfig as any)?.forking as { enabled?: boolean; url?: string; blockNumber?: number } | undefined
+    // HH3's resolved forking config uses ResolvedConfigurationVariable/bigint,
+    // but the plugin's config hook copies the raw user config values (string/number).
+    // Cast through the internal ForkingUserConfig to match the runtime values.
+    const forking = networkConfig?.forking as unknown as ForkingUserConfig | undefined
 
     // CLI --port overrides config adapterPort
     const useAnvil = networkConfig?.nodeConfig?.useAnvil !== false

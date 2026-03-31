@@ -14,7 +14,6 @@ const hardhatPolkadotNodePlugin: HardhatPlugin = {
     npmPackage: "@parity/hardhat-polkadot-node",
     hookHandlers: {
         config: () => import("./hook-handlers/config.js"),
-        hre: () => import("./hook-handlers/hre.js"),
         network: () => import("./hook-handlers/network.js"),
         test: () => import("./hook-handlers/test.js"),
     },
