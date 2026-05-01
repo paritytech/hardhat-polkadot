@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.4 (2026-05-01)
+### Bug Fixes
+
+- Custom compiler version not being used. ([#394](https://github.com/paritytech/hardhat-polkadot/pull/394)) ([2d99d40](https://github.com/paritytech/hardhat-polkadot/commit/2d99d406a7c54b217f752a1bd737e5b0819c15f9))
+
+### Chores
+
+- Add unit tests. ([#399](https://github.com/paritytech/hardhat-polkadot/pull/399)) ([119f447](https://github.com/paritytech/hardhat-polkadot/commit/119f447ced6df9867e9a7ff2c78cdb9b5bc20bda))
+
+
 ## 0.2.3 (2026-01-07)
 ### Features
 

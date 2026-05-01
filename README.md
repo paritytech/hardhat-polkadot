@@ -27,7 +27,8 @@ Overview of currently available plugins and those on the roadmap.
 |-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
 | [hardhat-polkadot](https://github.com/paritytech/hardhat-polkadot/tree/main/packages/hardhat-polkadot)           | Umbrella plugin that provides full functionality and a convenient cli.                              |
 | [hardhat-polkadot-resolc](https://github.com/paritytech/hardhat-polkadot/tree/main/packages/hardhat-polkadot-resolc)           | Compiles solidity smart contracts for the Polkadot network, creating Polkadot compatible hardhat artifacts.                              |
-| [hardhat-polkadot-node](https://github.com/paritytech/hardhat-polkadot/blob/main/packages/hardhat-polkadot-node/README.md)         | Run a Polkadot node locally 
+| [hardhat-polkadot-node](https://github.com/paritytech/hardhat-polkadot/tree/main/packages/hardhat-polkadot-node)         | Run a Polkadot node locally.                              |
+| [hardhat-polkadot-migrator](https://github.com/paritytech/hardhat-polkadot/tree/main/packages/hardhat-polkadot-migrator)         | Migrates an existing Ethereum Hardhat project for Polkadot compatibility.                              |
 
 ## Documentation
 
