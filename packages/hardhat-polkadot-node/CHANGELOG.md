@@ -1,6 +1,17 @@
 # Changelog
 
 
+## 0.3.0 (2026-05-01)
+### Features
+
+- Default to using `anvil-polkadot`. ([#400](https://github.com/paritytech/hardhat-polkadot/pull/400)) ([f37c1ad](https://github.com/paritytech/hardhat-polkadot/commit/f37c1ad469c95c13c12918ffbb5d802eccab92c6))
+- Default to using Docker for the RPC server. ([#401](https://github.com/paritytech/hardhat-polkadot/pull/401)) ([9ef2b9f](https://github.com/paritytech/hardhat-polkadot/commit/9ef2b9f153b8cca66eee21cb6fe544c93726fbbe))
+
+### Chores
+
+- Add unit tests. ([#399](https://github.com/paritytech/hardhat-polkadot/pull/399)) ([119f447](https://github.com/paritytech/hardhat-polkadot/commit/119f447ced6df9867e9a7ff2c78cdb9b5bc20bda))
+
+
 ## 0.2.5 (2026-01-06)
 ### Bug Fixes
 

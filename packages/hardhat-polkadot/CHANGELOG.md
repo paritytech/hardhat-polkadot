@@ -1,6 +1,18 @@
 # Changelog
 
 
+## 0.3.0 (2026-05-01)
+### Chores
+
+- Update testnet URLs in sample projects. ([#395](https://github.com/paritytech/hardhat-polkadot/pull/395)) ([0b12809](https://github.com/paritytech/hardhat-polkadot/commit/0b12809fa11fa30cbea0c62ee8d3831d616dd781))
+- Fix broken links in README. ([#425](https://github.com/paritytech/hardhat-polkadot/pull/425)) ([f85edc9](https://github.com/paritytech/hardhat-polkadot/commit/f85edc928bfa68c66655a9f06a69dfcad92d7df9))
+
+### Internal
+
+- Bumped `@parity/hardhat-polkadot-node` to `0.3.0`.
+- Bumped `@parity/hardhat-polkadot-resolc` to `0.2.4`.
+
+
 ## 0.2.7 (2026-01-07)
 ### Internal
 
