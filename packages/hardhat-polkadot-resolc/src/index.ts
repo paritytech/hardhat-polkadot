@@ -33,7 +33,12 @@ import type {
 import { assertHardhatInvariant } from "hardhat/internal/core/errors"
 import chalk from "chalk"
 
-import { pluralize, updateDefaultCompilerConfig, getResolcVersionFromBinary } from "./utils"
+import {
+    pluralize,
+    updateDefaultCompilerConfig,
+    getResolcVersionFromBinary,
+    normalizeBytecodeOutput,
+} from "./utils"
 import { compile } from "./compile"
 import {
     defaultNpmResolcConfig,
@@ -234,21 +239,7 @@ subtask(
         const compOut = await compile(config, args.input)
 
         // This is made to be compatible with @openzeppelin/hardhat-upgrades
-        Object.keys(compOut.contracts).map((file) => {
-            Object.keys(compOut.contracts[file]).map((contract) => {
-                const bytecode = compOut.contracts[file][contract].evm.bytecode
-                    ? compOut.contracts[file][contract].evm.bytecode.object
-                    : ""
-                compOut.contracts[file][contract].evm.bytecode = {
-                    functionDebugData: {},
-                    generatedSources: [],
-                    linkReferences: {},
-                    object: bytecode,
-                    opcodes: "",
-                    sourceMap: "",
-                }
-            })
-        })
+        normalizeBytecodeOutput(compOut)
         return compOut
     },
 )

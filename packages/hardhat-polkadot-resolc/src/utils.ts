@@ -191,3 +191,31 @@ export function orderSources(mapped: Map<string, string[]>): string[] {
 export function sha256(data: Uint8Array): string {
     return createHash("sha256").update(Buffer.from(data)).digest("hex")
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ContractsOutput = { contracts?: Record<string, Record<string, any>> }
+
+/**
+ * Fill in the bytecode fields expected by @openzeppelin/hardhat-upgrades.
+ *
+ * When compilation fails, the output has `errors` but no `contracts` (and a contract
+ * can come back without `evm`), so those are skipped instead of throwing a TypeError
+ * that hides the real compiler errors.
+ */
+export function normalizeBytecodeOutput(output: ContractsOutput): void {
+    for (const file of Object.keys(output.contracts ?? {})) {
+        const contracts = output.contracts![file] ?? {}
+        for (const contract of Object.keys(contracts)) {
+            const evm = contracts[contract]?.evm
+            if (!evm) continue
+            evm.bytecode = {
+                functionDebugData: {},
+                generatedSources: [],
+                linkReferences: {},
+                object: evm.bytecode ? evm.bytecode.object : "",
+                opcodes: "",
+                sourceMap: "",
+            }
+        }
+    }
+}
