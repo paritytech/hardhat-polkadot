@@ -9,6 +9,7 @@ import {
     getVersionComponents,
     sha256,
     updateDefaultCompilerConfig,
+    normalizeBytecodeOutput,
 } from "../src/utils"
 import type { ResolcConfig, SolcConfigData } from "../src/types"
 
@@ -381,5 +382,41 @@ describe("updateDefaultCompilerConfig", () => {
         updateDefaultCompilerConfig(data, resolc)
 
         expect(data.compiler.settings.resolc).toBe(resolc)
+    })
+})
+
+describe("normalizeBytecodeOutput", () => {
+    it("does not throw when compilation failed and there are no contracts (#322)", () => {
+        const output = { errors: [{ severity: "error", message: "boom" }] }
+        expect(() => normalizeBytecodeOutput(output)).not.toThrow()
+        expect(output).toEqual({ errors: [{ severity: "error", message: "boom" }] })
+    })
+
+    it("skips contracts without evm output", () => {
+        const output = { contracts: { "A.sol": { A: { abi: [] } } } }
+        expect(() => normalizeBytecodeOutput(output)).not.toThrow()
+        expect(output.contracts["A.sol"].A).toEqual({ abi: [] })
+    })
+
+    it("fills in the bytecode fields expected by hardhat-upgrades", () => {
+        const output = {
+            contracts: { "A.sol": { A: { evm: { bytecode: { object: "abcd" } } } } },
+        }
+        normalizeBytecodeOutput(output)
+        expect(output.contracts["A.sol"].A.evm.bytecode).toEqual({
+            functionDebugData: {},
+            generatedSources: [],
+            linkReferences: {},
+            object: "abcd",
+            opcodes: "",
+            sourceMap: "",
+        })
+    })
+
+    it("uses an empty object when there is no bytecode", () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const output: any = { contracts: { "I.sol": { I: { evm: {} } } } }
+        normalizeBytecodeOutput(output)
+        expect(output.contracts["I.sol"].I.evm.bytecode.object).toBe("")
     })
 })
