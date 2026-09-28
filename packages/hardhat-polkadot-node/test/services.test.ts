@@ -152,5 +152,97 @@ describe("ChopsticksService", () => {
             const service = new ChopsticksService()
             await expect(service.stop()).resolves.toBeUndefined()
         })
+
+        it.skipIf(process.platform === "win32")(
+            "signals the whole process group, not just the npx wrapper",
+            async () => {
+                const service = new ChopsticksService(["npx", "chopsticks"], false)
+                const killSpy = vi.spyOn(process, "kill").mockImplementation(() => true)
+                service.process = {
+                    pid: 4242,
+                    killed: false,
+                    kill: vi.fn(),
+                } as unknown as ChildProcess
+                await service.stop()
+                expect(killSpy).toHaveBeenCalledWith(-4242, "SIGTERM")
+                killSpy.mockRestore()
+            },
+        )
+
+        it.skipIf(process.platform === "win32")(
+            "ignores an already exited process group",
+            async () => {
+                const service = new ChopsticksService(["npx", "chopsticks"], false)
+                const killSpy = vi.spyOn(process, "kill").mockImplementation(() => {
+                    throw Object.assign(new Error("kill ESRCH"), { code: "ESRCH" })
+                })
+                service.process = {
+                    pid: 4242,
+                    killed: false,
+                    kill: vi.fn(),
+                } as unknown as ChildProcess
+                await expect(service.stop()).resolves.toBeUndefined()
+                killSpy.mockRestore()
+            },
+        )
+    })
+
+    describe.skipIf(process.platform === "win32")("process tree cleanup", () => {
+        const isAlive = (pid: number): boolean => {
+            try {
+                process.kill(pid, 0)
+                return true
+            } catch {
+                return false
+            }
+        }
+
+        const waitFor = async (predicate: () => boolean, timeoutMs = 5000): Promise<boolean> => {
+            const deadline = Date.now() + timeoutMs
+            while (Date.now() < deadline) {
+                if (predicate()) return true
+                await new Promise((r) => setTimeout(r, 50))
+            }
+            return predicate()
+        }
+
+        // same shape as npx: wrapper spawns the real server and prints its pid
+        const wrapperScript = [
+            "const { spawn } = require('child_process')",
+            "const c = spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], { stdio: 'ignore' })",
+            "console.log(c.pid)",
+            "setInterval(() => {}, 1000)",
+        ].join(";")
+
+        const startWrapper = async (service: ChopsticksService): Promise<number> => {
+            await service.from_binary("")
+            return new Promise((resolve) => {
+                service.process!.stdout!.once("data", (d: Buffer) =>
+                    resolve(parseInt(d.toString().trim(), 10)),
+                )
+            })
+        }
+
+        it("stop() terminates the grandchild spawned by the wrapper", async () => {
+            const service = new ChopsticksService([process.execPath, "-e", wrapperScript], false)
+            const grandchildPid = await startWrapper(service)
+            expect(isAlive(grandchildPid)).toBe(true)
+
+            await service.stop()
+
+            expect(await waitFor(() => !isAlive(grandchildPid))).toBe(true)
+        })
+
+        it("registers parent signal handlers while running and removes them on stop()", async () => {
+            const before = process.listenerCount("SIGTERM")
+            const service = new ChopsticksService([process.execPath, "-e", wrapperScript], false)
+            const grandchildPid = await startWrapper(service)
+            expect(process.listenerCount("SIGTERM")).toBe(before + 1)
+
+            await service.stop()
+
+            expect(process.listenerCount("SIGTERM")).toBe(before)
+            expect(await waitFor(() => !isAlive(grandchildPid))).toBe(true)
+        })
     })
 })
